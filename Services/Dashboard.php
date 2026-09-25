@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\ModernUi\Services;
+namespace Modules\Refresh\Services;
 
 use App\Conversation;
 use App\Thread;
@@ -15,7 +15,7 @@ class Dashboard
 {
     public static function stats($mailbox_id)
     {
-        return \Cache::remember('modernui_dash_'.$mailbox_id, 1, function () use ($mailbox_id) {
+        return \Cache::remember('refresh_dash_'.$mailbox_id, 1, function () use ($mailbox_id) {
             $tz = config('app.timezone');
             $today = Carbon::now($tz)->startOfDay();
             $yesterday = $today->copy()->subDay();
@@ -57,7 +57,7 @@ class Dashboard
                 $ok = 0;
                 foreach ($rows as $r) {
                     $meta = is_array($r->meta) ? $r->meta : (json_decode((string)$r->meta, true) ?: []);
-                    $due = !empty($meta['mu_due']) ? Carbon::parse($meta['mu_due']) : Carbon::parse($r->created_at)->addHours(\Modules\ModernUi\Services\Settings::resolutionHours());
+                    $due = !empty($meta['rf_due']) ? Carbon::parse($meta['rf_due']) : Carbon::parse($r->created_at)->addHours(\Modules\Refresh\Services\Settings::resolutionHours());
                     if (Carbon::parse($r->closed_at)->lte($due)) {
                         $ok++;
                     }
@@ -151,17 +151,17 @@ class Dashboard
         $step = ($w - $l - $r) / 23;
         $y = function ($v) use ($h, $t, $b, $max) { return round($h - $b - ($v / $max) * ($h - $t - $b), 1); };
         $x = function ($i) use ($l, $step) { return round($l + $i * $step, 1); };
-        $svg = '<svg class="mu-chart" viewBox="0 0 '.$w.' '.$h.'">';
+        $svg = '<svg class="rf-chart" viewBox="0 0 '.$w.' '.$h.'">';
         // horizontal grid
         $ticks = min(4, $max);
         for ($k = 0; $k <= $ticks; $k++) {
             $v = round($max * $k / max(1, $ticks));
             $yy = $y($v);
-            $svg .= '<line x1="'.$l.'" x2="'.($w - $r).'" y1="'.$yy.'" y2="'.$yy.'" class="mu-chart-grid"/>';
-            $svg .= '<text x="'.($l - 10).'" y="'.($yy + 4).'" class="mu-chart-lbl" text-anchor="end">'.$v.'</text>';
+            $svg .= '<line x1="'.$l.'" x2="'.($w - $r).'" y1="'.$yy.'" y2="'.$yy.'" class="rf-chart-grid"/>';
+            $svg .= '<text x="'.($l - 10).'" y="'.($yy + 4).'" class="rf-chart-lbl" text-anchor="end">'.$v.'</text>';
         }
         for ($i = 0; $i < 24; $i++) {
-            $svg .= '<text x="'.$x($i).'" y="'.($h - 8).'" class="mu-chart-lbl" text-anchor="middle">'.$i.'</text>';
+            $svg .= '<text x="'.$x($i).'" y="'.($h - 8).'" class="rf-chart-lbl" text-anchor="middle">'.$i.'</text>';
         }
         $line = function ($vals, $cls, $upto) use ($x, $y) {
             $pts = [];
@@ -169,12 +169,12 @@ class Dashboard
             for ($i = 0; $i <= $upto; $i++) {
                 $pts[] = $x($i).','.$y($vals[$i]);
                 $dots .= '<circle cx="'.$x($i).'" cy="'.$y($vals[$i]).'" r="3.5" class="'.$cls.'-dot"/>';
-                $dots .= '<text x="'.$x($i).'" y="'.($y($vals[$i]) - 8).'" class="mu-chart-val" text-anchor="middle">'.$vals[$i].'</text>';
+                $dots .= '<text x="'.$x($i).'" y="'.($y($vals[$i]) - 8).'" class="rf-chart-val" text-anchor="middle">'.$vals[$i].'</text>';
             }
             return '<polyline points="'.implode(' ', $pts).'" class="'.$cls.'"/>'.$dots;
         };
-        $svg .= $line($yest, 'mu-chart-yest', 23);
-        $svg .= $line($today, 'mu-chart-today', $now_h);
+        $svg .= $line($yest, 'rf-chart-yest', 23);
+        $svg .= $line($today, 'rf-chart-today', $now_h);
         $svg .= '</svg>';
         return $svg;
     }

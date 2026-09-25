@@ -1,6 +1,6 @@
-# Modern UI for FreeScout
+# Refresh: a new interface for FreeScout
 
-**A Freshdesk-inspired interface for [FreeScout](https://freescout.net).** Modern UI reworks the whole agent interface
+**A new, Freshdesk-inspired interface for [FreeScout](https://freescout.net).** Refresh reworks the whole agent interface
 of FreeScout: a left navigation bar, ticket views with SLA badges, a dashboard, a properties panel next to each ticket,
 a Freshdesk-style reply editor, ajax actions everywhere, a phone version, an installable app and Web Push notifications.
 It borrows Freshdesk's ergonomics, with a look of its own (slate and indigo, light borders, small radii), also applied
@@ -88,16 +88,19 @@ and optionally `Resources/lang/overrides/<locale>.php` to reword FreeScout's own
 
 ## Installation
 
-1. Download the latest release and unzip it into the `Modules` folder of FreeScout: you get `Modules/ModernUi`
+1. Download the latest release and unzip it into the `Modules` folder of FreeScout: you get `Modules/Refresh`
    (the folder **must** have this name).
-2. In FreeScout, **Manage › Modules**: activate **Modern UI**.
-3. Optional: **Manage › Settings › Modern UI** to set your SLA, logo and app name.
+2. In FreeScout, **Manage › Modules**: activate **Refresh**.
+3. Optional: **Manage › Settings › Refresh** to set your SLA, logo and app name.
 
 To go back to the stock interface, deactivate the module. Its settings are kept.
 
+**Upgrading from Modern UI 1.x** (this module's former name): deactivate Modern UI, delete `Modules/ModernUi`, install
+Refresh as above. Its settings, shared views and push notification keys are taken over automatically.
+
 ## Settings
 
-**Manage › Settings › Modern UI**
+**Manage › Settings › Refresh**
 
 | Setting | |
 |---|---|
@@ -113,7 +116,7 @@ tick the *Mobile* column in **Profile › Notifications**.
 
 ![Settings](screenshots/settings.png)
 
-The push keys are created on first use in `storage/app/modernui/`. Keep this folder when moving servers: new keys
+The push keys are created on first use in `storage/app/refresh/`. Keep this folder when moving servers: new keys
 would silently cut every existing subscription.
 
 ## For module developers
@@ -121,7 +124,7 @@ would silently cut every existing subscription.
 Other modules can add an entry with their own icon to the left bar:
 
 ```php
-\Eventy::addFilter('modernui.rail_items', function ($items) {
+\Eventy::addFilter('refresh.rail_items', function ($items) {
     $items[] = [
         'url'    => route('mymodule.page'),
         'label'  => __('My module'),
@@ -142,7 +145,7 @@ Icons: [Crayons](https://github.com/freshworks/crayons) (MIT), [Tabler Icons](ht
 [Lucide](https://lucide.dev) (ISC, partly derived from Feather, MIT). Full notices in
 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). No fonts are bundled.
 
-Modern UI is not affiliated with or endorsed by Freshworks. "Freshdesk" is a trademark of Freshworks Inc., used here
+Refresh is not affiliated with or endorsed by Freshworks. "Freshdesk" is a trademark of Freshworks Inc., used here
 only to describe the look the interface is inspired by.
 
 ## License

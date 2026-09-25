@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\ModernUi\Http\Controllers;
+namespace Modules\Refresh\Http\Controllers;
 
 use App\Customer;
 use App\Http\Controllers\Controller;
@@ -20,7 +20,7 @@ class ContactsController extends Controller
         $prefix = \DB::getTablePrefix();
         $query = Customer::query()
             ->select('customers.*')
-            ->selectRaw("(SELECT MIN(e.email) FROM {$prefix}emails e WHERE e.customer_id = {$prefix}customers.id) AS mu_email");
+            ->selectRaw("(SELECT MIN(e.email) FROM {$prefix}emails e WHERE e.customer_id = {$prefix}customers.id) AS rf_email");
         if ($q !== '') {
             $like = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $q).'%';
             $digits = preg_replace('/\D/', '', $q);
@@ -64,7 +64,7 @@ class ContactsController extends Controller
     public function index(Request $request)
     {
         $contacts = $this->query($request)->paginate(self::PER_PAGE)->appends($request->except('page'));
-        return view('modernui::contacts', [
+        return view('refresh::contacts', [
             'contacts' => $contacts,
             'q'        => (string)$request->input('q', ''),
         ]);
@@ -80,7 +80,7 @@ class ContactsController extends Controller
             $query->chunk(500, function ($rows) use ($out) {
                 foreach ($rows as $c) {
                     list($mobile, $work) = self::phones($c);
-                    fputcsv($out, [$c->getFullName(), $c->job_title, $c->company, $c->mu_email, $mobile, $work], ';');
+                    fputcsv($out, [$c->getFullName(), $c->job_title, $c->company, $c->rf_email, $mobile, $work], ';');
                 }
             });
             fclose($out);

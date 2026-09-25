@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\ModernUi\Http\Controllers;
+namespace Modules\Refresh\Http\Controllers;
 
 use App\Conversation;
 use App\Mailbox;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\ModernUi\Providers\ModernUiServiceProvider as Ui;
-use Modules\ModernUi\Services\Views;
+use Modules\Refresh\Providers\RefreshServiceProvider as Ui;
+use Modules\Refresh\Services\Views;
 
 /**
  * List views Freshdesk-style (/mailbox/{id}/tickets/{view}): views menu, "Sort by", "1 - 30 of N" pagination,
@@ -35,9 +35,9 @@ class TicketsController extends Controller
         if ($request->has('sort')) {
             $sort = (string)$request->input('sort');
             $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
-            \Cookie::queue('mu_sort', $sort.':'.$order, 525600);
+            \Cookie::queue('rf_sort', $sort.':'.$order, 525600);
         } else {
-            $saved = explode(':', (string)$request->cookie('mu_sort', ''));
+            $saved = explode(':', (string)$request->cookie('rf_sort', ''));
             $sort = $saved[0] !== '' ? $saved[0] : 'created';
             $order = (isset($saved[1]) && $saved[1] === 'asc') ? 'asc' : 'desc';
         }
@@ -61,9 +61,9 @@ class TicketsController extends Controller
         $query = $request->except('page');
         $lastUrl = '/mailbox/'.$mailbox->id.'/tickets/'.$view.($query ? '?'.http_build_query($query) : '');
         $lastTitle = ($lsv = Views::savedView((string)$request->input('sv'))) ? $lsv['label'] : $defs[$view][0];
-        \Cookie::queue('mu_last_view', json_encode(['u' => $lastUrl, 't' => $lastTitle]), 525600);
+        \Cookie::queue('rf_last_view', json_encode(['u' => $lastUrl, 't' => $lastTitle]), 525600);
 
-        return view('modernui::tickets', [
+        return view('refresh::tickets', [
             'mailbox'       => $mailbox,
             'folders'       => $mailbox->getAssesibleFolders(),
             'folder'        => $folder,
@@ -83,14 +83,14 @@ class TicketsController extends Controller
             'tags'          => $tags,
             'users'         => $mailbox->usersAssignable(),
             'statuses'      => [
-                Conversation::STATUS_ACTIVE  => __('modernui::labels.open'),
+                Conversation::STATUS_ACTIVE  => __('refresh::labels.open'),
                 Conversation::STATUS_PENDING => __('Pending'),
                 Conversation::STATUS_CLOSED  => __('Closed'),
             ],
         ]);
     }
 
-    /** /tickets: last viewed tickets view (mu_last_view cookie), otherwise "All tickets" of the first mailbox. */
+    /** /tickets: last viewed tickets view (rf_last_view cookie), otherwise "All tickets" of the first mailbox. */
     public function last(Request $request)
     {
         $last = self::lastView($request);
@@ -98,13 +98,13 @@ class TicketsController extends Controller
             return redirect($last['u']);
         }
         $mailbox = auth()->user()->mailboxesCanView()->first();
-        return $mailbox ? redirect()->route('modernui.tickets', ['mailbox_id' => $mailbox->id, 'view' => 'all']) : redirect('/');
+        return $mailbox ? redirect()->route('refresh.tickets', ['mailbox_id' => $mailbox->id, 'view' => 'all']) : redirect('/');
     }
 
     /** Last remembered view ['u' => local address, 't' => title], or null (cookie missing or invalid). */
     public static function lastView(Request $request)
     {
-        $last = json_decode((string)$request->cookie('mu_last_view', ''), true);
+        $last = json_decode((string)$request->cookie('rf_last_view', ''), true);
         if (!is_array($last) || empty($last['u']) || !preg_match('#^/mailbox/\d+/tickets/[a-z0-9-]+(\?.*)?$#', $last['u'])) {
             return null;
         }

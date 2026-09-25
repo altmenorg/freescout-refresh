@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\ModernUi\Services;
+namespace Modules\Refresh\Services;
 
 /**
  * In-house Web Push (installable PWA): replaces the paid "Mobile Notifications" module, which only serves
  * the FreeScout app. Pure PHP 7.4 (OpenSSL), no composer dependency:
  *  - VAPID (RFC 8292): ES256 JWT signed with the server's key, generated on first use;
  *  - aes128gcm content encryption (RFC 8291 / 8188): only the subscribed phone can read the notification.
- * Storage (outside the web root, storage/app/modernui, chmod 600): vapid.json (keys) and push_subscriptions.json (subscriptions).
+ * Storage (outside the web root, storage/app/refresh, chmod 600): vapid.json (keys) and push_subscriptions.json (subscriptions).
  */
 class WebPush
 {
@@ -15,7 +15,7 @@ class WebPush
 
     protected static function dir()
     {
-        $dir = storage_path('app/modernui');
+        $dir = storage_path('app/refresh');
         if (!is_dir($dir)) {
             mkdir($dir, 0700, true);
         }
@@ -135,7 +135,7 @@ class WebPush
                 // subscription expired or revoked (app uninstalled, notifications turned off): drop it
                 self::unsubscribe($sub['endpoint']);
             } else {
-                \Log::warning('[ModernUi][WebPush] HTTP '.$code.' for user '.$user_id);
+                \Log::warning('[Refresh][WebPush] HTTP '.$code.' for user '.$user_id);
             }
         }
         return $ok;
@@ -178,7 +178,7 @@ class WebPush
         $p = parse_url($endpoint);
         $aud = $p['scheme'].'://'.$p['host'].(isset($p['port']) ? ':'.$p['port'] : '');
         $input = self::b64u(json_encode(['typ' => 'JWT', 'alg' => 'ES256']))
-            .'.'.self::b64u(json_encode(['aud' => $aud, 'exp' => time() + 12 * 3600, 'sub' => \Modules\ModernUi\Services\Settings::pushContact()], JSON_UNESCAPED_SLASHES));
+            .'.'.self::b64u(json_encode(['aud' => $aud, 'exp' => time() + 12 * 3600, 'sub' => \Modules\Refresh\Services\Settings::pushContact()], JSON_UNESCAPED_SLASHES));
         $key = openssl_pkey_get_private(self::vapid()['private']);
         if (!$key || !openssl_sign($input, $der, $key, OPENSSL_ALGO_SHA256)) {
             return null;

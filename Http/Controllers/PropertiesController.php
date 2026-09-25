@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\ModernUi\Http\Controllers;
+namespace Modules\Refresh\Http\Controllers;
 
 use App\Conversation;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\ModernUi\Services\Views;
+use Modules\Refresh\Services\Views;
 
 /**
  * Saves Freshdesk properties that FreeScout lacks (type, priority), stored in conversations.meta
@@ -42,10 +42,10 @@ class PropertiesController extends Controller
         if ($request->has('due')) {
             $due = trim((string)$request->input('due', ''));
             if ($due === '') {
-                unset($meta['mu_due']);
+                unset($meta['rf_due']);
             } else {
                 try {
-                    $meta['mu_due'] = \Carbon\Carbon::parse($due, config('app.timezone'))->setTimezone('UTC')->toIso8601String();
+                    $meta['rf_due'] = \Carbon\Carbon::parse($due, config('app.timezone'))->setTimezone('UTC')->toIso8601String();
                 } catch (\Exception $e) {
                     return response()->json(['status' => 'error', 'msg' => __('Invalid date')], 422);
                 }
@@ -53,7 +53,7 @@ class PropertiesController extends Controller
         }
         $conversation->meta = $meta;
         $conversation->save();
-        \Cache::forget('modernui_types');
+        \Cache::forget('refresh_types');
 
         return response()->json(['status' => 'success', 'type' => $meta['fd_type'] ?? '', 'priority' => $meta['fd_priority'] ?? 1]);
     }

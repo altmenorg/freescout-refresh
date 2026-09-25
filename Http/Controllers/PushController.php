@@ -1,16 +1,16 @@
 <?php
 
-namespace Modules\ModernUi\Http\Controllers;
+namespace Modules\Refresh\Http\Controllers;
 
 use App\Subscription;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\ModernUi\Services\Settings;
-use Modules\ModernUi\Services\WebPush;
+use Modules\Refresh\Services\Settings;
+use Modules\Refresh\Services\WebPush;
 
 /**
  * Installable app (PWA): manifest, service worker, and Web Push subscriptions of the agents' devices.
- * Notifications are sent by ModernUiServiceProvider (hook subscription.process_events, "Mobile" channel).
+ * Notifications are sent by RefreshServiceProvider (hook subscription.process_events, "Mobile" channel).
  */
 class PushController extends Controller
 {
@@ -40,7 +40,7 @@ class PushController extends Controller
     {
         return response(file_get_contents(__DIR__.'/../../Resources/js/service-worker.js'), 200, [
             'Content-Type'           => 'application/javascript; charset=utf-8',
-            'Service-Worker-Allowed' => '/',  // allows the scope "/" although the script is under /modernui/
+            'Service-Worker-Allowed' => '/',  // allows the scope "/" although the script is under /refresh/
             'Cache-Control'          => 'no-cache',
         ]);
     }

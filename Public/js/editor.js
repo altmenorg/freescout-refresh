@@ -1,4 +1,4 @@
-/* ModernUi: reply editor formatting toolbar, Freshdesk-style.
+/* Refresh: reply editor formatting toolbar, Freshdesk-style.
    File loaded with the page scripts ("javascripts" filter): it must run BEFORE initReplyForm(),
    which the view calls in the footer script, after the module's JS (too late for this filter).
    Freshdesk order: alignment, indent | [attachment] bold italic underline, Heading 1, Heading 2, color, lists,
@@ -7,12 +7,12 @@
    ($parent.append is not a function -> whole editor breaks): recreated here instead. Test any new entry
    on a disposable editor before deploying. */
 (function () {
-    // Modern UI translations: dictionary of the user's language, put in <head> by the module (meta modernui-l10n).
-    var muT = window.muT = window.muT || function (s) {
-        if (!window.muL) {
-            try { window.muL = JSON.parse(document.querySelector('meta[name="modernui-l10n"]').getAttribute('content')); } catch (e) { window.muL = {}; }
+    // Refresh translations: dictionary of the user's language, put in <head> by the module (meta refresh-l10n).
+    var rfT = window.rfT = window.rfT || function (s) {
+        if (!window.rfL) {
+            try { window.rfL = JSON.parse(document.querySelector('meta[name="refresh-l10n"]').getAttribute('content')); } catch (e) { window.rfL = {}; }
         }
-        return window.muL[s] || s;
+        return window.rfL[s] || s;
     };
     if (typeof fsAddFilter === 'undefined' || typeof fs_conv_editor_buttons === 'undefined') {
         return;
@@ -47,17 +47,17 @@
         };
     };
 
-    fs_conv_editor_buttons.muJustifyLeft = cmdButton('justifyLeft', 'align-left', muT('Align left'));
-    fs_conv_editor_buttons.muJustifyCenter = cmdButton('justifyCenter', 'align-center', muT('Align center'));
-    fs_conv_editor_buttons.muJustifyRight = cmdButton('justifyRight', 'align-right', muT('Align right'));
-    fs_conv_editor_buttons.muJustifyFull = cmdButton('justifyFull', 'align-justify', muT('Justify'));
-    fs_conv_editor_buttons.muOutdent = cmdButton('outdent', 'align-outdent', muT('Decrease indent'));
-    fs_conv_editor_buttons.muIndent = cmdButton('indent', 'align-indent', muT('Increase indent'));
-    fs_conv_editor_buttons.mesh1 = headingButton('h1', muT('Heading 1'));
-    fs_conv_editor_buttons.mesh2 = headingButton('h2', muT('Heading 2'));
+    fs_conv_editor_buttons.rfJustifyLeft = cmdButton('justifyLeft', 'align-left', rfT('Align left'));
+    fs_conv_editor_buttons.rfJustifyCenter = cmdButton('justifyCenter', 'align-center', rfT('Align center'));
+    fs_conv_editor_buttons.rfJustifyRight = cmdButton('justifyRight', 'align-right', rfT('Align right'));
+    fs_conv_editor_buttons.rfJustifyFull = cmdButton('justifyFull', 'align-justify', rfT('Justify'));
+    fs_conv_editor_buttons.rfOutdent = cmdButton('outdent', 'align-outdent', rfT('Decrease indent'));
+    fs_conv_editor_buttons.rfIndent = cmdButton('indent', 'align-indent', rfT('Increase indent'));
+    fs_conv_editor_buttons.mesh1 = headingButton('h1', rfT('Heading 1'));
+    fs_conv_editor_buttons.mesh2 = headingButton('h2', rfT('Heading 2'));
 
     fsAddFilter('conversation.editor_toolbar', function (toolbar) {
-        var out = [['mu-align', ['muJustifyLeft', 'muJustifyCenter', 'muJustifyRight', 'muJustifyFull', 'muOutdent', 'muIndent']]];
+        var out = [['rf-align', ['rfJustifyLeft', 'rfJustifyCenter', 'rfJustifyRight', 'rfJustifyFull', 'rfOutdent', 'rfIndent']]];
         for (var i = 0; i < toolbar.length; i++) {
             if (toolbar[i][0] !== 'style') {
                 out.push(toolbar[i]);

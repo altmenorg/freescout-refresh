@@ -1,14 +1,14 @@
 <?php
 
-namespace Modules\ModernUi\Http\Controllers;
+namespace Modules\Refresh\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\ModernUi\Services\Views;
+use Modules\Refresh\Services\Views;
 
 /**
  * Shared saved views ("Shared" section of the views menu, like Freshdesk):
- * a combination of base view + filters + sort, visible to the whole team. Storage: `modernui_saved_views` option.
+ * a combination of base view + filters + sort, visible to the whole team. Storage: `refresh_saved_views` option.
  */
 class SavedViewsController extends Controller
 {
@@ -32,7 +32,7 @@ class SavedViewsController extends Controller
             'user_id' => auth()->id(),
             'created' => date('c'),
         ];
-        \App\Option::set('modernui_saved_views', json_encode(array_values($list)));
+        \App\Option::set('refresh_saved_views', json_encode(array_values($list)));
         Views::forgetCounts();
 
         return response()->json(['status' => 'success', 'url' => Views::savedViewUrl((int)$request->input('mailbox_id', 1), end($list))]);
@@ -54,7 +54,7 @@ class SavedViewsController extends Controller
         if (!$found) {
             return response()->json(['status' => 'error', 'msg' => __('View not found or not allowed')], 403);
         }
-        \App\Option::set('modernui_saved_views', json_encode(array_values($kept)));
+        \App\Option::set('refresh_saved_views', json_encode(array_values($kept)));
         Views::forgetCounts();
 
         return response()->json(['status' => 'success']);

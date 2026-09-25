@@ -1,5 +1,5 @@
-/* Modern UI for FreeScout: service worker of the installable app (PWA).
-   Served by the module at /modernui/service-worker with "Service-Worker-Allowed: /", so it covers the whole site
+/* Refresh for FreeScout: service worker of the installable app (PWA).
+   Served by the module at /refresh/service-worker with "Service-Worker-Allowed: /", so it covers the whole site
    without copying a file into FreeScout's public folder. It caches nothing: it only receives Web Push notifications,
    even when the app and the browser are closed (the push service wakes it up). */
 

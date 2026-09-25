@@ -1,6 +1,6 @@
 # Third-party notices
 
-Modern UI is licensed under the GNU Affero General Public License v3.0 (see `LICENSE`). It bundles the icons listed
+Refresh is licensed under the GNU Affero General Public License v3.0 (see `LICENSE`). It bundles the icons listed
 below, each under its own license. No fonts are bundled: the interface uses the system font stack.
 
 | Icons | Where | License |

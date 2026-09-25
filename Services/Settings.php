@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\ModernUi\Services;
+namespace Modules\Refresh\Services;
 
 /**
- * Modern UI settings (Manage > Settings > Modern UI), stored as FreeScout options, with neutral defaults.
+ * Refresh settings (Manage > Settings > Refresh), stored as FreeScout options, with neutral defaults.
  */
 class Settings
 {
@@ -12,7 +12,7 @@ class Settings
 
     public static function get($key, $default = null)
     {
-        $v = \Option::get('modernui.'.$key, null);
+        $v = \Option::get('refresh.'.$key, null);
         return ($v === null || $v === '') ? $default : $v;
     }
 
@@ -28,10 +28,15 @@ class Settings
         return max(1, (int)self::get('sla_resolution', self::DEFAULT_RESOLUTION_HOURS));
     }
 
-    /** Logo of the left bar: setting, else the header logo (Customization module or FreeScout's own). */
+    /**
+     * Logo of the left bar: setting, else the header logo of the Customization module, else FreeScout's blue icon
+     * (FreeScout's own header logo is white, made for its blue top bar: nearly invisible on the light left bar).
+     */
     public static function logoUrl()
     {
-        return self::get('logo_url') ?: \Eventy::filter('layout.header_logo', asset('img/logo-brand.svg'));
+        $default = asset('img/logo-brand.svg');
+        $logo = self::get('logo_url') ?: \Eventy::filter('layout.header_logo', $default);
+        return $logo === $default ? asset('img/logo-icon-150.png') : $logo;
     }
 
     /** Name of the installable app (PWA). */

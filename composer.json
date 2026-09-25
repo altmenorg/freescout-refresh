@@ -1,14 +1,14 @@
 {
-    "name": "altmenorg/freescout-modern-ui",
-    "description": "Modern UI for FreeScout: a Freshdesk-inspired interface",
+    "name": "altmenorg/freescout-refresh",
+    "description": "Refresh: a new interface for FreeScout, inspired by Freshdesk",
     "license": "AGPL-3.0-only",
     "extra": {
         "laravel": {
-            "providers": ["Modules\\ModernUi\\Providers\\ModernUiServiceProvider"],
+            "providers": ["Modules\\Refresh\\Providers\\RefreshServiceProvider"],
             "aliases": {}
         }
     },
     "autoload": {
-        "psr-4": { "Modules\\ModernUi\\": "" }
+        "psr-4": { "Modules\\Refresh\\": "" }
     }
 }

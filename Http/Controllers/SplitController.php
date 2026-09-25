@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\ModernUi\Http\Controllers;
+namespace Modules\Refresh\Http\Controllers;
 
 use App\Conversation;
 use App\Thread;

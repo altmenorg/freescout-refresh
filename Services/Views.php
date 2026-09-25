@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\ModernUi\Services;
+namespace Modules\Refresh\Services;
 
 use App\Conversation;
 use App\Folder;
@@ -30,7 +30,7 @@ class Views
     /** Known Freshdesk types (imported) + ones added since, sorted. */
     public static function types()
     {
-        return \Cache::remember('modernui_types', 10, function () {
+        return \Cache::remember('refresh_types', 10, function () {
             $rows = \DB::select("SELECT DISTINCT JSON_UNQUOTE(JSON_EXTRACT(meta, '$.fd_type')) AS t FROM conversations WHERE meta LIKE '%fd_type%'");
             $types = [];
             foreach ($rows as $row) {
@@ -62,7 +62,7 @@ class Views
             'new'            => [__('New'), 'new', 'work', true],
             'overdue'           => [__('Overdue'), 'fd-alert', 'work', true],
             'due-today' => [__('Due today'), 'fd-calendar', 'work', true],
-            'open'             => [__('modernui::labels.open'), 'fd-status', 'work', true],
+            'open'             => [__('refresh::labels.open'), 'fd-status', 'work', true],
             'pending'          => [__('Pending'), 'fd-hourglass', 'work', true],
             'starred'             => [__('Starred'), 'fd-star-filled', 'work', true],
             // Bottom of menu
@@ -71,7 +71,7 @@ class Views
         ];
     }
 
-    /** Modern UI view equivalent to a native FreeScout folder type, or null (folder added by another module). */
+    /** Refresh view equivalent to a native FreeScout folder type, or null (folder added by another module). */
     public static function viewForFolderType($type)
     {
         $map = [
@@ -151,9 +151,9 @@ class Views
             case 'overdue':
                 $q->where('conversations.status', Conversation::STATUS_ACTIVE)
                     ->where(function ($w) use ($now) {
-                        $w->where('conversations.created_at', '<', $now->copy()->subHours(\Modules\ModernUi\Services\Settings::resolutionHours()))
+                        $w->where('conversations.created_at', '<', $now->copy()->subHours(\Modules\Refresh\Services\Settings::resolutionHours()))
                             ->orWhere(function ($w2) use ($now) {
-                                $w2->where('conversations.created_at', '<', $now->copy()->subHours(\Modules\ModernUi\Services\Settings::firstResponseHours()));
+                                $w2->where('conversations.created_at', '<', $now->copy()->subHours(\Modules\Refresh\Services\Settings::firstResponseHours()));
                                 self::whereNeverAnswered($w2);
                             });
                     });
@@ -161,8 +161,8 @@ class Views
             case 'due-today':
                 $q->where('conversations.status', Conversation::STATUS_ACTIVE)
                     ->whereBetween('conversations.created_at', [
-                        $now->copy()->subHours(\Modules\ModernUi\Services\Settings::resolutionHours()),
-                        $now->copy()->endOfDay()->subHours(\Modules\ModernUi\Services\Settings::resolutionHours()),
+                        $now->copy()->subHours(\Modules\Refresh\Services\Settings::resolutionHours()),
+                        $now->copy()->endOfDay()->subHours(\Modules\Refresh\Services\Settings::resolutionHours()),
                     ]);
                 break;
             case 'starred':
@@ -181,8 +181,8 @@ class Views
     public static function counts($mailbox_id, $user = null)
     {
         $user = $user ?: auth()->user();
-        $ver = (int)\Cache::get('modernui_counts_ver', 0);
-        return \Cache::remember('modernui_counts_'.$ver.'_'.$mailbox_id.'_'.$user->id, 0.5, function () use ($mailbox_id, $user) {
+        $ver = (int)\Cache::get('refresh_counts_ver', 0);
+        return \Cache::remember('refresh_counts_'.$ver.'_'.$mailbox_id.'_'.$user->id, 0.5, function () use ($mailbox_id, $user) {
             $counts = [];
             foreach (self::definitions() as $key => $def) {
                 if ($def[3]) {
@@ -201,13 +201,13 @@ class Views
     /** Invalidates counters for all users (bumps the key version). */
     public static function forgetCounts()
     {
-        \Cache::forever('modernui_counts_ver', (int)\Cache::get('modernui_counts_ver', 0) + 1);
+        \Cache::forever('refresh_counts_ver', (int)\Cache::get('refresh_counts_ver', 0) + 1);
     }
 
     /** Shared saved views (JSON option). */
     public static function savedViews()
     {
-        $raw = \App\Option::get('modernui_saved_views', []);
+        $raw = \App\Option::get('refresh_saved_views', []);
         if (is_string($raw)) {
             $raw = json_decode($raw, true);
         }
@@ -233,7 +233,7 @@ class Views
 
     public static function savedViewUrl($mailbox_id, $sv)
     {
-        return route('modernui.tickets', ['mailbox_id' => $mailbox_id, 'view' => $sv['view']])
+        return route('refresh.tickets', ['mailbox_id' => $mailbox_id, 'view' => $sv['view']])
             .'?'.http_build_query(array_merge($sv['query'], ['sv' => $sv['id']]));
     }
 
@@ -423,8 +423,8 @@ class Views
         }
         self::applyPeriod($q, 'conversations.created_at', $f['created']);
         self::applyPeriod($q, 'conversations.closed_at', $f['closed']);
-        self::applyDue($q, $f['res_due'], \Modules\ModernUi\Services\Settings::resolutionHours(), false);
-        self::applyDue($q, $f['fr_due'], \Modules\ModernUi\Services\Settings::firstResponseHours(), true);
+        self::applyDue($q, $f['res_due'], \Modules\Refresh\Services\Settings::resolutionHours(), false);
+        self::applyDue($q, $f['fr_due'], \Modules\Refresh\Services\Settings::firstResponseHours(), true);
 
         return $q;
     }
