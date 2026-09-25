@@ -33,7 +33,7 @@
     var headingButton = function (tag, title) {
         return function (context) {
             return $.summernote.ui.button({
-                contents: '<i class="note-icon-mes-' + tag + '"></i>',
+                contents: '<i class="note-icon-rf-' + tag + '"></i>',
                 tooltip: title,
                 container: 'body',
                 click: function () {
@@ -53,8 +53,8 @@
     fs_conv_editor_buttons.rfJustifyFull = cmdButton('justifyFull', 'align-justify', rfT('Justify'));
     fs_conv_editor_buttons.rfOutdent = cmdButton('outdent', 'align-outdent', rfT('Decrease indent'));
     fs_conv_editor_buttons.rfIndent = cmdButton('indent', 'align-indent', rfT('Increase indent'));
-    fs_conv_editor_buttons.mesh1 = headingButton('h1', rfT('Heading 1'));
-    fs_conv_editor_buttons.mesh2 = headingButton('h2', rfT('Heading 2'));
+    fs_conv_editor_buttons.rfH1 = headingButton('h1', rfT('Heading 1'));
+    fs_conv_editor_buttons.rfH2 = headingButton('h2', rfT('Heading 2'));
 
     fsAddFilter('conversation.editor_toolbar', function (toolbar) {
         var out = [['rf-align', ['rfJustifyLeft', 'rfJustifyCenter', 'rfJustifyRight', 'rfJustifyFull', 'rfOutdent', 'rfIndent']]];
@@ -67,7 +67,7 @@
             for (var j = 0; j < toolbar[i][1].length; j++) {
                 var b = toolbar[i][1][j];
                 btns.push(b);
-                if (b === 'underline') { btns.push('mesh1', 'mesh2', 'color'); }
+                if (b === 'underline') { btns.push('rfH1', 'rfH2', 'color'); }
                 if (b === 'picture') { btns.push('table'); }
             }
             out.push(['style', btns]);
