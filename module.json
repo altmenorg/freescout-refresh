@@ -2,7 +2,7 @@
     "name": "Refresh",
     "alias": "refresh",
     "description": "A new interface for FreeScout, inspired by Freshdesk: views, SLA badges, dashboard, properties panel, Freshdesk-style editor, ajax actions, mobile version, installable app (PWA) and Web Push notifications.",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "detailsUrl": "https://github.com/altmenorg/freescout-refresh",
     "author": "altmenorg",
     "authorUrl": "https://github.com/altmenorg",

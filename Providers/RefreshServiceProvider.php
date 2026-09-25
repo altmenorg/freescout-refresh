@@ -63,6 +63,15 @@ class RefreshServiceProvider extends ServiceProvider
         $this->registerPush();
         $this->registerSettings();
 
+        // The shell (rail, top bar, list layout) is built by the provider script at the end of the page: until then the
+        // browser would paint FreeScout's own layout, a white flash on every page change. The page stays hidden
+        // (refresh.css, "page change") until the script removes this class, or at worst 1.5 s later.
+        \Eventy::addAction('body.class', function () {
+            if (auth()->check()) {
+                echo ' rf-boot';
+            }
+        });
+
         // Dictionary of the user's language for the module's scripts (rfT), in <head> so that it is there before any script
         \Eventy::addAction('layout.head', function () {
             $locale = app()->getLocale();
@@ -560,6 +569,13 @@ class RefreshServiceProvider extends ServiceProvider
 
     protected function registerConversationHooks()
     {
+        // Notifications menu: the sentence ("X replied to…") is plain translated text, so the author's name is given
+        // to the avatar script (rfNotifAvatars) in an empty marker
+        \Eventy::addFilter('web_notification.header', function ($header, $data) {
+            $person = !empty($data['thread']) ? $data['thread']->getPerson(true) : null;
+            $name = $person ? trim($person instanceof \App\Customer ? $person->getFullName(true) : $person->getFullName()) : '';
+            return $header.($name !== '' ? '<span class="rf-notif-name" data-name="'.e($name).'"></span>' : '');
+        }, 20, 2);
         // Freshdesk-style right panels (status + properties | contact), at the top of the column (before Cobrowse).
         \Eventy::addAction('conversation.after_customer_sidebar', function ($conversation) {
             if (!$conversation) {
@@ -792,6 +808,22 @@ class RefreshServiceProvider extends ServiceProvider
                 $(this).replaceWith($('<span class="rf-av"></span>').text((name.charAt(0) || '?').toUpperCase())
                     .css({ background: 'hsl(' + hue + ', 60%, 92%)', borderColor: 'hsl(' + hue + ', 55%, 84%)', color: 'hsl(' + hue + ', 45%, 32%)' }));
             });
+            // Notifications menu (loaded by ajax, "load more" included): same initial avatars, the grey placeholder and
+            // FreeScout's grey initials clash with the rest of the interface. A real photo is kept.
+            var rfNotifAvatars = function () {
+                $('.web-notification-img').not('.rf-av-done').each(function () {
+                    var box = $(this).addClass('rf-av-done'), img = box.find('img.person-photo');
+                    if (img.length && !/default-avatar/.test(img.attr('src') || '')) { return; }
+                    // name from the marker of the web_notification.header filter, else the start of the sentence
+                    var head = box.closest('.web-notification').find('.web-notification-msg-header');
+                    var name = $.trim(head.find('.rf-notif-name').attr('data-name') || head.text()), hue = 0;
+                    for (var i = 0; i < name.length; i++) { hue = (hue * 31 + name.charCodeAt(i)) % 360; }
+                    box.empty().append($('<span class="rf-av rf-av-32"></span>').text((name.charAt(0) || '?').toUpperCase())
+                        .css({ background: 'hsl(' + hue + ', 60%, 92%)', borderColor: 'hsl(' + hue + ', 55%, 84%)', color: 'hsl(' + hue + ', 45%, 32%)' }));
+                });
+            };
+            rfNotifAvatars();
+            $(document).ajaxComplete(rfNotifAvatars);
             // New ticket form: FreeScout shows "#Pending" until the ticket gets its number, which reads like a status
             $('.conv-new-number').each(function () { if (!/\d/.test($(this).text())) { $(this).closest('.conv-info').hide(); } });
             // Modules page: the "Active" badge shares its translation key with the ticket status, which this module
@@ -2175,6 +2207,12 @@ class RefreshServiceProvider extends ServiceProvider
                     });
                 }
             })();
+
+            // Shell built: show the page (see the body.class action). Registered last, so it runs after the other
+            // "ready" handlers; the frame lets the browser apply the new layout before the first paint.
+            $(function () {
+                window.requestAnimationFrame(function () { document.body.classList.remove('rf-boot'); });
+            });
             <?php
         });
     }

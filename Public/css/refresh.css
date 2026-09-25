@@ -1383,3 +1383,33 @@ input[type="file"]::file-selector-button:hover { background: #f6f7fb; }
 .module-card .label-lightgrey { background: #f1f4f9; color: #64748b; }
 /* one line between the views panel and the content: the panel's right border (FreeScout adds a left one to .content-2col) */
 .layout-2col > .content-2col { border-left: 0 !important; }
+
+/* ---------------------------------------------------------------- notifications menu (style.css:3367-3500: light blue unread rows,
+   18 px title, orange counter, grey silhouettes). Initial avatars are drawn by the provider script. */
+.web-notifications-header { padding: 12px 16px; border-bottom: 1px solid var(--fd-border); box-shadow: none; border-radius: 5px 5px 0 0; }
+.web-notifications-header h1 { font-size: 15px; font-weight: 600; color: var(--fd-text); }
+.web-notifications-count { display: inline-block; top: -1px; margin-left: 6px; padding: 0 6px; border-radius: 4px; background: #eef2ff; color: var(--fd-brand); font-size: 12px; font-weight: 600; line-height: 18px; }
+.web-notifications-header a { color: var(--fd-brand); font-size: 12px; }
+.web-notifications-header a:hover, .web-notifications-header a:focus { color: var(--fd-primary-h); text-decoration: underline; }
+.web-notification-date { background: #f8fafc; border-bottom: 1px solid var(--fd-border); color: var(--fd-muted); font-size: 11px; font-weight: 600; padding: 7px 16px 6px; }
+.web-notification { border-bottom: 1px solid var(--fd-border); }
+.web-notification a, .web-notification a:hover, .web-notification a:focus { color: var(--fd-text); padding: 12px 16px; align-items: flex-start; }
+.web-notification a:hover, .web-notification a:focus { background: #f6f7fb; }
+/* unread: the indigo tint of the active entries, plus a bar on the left instead of the full light blue row */
+.web-notification.is-unread a { background: var(--fd-active-bg); box-shadow: inset 3px 0 0 var(--fd-primary); }
+.web-notification.is-unread a:hover, .web-notification.is-unread a:focus { background: rgba(99, 102, 241, .13); }
+.web-notification-img { width: 32px; min-width: 32px; margin-right: 12px; overflow: visible; }
+.web-notification-img .person-photo { width: 32px; height: 32px; border: 0; box-shadow: none; }
+.web-notification-msg { line-height: 19px; }
+.web-notification-msg-header { font-size: 13px; margin-bottom: 2px; color: var(--fd-text-2); }
+.web-notification-msg-header strong { color: var(--fd-text); font-weight: 600; }
+.web-notification-msg-preview { color: var(--fd-muted); font-size: 12.5px; }
+.web-notification-more .btn { color: var(--fd-brand); font-size: 13px; }
+
+/* ---------------------------------------------------------------- page change
+   rf-boot (body.class action) hides the page until the provider script has built the shell, so FreeScout's own layout
+   never flashes in between. The page color stays on the html element meanwhile, and Chrome keeps showing the previous
+   page until something is visible. If the script fails, the animation shows the page after 1.5 s anyway. */
+html { background: var(--fd-bg); }
+body.rf-boot { visibility: hidden; animation: rf-boot-failsafe 0s 1.5s forwards; }
+@keyframes rf-boot-failsafe { to { visibility: visible; } }
