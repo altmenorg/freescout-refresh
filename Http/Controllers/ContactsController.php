@@ -38,6 +38,8 @@ class ContactsController extends Controller
             });
         }
         return $query->orderByRaw("TRIM(CONCAT(COALESCE(customers.first_name, ''), ' ', COALESCE(customers.last_name, ''))) = ''")
+            // names starting with punctuation ("- Smith", ".john") after the others, not at the top of the list
+            ->orderByRaw("TRIM(CONCAT(COALESCE(customers.first_name, ''), COALESCE(customers.last_name, ''))) REGEXP '^[^[:alnum:]]'")
             ->orderBy('customers.first_name')->orderBy('customers.last_name');
     }
 

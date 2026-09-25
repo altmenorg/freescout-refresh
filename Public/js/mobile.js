@@ -32,13 +32,13 @@
     var txt = function (el) { return $.trim($(el).first().text()).replace(/\s+/g, ' '); };
     // App priorities: round dots ("Priority" sheet, ticket row, properties) in teal / blue / orange / red,
     // "High" label (desktop keeps "High" and the light green square on cards, same as the app)
-    var PRIO_DOT = { 1: '#00a886', 2: '#2c5cc5', 3: '#e86f25', 4: '#f73f3e' };
+    var PRIO_DOT = { 1: '#94a3b8', 2: '#38bdf8', 3: '#f59e0b', 4: '#e11d48' }; // same as Views::priorities()
     var prioLabel = function (t) { return t === muT('High') ? muT('High') : t; };
     // Avatars: palette matched from the app (mint, blue, peach, pink), color stable per name
     var avColor = function (name) {
         var h = 0;
         for (var i = 0; i < (name || '').length; i++) { h = (h * 31 + name.charCodeAt(i)) % 9973; }
-        return ['#b4e5da', '#bbdcfe', '#fddbb5', '#ffd0d6'][h % 4];
+        return ['#bbf7d0', '#c7d2fe', '#fde6b0', '#fecdd6'][h % 4];
     };
 
     $(function () {
@@ -673,7 +673,7 @@
             body.addClass('mu-m-ticket');
             var back = $('.mu-crumb a').first().attr('href') || ticketsUrl;
             var num = txt($('.mu-crumb > span').last());
-            bar.append($('<a class="mu-m-ib mu-m-back" aria-label="Retour">' + ic('m-back') + '</a>').attr('href', back));
+            bar.append($('<a class="mu-m-ib mu-m-back" aria-label="' + muT('Back') + '">' + ic('m-back') + '</a>').attr('href', back));
             bar.append(title.text(num ? '#' + num : ''));
             bar.append($('<button type="button" class="mu-m-ib" aria-label="' + muT('Edit ticket') + '">' + ic('m-pencil') + '</button>').on('click', function () { openEdit(); }));
             bar.append($('<button type="button" class="mu-m-ib" aria-label="' + muT('Ticket actions') + '">' + ic('m-more') + '</button>').on('click', actionsSheet));
@@ -682,7 +682,7 @@
             var rp = $('.mu-rp').first();
             var subjBlock = $('#conv-subject .conv-subj-block').first();
             var statusName = txt(rp.find('.mu-rp-status-name'));
-            if (statusName) { subjBlock.prepend($('<span class="mu-m-status"></span>').text(statusName)); }
+            if (statusName) { subjBlock.prepend($('<span class="mu-m-status"></span>').addClass('mu-m-status-' + (rp.find('.mu-rp-status-select').val() || '')).text(statusName)); }
             var sla = rp.find('.mu-rp-sla').first();
             var box = $('<div class="mu-m-slabox"></div>');
             if (sla.length) {
@@ -701,7 +701,7 @@
             var agent = txt(rp.find('.mu-rp-user option:selected'));
             var st = txt(rp.find('.mu-rp-status-select option:selected'));
             var prow = $('<button type="button" class="mu-m-proprow"></button>');
-            prow.append($('<span class="mu-m-pp"></span>').append($('<i class="mu-m-dot"></i>').css('background', PRIO_DOT[prio.val()] || '#9ea9b3'), $('<span></span>').text(prioLabel(txt(prio)) || '--')));
+            prow.append($('<span class="mu-m-pp"></span>').append($('<i class="mu-m-dot"></i>').css('background', PRIO_DOT[prio.val()] || '#9aa6b8'), $('<span></span>').text(prioLabel(txt(prio)) || '--')));
             prow.append($('<span class="mu-m-pp mu-m-pp-agent"></span>').append(ic('m-person', true), $('<span></span>').text(agent && agent !== '--' ? agent : '--')));
             prow.append($('<span class="mu-m-pp"></span>').append(ic('m-pulse', true), $('<span></span>').text(st)));
             prow.append('<span class="mu-m-pp-chev">' + ic('m-chevron', true) + '</span>');
@@ -741,11 +741,11 @@
             var cust = $('#conv-layout-customer');
             var props = rp.find('.mu-rp-props').first();
             if (props.length) {
-                props.prepend($('<div class="mu-m-bar mu-m-phead"><button type="button" class="mu-m-ib" aria-label="Retour">' + ic('m-back') + '</button><div class="mu-m-title">' + muT('Properties') + '</div></div>'));
+                props.prepend($('<div class="mu-m-bar mu-m-phead"><button type="button" class="mu-m-ib" aria-label="' + muT('Back') + '">' + ic('m-back') + '</button><div class="mu-m-title">' + muT('Properties') + '</div></div>'));
                 props.on('click', '.mu-m-phead .mu-m-ib', function () { body.removeClass('mu-m-props mu-m-edit'); });
                 var prioSel = props.find('.mu-rp-priority');
                 prioSel.find('option').each(function () { $(this).text(prioLabel($(this).text())); });
-                var paintPrio = function () { props.find('.mu-rp-prio-sq').css('background', PRIO_DOT[prioSel.val()] || '#9ea9b3'); };
+                var paintPrio = function () { props.find('.mu-rp-prio-sq').css('background', PRIO_DOT[prioSel.val()] || '#9aa6b8'); };
                 paintPrio();
                 prioSel.on('change', function () { setTimeout(paintPrio, 0); });
                 // app-style labels and empty text: "Tags", "- -"
@@ -848,7 +848,7 @@
             var modes = { '.conv-reply': muT('Reply'), '.conv-forward': muT('Forward'), '.conv-add-note': muT('Add note') };
             var edbar = $('<div class="mu-m-bar mu-m-edbar"></div>');
             var edMode = $('<button type="button" class="mu-m-edmode"><span></span>' + ic('m-chevron', true) + '</button>');
-            edbar.append($('<button type="button" class="mu-m-ib" aria-label="Retour">' + ic('m-back') + '</button>').on('click', function () {
+            edbar.append($('<button type="button" class="mu-m-ib" aria-label="' + muT('Back') + '">' + ic('m-back') + '</button>').on('click', function () {
                 // like the app: leave the editor, the draft stays (saved by FreeScout) and reopens from the bar
                 body.removeClass('mu-m-compose');
             }), edMode);
@@ -905,7 +905,7 @@
         // Status and Agent as fields, full-width button at the bottom. The native form stays the same (send, draft, attachments).
         function initNew() {
             body.addClass('mu-m-new mu-m-notabs');
-            bar.append($('<button type="button" class="mu-m-ib mu-m-back" aria-label="Retour">' + ic('m-back') + '</button>').on('click', function () {
+            bar.append($('<button type="button" class="mu-m-ib mu-m-back" aria-label="' + muT('Back') + '">' + ic('m-back') + '</button>').on('click', function () {
                 if (window.history.length > 1) { window.history.back(); } else { window.location.href = ticketsUrl; }
             }));
             bar.append(title);
@@ -965,7 +965,7 @@
             var name = txt(pv.find('.customer-name'));
             var editUrl = $('.nav-tabs-main a').filter(function () { return /\/edit$/.test(this.getAttribute('href') || ''); }).attr('href');
             var isEdit = /\/edit$/.test(window.location.pathname);
-            bar.append($('<button type="button" class="mu-m-ib" aria-label="Retour">' + ic('m-back') + '</button>').on('click', function () {
+            bar.append($('<button type="button" class="mu-m-ib" aria-label="' + muT('Back') + '">' + ic('m-back') + '</button>').on('click', function () {
                 if (window.history.length > 1) { window.history.back(); } else { window.location.href = railHref('contact'); }
             }));
             bar.append(title.text(isEdit ? muT('Edit contact') : name));
@@ -980,7 +980,7 @@
             var email = $.trim(pv.find('.customer-email').first().text());
             var phone = $.trim((pv.find('.customer-phone').first().contents().filter(function () { return this.nodeType === 3; }).first().text() || pv.find('.customer-phone').first().text()).split('(')[0]);
             if (newUrl) { btns.append($('<a class="mu-m-hero-btn" aria-label="' + muT('New ticket') + '">' + ic('m-ticket-plus') + '</a>').attr('href', newUrl + (email ? '?to=' + encodeURIComponent(email) : ''))); }
-            if (phone) { btns.append($('<a class="mu-m-hero-btn" aria-label="Appeler">' + ic('phone') + '</a>').attr('href', 'tel:' + phone.replace(/[^\d+]/g, ''))); }
+            if (phone) { btns.append($('<a class="mu-m-hero-btn" aria-label="' + muT('Call') + '">' + ic('phone') + '</a>').attr('href', 'tel:' + phone.replace(/[^\d+]/g, ''))); }
             hero.append(btns);
 
             var ctabs = $('<div class="mu-m-ctabs"><button type="button" data-t="profile">' + muT('Profile') + '</button><button type="button" data-t="tickets">' + muT('Tickets') + '</button></div>');
@@ -1015,7 +1015,7 @@
         function initOther() {
             var tabPage = railActive('nav-dashboard') || $('.mu-ctable').length > 0;
             if (!tabPage) {
-                bar.append($('<button type="button" class="mu-m-ib" aria-label="Retour">' + ic('m-back') + '</button>').on('click', function () {
+                bar.append($('<button type="button" class="mu-m-ib" aria-label="' + muT('Back') + '">' + ic('m-back') + '</button>').on('click', function () {
                     if (window.history.length > 1) { window.history.back(); } else { window.location.href = ticketsUrl; }
                 }));
             }

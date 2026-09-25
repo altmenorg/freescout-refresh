@@ -43,11 +43,11 @@
                             <span class="mu-av mu-av-28" style="background: hsl({{ $hue }}, 60%, 92%); border-color: hsl({{ $hue }}, 55%, 84%); color: hsl({{ $hue }}, 45%, 32%)">{{ $initial }}</span>
                             <a href="{{ route('customers.conversations', ['id' => $c->id]) }}">{{ $name }}</a>
                         </td>
-                        <td>{{ $c->job_title ?: '- -' }}</td>
-                        <td>{{ $c->company ?: '- -' }}</td>
-                        <td>{{ $c->mu_email ?: '- -' }}</td>
-                        <td>{{ $mobile ?: '- -' }}</td>
-                        <td>{{ $work ?: '- -' }}</td>
+                        <td>@if ($c->job_title){{ $c->job_title }}@else<span class="mu-empty">–</span>@endif</td>
+                        <td>@if ($c->company){{ $c->company }}@else<span class="mu-empty">–</span>@endif</td>
+                        <td>@if ($c->mu_email){{ $c->mu_email }}@else<span class="mu-empty">–</span>@endif</td>
+                        <td>@if ($mobile){{ $mobile }}@else<span class="mu-empty">–</span>@endif</td>
+                        <td>@if ($work){{ $work }}@else<span class="mu-empty">–</span>@endif</td>
                         <td class="mu-ct-menu">
                             <div class="dropdown">
                                 <a href="#" class="mu-ct-more dropdown-toggle" data-toggle="dropdown"><i class="mu-i mu-i-fd-more"></i></a>

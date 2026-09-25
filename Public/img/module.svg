@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="20" fill="#4f46e5"/>
+  <g transform="translate(78 44)"><g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="92" height="84" rx="10"/><path d="M34 8v84"/><path d="M48 30h34M48 50h34M48 70h22"/><path d="M14 30h8M14 46h8M14 62h8"/></g></g>
+  <text x="128" y="212" text-anchor="middle" font-family="-apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-size="26" font-weight="600" fill="#fff">Modern UI</text>
+</svg>

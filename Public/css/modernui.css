@@ -1,28 +1,28 @@
-/* FreeScout — Freshdesk-style interface (ModernUi module).
+/* Modern UI for FreeScout: a Freshdesk-inspired layout with its own look.
    Served by the module (Public/css): does not go through the Customization module (which filters CSS). FreeScout bundles the stylesheets into
    /css/builds/<hash>.css without rewriting url(): icon paths are relative to that folder (../../modules/modernui/icons/),
    which also works when FreeScout is installed in a subdirectory.
-   Values measured on Freshdesk ("All tickets" view, card layout):
-   system font, text #12344d 14/21 px, secondary #485a68 13/19.5 px, muted #92a2b1, page background #f3f5f6,
-   white cards radius 8 px, border #eaeef2, avatar 44 px, badge 12/18 px radius 4, tag 11/16.5 px border #c9d3db.
-   Status colors: olive green #939a1e (open), gold #e3a701 (pending, star). */
+   Palette: slate text #1e293b / #475569 / #94a3b8, page #f6f7fb, borders #e3e8ef / #eef1f6, indigo accent #4f46e5 (hover #4338ca,
+   pale #eef2ff); statuses: new green #15803d, open emerald #10b981, pending amber #f59e0b, overdue rose #e11d48.
+   Layout sizes (card list, 14/21 px text, 44 px avatars…) follow Freshdesk's ergonomics; the identity block at the end of the
+   file sets the shapes (small radii, round priority dots, rectangular badges). */
 
 /* Font: system stack, like Freshdesk (Segoe UI on Windows, San Francisco on macOS). Freshdesk loads InterVariable but doesn't apply
    it to any text; Inter (former v6) unhinted rendered blurry at 14 px on Windows. no font is bundled. */
 
 :root {
-  --fs-green: #939a1e;       /* open status */
-  --fs-gold: #e3a701;        /* pending status, star */
-  --fd-bg: #f3f5f6;          /* Freshdesk page background */
-  --fd-border: #eaeef2;      /* Freshdesk card border */
-  --fd-text: #12344d;        /* Freshdesk primary text */
-  --fd-text-2: #485a68;      /* Freshdesk secondary text */
-  --fd-muted: #92a2b1;       /* Freshdesk muted text (closed tickets, icons) */
-  --fd-brand: #003fd2;       /* Freshdesk link blue / active entry (text-brand) */
-  --fd-primary: #276cf0;     /* Freshdesk primary button (Apply, Send) */
-  --fd-primary-h: #1d59d8;   /* primary button hover */
-  --fd-active-bg: rgba(165, 210, 255, .2); /* Freshdesk active entry background */
-  --fd-input-border: #dde3e8; /* Freshdesk field border */
+  --fs-green: #10b981;       /* open status */
+  --fs-gold: #f59e0b;        /* pending status, star */
+  --fd-bg: #f6f7fb;          /* Freshdesk page background */
+  --fd-border: #eef1f6;      /* Freshdesk card border */
+  --fd-text: #1e293b;        /* Freshdesk primary text */
+  --fd-text-2: #475569;      /* Freshdesk secondary text */
+  --fd-muted: #94a3b8;       /* Freshdesk muted text (closed tickets, icons) */
+  --fd-brand: #4338ca;       /* Freshdesk link blue / active entry (text-brand) */
+  --fd-primary: #4f46e5;     /* Freshdesk primary button (Apply, Send) */
+  --fd-primary-h: #4338ca;   /* primary button hover */
+  --fd-active-bg: rgba(99, 102, 241, .08); /* Freshdesk active entry background */
+  --fd-input-border: #e6eaf0; /* Freshdesk field border */
   --fd-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, 'Helvetica Neue', sans-serif; /* Freshdesk's exact font stack */
 }
 body, .btn, .form-control, input, select, textarea, .dropdown-menu, .tooltip, .popover { font-family: var(--fd-font); }
@@ -36,7 +36,7 @@ body { background: var(--fd-bg); color: var(--fd-text); font-size: 14px; line-he
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
-.navbar-default .navbar-nav > .open > a:focus { background: #f3f5f6 !important; color: var(--fd-text) !important; }
+.navbar-default .navbar-nav > .open > a:focus { background: #f6f7fb !important; color: var(--fd-text) !important; }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover { background: var(--fd-active-bg) !important; color: var(--fd-brand) !important; }
 .navbar .glyphicon { color: var(--fd-text); }
@@ -50,7 +50,7 @@ body { background: var(--fd-bg); color: var(--fd-text); font-size: 14px; line-he
 .sidebar-title .sidebar-title-email { color: var(--fd-muted); }
 .sidebar-menu li > a { color: var(--fd-text-2); border-radius: 6px; margin: 1px 8px; font-size: 13px; }
 .sidebar-menu li.active > a, .sidebar-menu li.active > a:hover { background: var(--fd-active-bg); color: var(--fd-brand); font-weight: 600; }
-.sidebar-menu li > a:hover { background: #f3f5f6; }
+.sidebar-menu li > a:hover { background: #f6f7fb; }
 .sidebar-menu li > a .glyphicon { color: var(--fd-muted); }
 .sidebar-menu li.active > a .glyphicon { color: var(--fd-brand); }
 /* Freshdesk views added by the module (All tickets, New, Overdue) */
@@ -60,10 +60,10 @@ body { background: var(--fd-bg); color: var(--fd-text); font-size: 14px; line-he
 .btn { font-size: 13px; font-weight: 500; }
 .btn-primary, .btn-primary:focus { background: var(--fd-brand); border-color: var(--fd-brand); border-radius: 6px; }
 .btn-primary:hover, .btn-primary:active, .btn-primary:active:focus, .btn-primary.active, .open > .dropdown-toggle.btn-primary, .open > .dropdown-toggle.btn-primary:hover, .open > .dropdown-toggle.btn-primary:focus { background: var(--fd-primary-h) !important; border-color: var(--fd-primary-h) !important; }
-.btn-default { border-radius: 6px; border-color: #cfd7df; color: var(--fd-text); }
+.btn-default { border-radius: 6px; border-color: #e3e8ef; color: var(--fd-text); }
 a { color: var(--fd-brand); }
 a:hover { color: var(--fd-text); }
-.dropdown-menu { border-radius: 8px; border: 1px solid var(--fd-border); box-shadow: 0 6px 24px rgba(18,52,77,.12); font-size: 13px; }
+.dropdown-menu { border-radius: 5px; border: 1px solid var(--fd-border); box-shadow: 0 6px 24px rgba(15, 23, 42,.12); font-size: 13px; }
 .badge { background: var(--fd-muted); }
 .conv-star.glyphicon-star { color: var(--fs-gold); }
 /* Statuses: olive green = open, gold = pending (status buttons at top of conversation) */
@@ -71,7 +71,7 @@ a:hover { color: var(--fd-text); }
 .btn-status-pending, .btn-warning { background: var(--fs-gold) !important; border-color: var(--fs-gold) !important; }
 
 /* ---------------------------------------------------------------- ticket list = Freshdesk cards
-   White card, radius 8 px, 1 px border #eaeef2, 8 px between cards, padding 16 px. No colored background: colors
+   White card, radius 8 px, 1 px border #eef1f6, 8 px between cards, padding 16 px. No colored background: colors
    are reserved for badges. The native table stays (checkboxes, bulk actions, sorting); each row becomes a card via
    border-spacing + cell borders. */
 .content { background: var(--fd-bg); }
@@ -80,14 +80,14 @@ a:hover { color: var(--fd-text); }
 .table-conversations thead th { border: 0 !important; color: var(--fd-muted); font-weight: 500; text-transform: none; font-size: 12px; letter-spacing: 0; padding: 4px 8px 0 !important; height: 28px; }
 .table-conversations thead th span, .table-conversations thead th .conv-col-sort { color: var(--fd-muted); }
 .table-conversations tbody tr td { background: #fff !important; border-top: 1px solid var(--fd-border) !important; border-bottom: 1px solid var(--fd-border) !important; padding: 16px 0 !important; vertical-align: top; }
-.table-conversations tbody tr td:first-child { border-left: 1px solid var(--fd-border) !important; border-radius: 8px 0 0 8px; }
-.table-conversations tbody tr td:last-child { border-right: 1px solid var(--fd-border) !important; border-radius: 0 8px 8px 0; padding-right: 8px !important; }
+.table-conversations tbody tr td:first-child { border-left: 1px solid var(--fd-border) !important; border-radius: 5px 0 0 5px; }
+.table-conversations tbody tr td:last-child { border-right: 1px solid var(--fd-border) !important; border-radius: 0 5px 5px 0; padding-right: 8px !important; }
 .table-conversations tbody tr:hover td { background: #fbfcfd !important; }
 .table-conversations tbody tr.conv-active td { background: #fff !important; }
 /* Closed tickets: text and avatar in muted gray, like Freshdesk (no opacity) */
 .table-conversations tr.conv-closed .conv-subject a, .table-conversations tr.conv-closed .mu-status-line, .table-conversations tr.conv-closed .mu-meta-who a,
 .table-conversations tr.conv-closed .mu-side, .table-conversations tr.conv-closed .mu-side a, .table-conversations tr.conv-closed .mu-num { color: var(--fd-muted) !important; }
-.table-conversations tr.conv-closed .mu-av { background: #ebeff3 !important; border-color: #dfe5ea !important; color: var(--fd-muted) !important; }
+.table-conversations tr.conv-closed .mu-av { background: #f1f4f9 !important; border-color: #e8ecf2 !important; color: var(--fd-muted) !important; }
 
 /* Widths (table-layout fixed driven by <colgroup>). Native Number, Agent and Since columns reduced to 0: their content
    is picked up in the module's right column (stacked agent / status / due block, 300 px like Freshdesk).
@@ -108,21 +108,21 @@ a:hover { color: var(--fd-text); }
 .table-conversations th.conv-attachment, .table-conversations td.conv-attachment,
 .table-conversations th.conv-current, .table-conversations td.conv-current { width: 0 !important; padding: 0 !important; font-size: 0 !important; overflow: hidden; }
 .table-conversations td.conv-current { border-left: 0 !important; border-radius: 0 !important; }
-.table-conversations tbody tr td.conv-cb { border-left: 1px solid var(--fd-border) !important; border-radius: 8px 0 0 8px; }
+.table-conversations tbody tr td.conv-cb { border-left: 1px solid var(--fd-border) !important; border-radius: 5px 0 0 5px; }
 .table-conversations th.conv-customer, .table-conversations td.conv-customer { width: 60px !important; max-width: 60px !important; }
 .table-conversations th.conv-customer span { display: none; }
-/* Checkbox: 14 px, border #8e9dac, radius 4 (the magic checkbox is 20 px: scaled to 70%), centered on the avatar */
+/* Checkbox: 14 px, border #94a3b8, radius 4 (the magic checkbox is 20 px: scaled to 70%), centered on the avatar */
 .table-conversations td.conv-cb, .table-conversations th.conv-cb { text-align: left; vertical-align: top; position: relative; }
 .table-conversations td.conv-cb label { position: absolute; top: 50%; margin: -7px 0 0; left: 16px; transform: scale(.7); transform-origin: left top; } /* vertically centered like the avatar (cell is vertical-align: middle), 14 px checkbox */
 .table-conversations th.conv-cb label { position: relative; top: 0; left: 4px; margin: 0; transform: scale(.7); transform-origin: left top; }
-.magic-checkbox + label:before { border: 1px solid #8e9dac; border-radius: 4px; }
+.magic-checkbox + label:before { border: 1px solid #94a3b8; border-radius: 4px; }
 .magic-checkbox:checked + label:before { background: var(--fd-brand); border-color: var(--fd-brand); }
 /* Star (favorite): in the counter column, subtle */
 .table-conversations td.conv-thread-count { padding-top: 14px !important; }
-.table-conversations td.conv-thread-count .conv-star { color: #c9d3db; font-size: 13px; }
+.table-conversations td.conv-thread-count .conv-star { color: #e3e8ef; font-size: 13px; }
 .table-conversations td.conv-thread-count .conv-star.glyphicon-star { color: var(--fs-gold); }
 
-/* Customer: round 44 px initial avatar (added via JS, color derived from name), initial 14 px 500 #485a68;
+/* Customer: round 44 px initial avatar (added via JS, color derived from name), initial 14 px 500 #475569;
    the name moves to the status line. The message counter sits bottom-right of the avatar. */
 .table-conversations td.conv-customer > a { display: block; width: 100% !important; max-width: 100% !important; overflow: visible; padding: 0 !important; }
 .table-conversations.mu-avatars td.conv-customer > a { font-size: 0 !important; line-height: 0; }
@@ -146,38 +146,38 @@ table.table-conversations td.conv-subject, .table-conversations td.conv-subject 
 .mu-badges { display: inline; }
 .mu-subject-start { display: block; height: 0; clear: both; }
 .mu-badge { display: inline-block; font-size: 12px; font-weight: 500; line-height: 18px; padding: 0 4px 1px; border-radius: 4px; margin: 0 4px 3px 0; vertical-align: middle; border: 1px solid transparent; }
-.mu-badge-new { background: #e0f5f0; color: #00795b; }
-.mu-badge-first, .mu-badge-late { background: #ffe9ee; color: #cd2629; }
-.mu-badge-customer { background: #e5f2fd; color: #2c5cc5; }
-.mu-badge-pending { background: #fef1e1; color: #b45a00; }
-/* Status line: "🌐 Jane Doe • Created a day ago • ↪ First response overdue by 4 hours" (13/19.5 px #485a68) */
+.mu-badge-new { background: #dcfce7; color: #15803d; }
+.mu-badge-first, .mu-badge-late { background: #fff1f3; color: #be123c; }
+.mu-badge-customer { background: #eef2ff; color: #4f46e5; }
+.mu-badge-pending { background: #fef6e4; color: #b45309; }
+/* Status line: "🌐 Jane Doe • Created a day ago • ↪ First response overdue by 4 hours" (13/19.5 px #475569) */
 .mu-status-line { display: block; color: var(--fd-text-2); font-size: 13px; line-height: 19.5px; padding-top: 4px; }
 .mu-meta-who a, .mu-meta-who { color: var(--fd-text); }
 .mu-meta .glyphicon { font-size: 12px; margin-right: 4px; color: var(--fd-muted); top: 1px; }
 .mu-meta-sep { color: var(--fd-muted); margin: 0 6px; }
 .mu-meta-overdue { color: var(--fd-text-2); } /* Freshdesk doesn't write the overdue text in red on the status line: the badge is enough */
-/* Tags (Tags module): white chips 11/16.5 px, border #c9d3db, like Freshdesk. The module floats #conv_tags left
+/* Tags (Tags module): white chips 11/16.5 px, border #e3e8ef, like Freshdesk. The module floats #conv_tags left
    (pull-left), which would push them in front of the badges and shift the subject: float canceled. */
 .table-conversations .conv-tags, .table-conversations .conv-tags * { float: none !important; }
-.conv-subject .fs-tag, .conv-subject .tag { float: none !important; display: inline-block; vertical-align: middle; margin: 0 4px 3px 0; background: #fff !important; border: 1px solid #c9d3db; border-radius: 4px; color: #2b3640 !important; font-size: 11px; line-height: 16.5px; padding: 0 5px; font-weight: 600; }
-.conv-subject .tag a, .conv-subject .fs-tag a, .conv-subject .tag .tag-name, .conv-subject .fs-tag .fs-tag-name { color: #2b3640 !important; }
-/* Right column (module): agent / status / due stacked, 13/19.5 px #12344d, 22 px step, like Freshdesk */
+.conv-subject .fs-tag, .conv-subject .tag { float: none !important; display: inline-block; vertical-align: middle; margin: 0 4px 3px 0; background: #fff !important; border: 1px solid #e3e8ef; border-radius: 4px; color: #1e293b !important; font-size: 11px; line-height: 16.5px; padding: 0 5px; font-weight: 600; }
+.conv-subject .tag a, .conv-subject .fs-tag a, .conv-subject .tag .tag-name, .conv-subject .fs-tag .fs-tag-name { color: #1e293b !important; }
+/* Right column (module): agent / status / due stacked, 13/19.5 px #1e293b, 22 px step, like Freshdesk */
 .table-conversations td.mu-col-side { padding-left: 16px !important; }
 .mu-side { font-size: 13px; line-height: 19.5px; color: var(--fd-text); }
 .mu-side > span { display: block; height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mu-side .glyphicon { display: inline-block; width: 14px; text-align: center; font-size: 12px; color: var(--fd-muted); margin-right: 8px; top: 1px; } /* fixed width: the three lines start at the same x */
 .mu-side a { color: var(--fd-text); display: inline !important; font-weight: 400 !important; } /* the theme sets cell links to display:block (style.css:1450): the text would slip under the icon and get hidden by overflow */
-.mu-st i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin: 0 11px 0 3px; background: #c9d3db; vertical-align: 1px; } /* 3 + 8 + 11 = 22 px, same step as the glyphicons (14 + 8) */
+.mu-st i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin: 0 11px 0 3px; background: #e3e8ef; vertical-align: 1px; } /* 3 + 8 + 11 = 22 px, same step as the glyphicons (14 + 8) */
 .mu-st-1 i { background: var(--fs-green); }
 .mu-st-2 i { background: var(--fs-gold); }
-.mu-st-3 i { background: #c9d3db; }
-.mu-st-4 i { background: #cd2629; }
+.mu-st-3 i { background: #e3e8ef; }
+.mu-st-4 i { background: #be123c; }
 /* Table footer */
 .table.table-conversations tfoot td { border: 0 !important; color: var(--fd-muted); background: transparent !important; font-size: 13px; }
 .table-conversations tfoot td strong { color: var(--fd-text-2); }
 
 /* Bulk actions (checked rows): white bar, labeled buttons instead of bare icons */
-#conversations-bulk-actions > .btn-group { background: #fff; border: 1px solid var(--fd-border); border-radius: 8px; padding: 6px; box-shadow: 0 4px 16px rgba(18,52,77,.10); }
+#conversations-bulk-actions > .btn-group { background: #fff; border: 1px solid var(--fd-border); border-radius: 5px; padding: 6px; box-shadow: 0 4px 16px rgba(15, 23, 42,.10); }
 #conversations-bulk-actions .btn { border-radius: 6px !important; margin-right: 4px; font-weight: 500; font-size: 13px; }
 #conversations-bulk-actions .btn .glyphicon { margin-right: 4px; }
 #conversations-bulk-actions .conv-checkbox-clear::after { content: var(--mu-t-cancel, "Cancel"); }
@@ -188,28 +188,28 @@ table.table-conversations td.conv-subject, .table-conversations td.conv-subject 
 #conversations-bulk-actions .btn .caret { margin-left: 5px; }
 /* View title: "All tickets  152" (16 px 600 + pill counter) */
 .mu-view-heading h2 { font-size: 16px; font-weight: 600; margin: 14px 0 10px 0; color: var(--fd-text); line-height: 24px; }
-.mu-view-heading h2 small { display: inline-block; color: var(--fd-text-2); background: #e5eaee; border-radius: 12px; font-size: 12px; font-weight: 600; padding: 0 8px; line-height: 20px; margin-left: 8px; vertical-align: 2px; }
+.mu-view-heading h2 small { display: inline-block; color: var(--fd-text-2); background: #eceff4; border-radius: 7px; font-size: 12px; font-weight: 600; padding: 0 8px; line-height: 20px; margin-left: 8px; vertical-align: 2px; }
 
 /* ---------------------------------------------------------------- dashboard (Freshdesk tiles) */
 .heading { color: var(--fd-text); font-weight: 600; font-size: 20px; }
 .mu-tiles { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin: 16px 0 20px; }
-.mu-tile { display: block; background: #fff; border: 1px solid var(--fd-border); border-radius: 8px; padding: 14px 16px; text-decoration: none !important; color: var(--fd-text); transition: box-shadow .15s; }
-.mu-tile:hover { box-shadow: 0 4px 16px rgba(18,52,77,.10); color: var(--fd-text); }
+.mu-tile { display: block; background: #fff; border: 1px solid var(--fd-border); border-radius: 5px; padding: 14px 16px; text-decoration: none !important; color: var(--fd-text); transition: box-shadow .15s; }
+.mu-tile:hover { box-shadow: 0 4px 16px rgba(15, 23, 42,.10); color: var(--fd-text); }
 .mu-tile-count { display: block; font-size: 28px; font-weight: 600; line-height: 1.1; }
 .mu-tile-label { display: block; color: var(--fd-text-2); font-size: 13px; margin-top: 4px; }
-.mu-tile-overdue .mu-tile-count, .mu-tile-due-today .mu-tile-count { color: #cd2629; }
-.mu-tile-new .mu-tile-count { color: #00795b; }
-.mu-tile-pending .mu-tile-count { color: #b45a00; }
-.mu-tile-zero .mu-tile-count { color: #c9d3db; }
+.mu-tile-overdue .mu-tile-count, .mu-tile-due-today .mu-tile-count { color: #be123c; }
+.mu-tile-new .mu-tile-count { color: #15803d; }
+.mu-tile-pending .mu-tile-count { color: #b45309; }
+.mu-tile-zero .mu-tile-count { color: #e3e8ef; }
 .mu-dash-list-heading { display: flex; align-items: center; justify-content: space-between; margin: 0 0 10px 0; }
 .mu-dash-list-heading h3 { font-size: 16px; font-weight: 600; margin: 0; color: var(--fd-text); }
-.mu-dash-list-heading h3 small { display: inline-block; color: var(--fd-text-2); background: #e5eaee; border-radius: 12px; font-size: 12px; font-weight: 600; padding: 0 8px; line-height: 20px; margin-left: 8px; vertical-align: 2px; }
+.mu-dash-list-heading h3 small { display: inline-block; color: var(--fd-text-2); background: #eceff4; border-radius: 7px; font-size: 12px; font-weight: 600; padding: 0 8px; line-height: 20px; margin-left: 8px; vertical-align: 2px; }
 .dash-cards { margin-top: 24px; }
-.dash-card { border-radius: 8px; border: 1px solid var(--fd-border); }
+.dash-card { border-radius: 5px; border: 1px solid var(--fd-border); }
 @media (max-width: 1400px) { .mu-tiles { grid-template-columns: repeat(4, 1fr); } }
 
 /* ---------------------------------------------------------------- ticket */
-/* Toolbar: the theme paints it sky blue (#deecf9, style.css:1891) */
+/* Toolbar: the theme paints it sky blue (#eef2ff, style.css:1891) */
 #conv-toolbar { background-color: #fff !important; border-bottom: 1px solid var(--fd-border); }
 .conv-top-block { background: #fff; border-bottom: 1px solid var(--fd-border); }
 #conv-subject { border-bottom: 1px solid var(--fd-border) !important; }
@@ -220,13 +220,13 @@ table.table-conversations td.conv-subject, .table-conversations td.conv-subject 
 .conv-actions .conv-action { color: var(--fd-text-2); }
 .conv-actions .conv-action:hover { color: var(--fd-brand); }
 /* Tags below the subject: same white chips as in the list */
-#conv_tags .tag, #conv_tags .tag a { background: #fff !important; color: #2b3640 !important; }
-#conv_tags .tag { border: 1px solid #c9d3db; border-radius: 4px; font-size: 11px; font-weight: 600; padding: 0 5px; line-height: 16.5px; }
+#conv_tags .tag, #conv_tags .tag a { background: #fff !important; color: #1e293b !important; }
+#conv_tags .tag { border: 1px solid #e3e8ef; border-radius: 4px; font-size: 11px; font-weight: 600; padding: 0 5px; line-height: 16.5px; }
 /* Conversation threads as separate cards on the page background, like Freshdesk messages; note = pale yellow background */
 #conv-layout-main { background: var(--fd-bg); }
-.thread { background: #fff; border: 1px solid var(--fd-border) !important; border-radius: 8px; margin: 12px 24px 0 12px; }
+.thread { background: #fff; border: 1px solid var(--fd-border) !important; border-radius: 5px; margin: 12px 24px 0 12px; }
 .thread-type-note { background-color: #fff8e6 !important; border-color: #f5e3b3 !important; box-shadow: none !important; }
-.thread-type-note .thread-person { color: #9a6b00; }
+.thread-type-note .thread-person { color: #a16207; }
 .thread-type-message .thread-person, .thread-type-customer .thread-person { color: var(--fd-text); }
 .thread-header .thread-person, .conv-title { color: var(--fd-text); font-weight: 600; font-size: 14px; }
 .thread-date { color: var(--fd-muted); font-size: 12px; }
@@ -235,7 +235,7 @@ table.table-conversations td.conv-subject, .table-conversations td.conv-subject 
    (the module moves .conv-action-wrapper into #conv-layout-main; in column-reverse, order:-1 = bottom) */
 #conv-layout-main { display: flex; flex-direction: column-reverse; }
 #conv-layout-main > .conv-action-wrapper { order: -1; width: 100%; }
-#conv-layout-main > .conv-action-wrapper .conv-action-block { margin: 10px 24px 16px 12px; border: 1px solid var(--fd-border); border-radius: 8px; background: #fff; }
+#conv-layout-main > .conv-action-wrapper .conv-action-block { margin: 10px 24px 16px 12px; border: 1px solid var(--fd-border); border-radius: 5px; background: #fff; }
 /* Independent scrolling, Freshdesk-style: the page no longer scrolls; the conversation, the views menu, the properties and
    the contact panel each have their own scrollbar, while the toolbar and subject stay in place. The module's JS opens the
    conversation at the top (in column-reverse, scrollTop 0 = bottom) and replaces the native maybeScrollToReplyBlock, which
@@ -247,12 +247,12 @@ body.mu-conv #conv-layout { height: 100%; display: flex; flex-direction: column;
 body.mu-conv #conv-layout-header { flex: none; }
 body.mu-conv #conv-layout-main { flex: 1; min-height: 0; overflow-y: auto; }
 /* "Reply / Note / Forward" bar, Freshdesk-style, at the bottom of the conversation */
-.mu-reply-bar { background: #fff; border: 1px solid var(--fd-border); border-radius: 8px; padding: 10px 12px; margin: 12px 24px 0 12px; }
+.mu-reply-bar { background: #fff; border: 1px solid var(--fd-border); border-radius: 5px; padding: 10px 12px; margin: 12px 24px 0 12px; }
 .mu-reply-bar .btn { margin-right: 6px; font-weight: 500; }
 .mu-reply-bar .btn .glyphicon { margin-right: 4px; color: var(--fd-muted); }
 .mu-reply-bar .btn:hover .glyphicon { color: var(--fd-brand); }
 /* Properties panel (right column) */
-.mu-props { background: #fff; border: 1px solid var(--fd-border); border-radius: 8px; padding: 12px 14px; }
+.mu-props { background: #fff; border: 1px solid var(--fd-border); border-radius: 5px; padding: 12px 14px; }
 .mu-props-title { font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--fd-muted); margin-bottom: 10px; }
 .mu-prop { margin-bottom: 10px; }
 .mu-prop label { display: block; font-size: 12px; color: var(--fd-text-2); font-weight: 500; margin-bottom: 3px; }
@@ -260,8 +260,8 @@ body.mu-conv #conv-layout-main { flex: 1; min-height: 0; overflow-y: auto; }
 .mu-prop label a:hover { color: var(--fd-brand); }
 .mu-prop-val { font-size: 13px; color: var(--fd-text); }
 .mu-prop select.form-control { border-radius: 6px; height: 30px; padding: 3px 8px; font-size: 13px; }
-.mu-prop-tags .tag { display: inline-block; margin: 0 4px 4px 0; background: #fff !important; color: #2b3640 !important; border: 1px solid #c9d3db; border-radius: 4px; font-size: 11px; font-weight: 600; padding: 0 5px; line-height: 16.5px; }
-.mu-prop-tags .tag a { color: #2b3640 !important; }
+.mu-prop-tags .tag { display: inline-block; margin: 0 4px 4px 0; background: #fff !important; color: #1e293b !important; border: 1px solid #e3e8ef; border-radius: 4px; font-size: 11px; font-weight: 600; padding: 0 5px; line-height: 16.5px; }
+.mu-prop-tags .tag a { color: #1e293b !important; }
 .mu-prop-sla .mu-meta-sep { display: none; }
 .mu-prop-sla .mu-meta { display: block; }
 .mu-prop-sla .mu-meta-who { display: none; } /* the customer name is already at the top of the column */
@@ -313,7 +313,7 @@ body.mu-conv #conv-layout-main { flex: 1; min-height: 0; overflow-y: auto; }
 
 /* Active top bar tab: the Customization module adds "filter: brightness(80%)" whenever the bar color isn't the
    default one (CustomizationServiceProvider, hook layout.body_bottom) → the pale red was turning brown.
-   Freshdesk has no highlighted tab: text 14 px 600 #12344d, no background. */
+   Freshdesk has no highlighted tab: text 14 px 600 #1e293b, no background. */
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > li.active > a:hover,
 .navbar-default .navbar-nav > li.active > a:focus,
@@ -351,18 +351,18 @@ body.mu-conv #conv-layout-main { flex: 1; min-height: 0; overflow-y: auto; }
 .dropdown-menu > li > a .glyphicon,
 .dropdown-menu > li > a > i { color: var(--fd-text-2) !important; }
 .dropdown-menu > li > a { color: var(--fd-text) !important; }
-.dropdown-menu > li > a:hover { background: #f3f5f6 !important; color: var(--fd-text) !important; }
+.dropdown-menu > li > a:hover { background: #f6f7fb !important; color: var(--fd-text) !important; }
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover { background: var(--fd-active-bg) !important; color: var(--fd-brand) !important; }
 
 /* Ticket detail, values measured on Freshdesk:
-   author name 14 px 700 (blue link on Freshdesk → red for us), "replied" 14 px 400 #485a68,
-   date 12 px italic #485a68, "To:" 12 px 500, body 14/21 px #12344d, round avatar ~32 px.
+   author name 14 px 700 (blue link on Freshdesk → red for us), "replied" 14 px 400 #475569,
+   date 12 px italic #475569, "To:" 12 px 500, body 14/21 px #1e293b, round avatar ~32 px.
    FreeScout used to show the name at 18 px 700 (link inside .thread-person). */
 .thread-header .thread-person,
 .thread-header .thread-person a,
 .thread .thread-person a { font-size: 14px !important; font-weight: 700 !important; line-height: 21px !important; }
 .thread-type-customer .thread-person a, .thread-type-message .thread-person a { color: var(--fd-brand) !important; }
-.thread-type-note .thread-person a { color: #9a6b00 !important; }
+.thread-type-note .thread-person a { color: #a16207 !important; }
 .thread-date, .thread-info, .thread-info a { font-size: 12px !important; font-style: italic; color: var(--fd-text-2) !important; }
 .thread-recipients, .thread-recipients * { font-size: 12px !important; color: var(--fd-text-2) !important; }
 .thread-recipients strong, .thread-recipients b { font-weight: 500; color: var(--fd-text) !important; }
@@ -378,13 +378,13 @@ body.mu-conv #conv-layout-main { flex: 1; min-height: 0; overflow-y: auto; }
    Values measured in the Freshdesk shadow DOM (ticket-left-nav, tickets-right-panel-filter). */
 
 /* ---------------------------------------------------------------- views menu (replaces the folder sidebar)
-   Row: 14/24 px, 400, #485a68, padding 8 px, radius 4; icon 16 px brand blue, 8 px before the label.
-   Active: background rgba(165,210,255,.2), 4 px left border #276cf0, text #003fd2 600. Section titles 14 px 600 #12344d. */
+   Row: 14/24 px, 400, #475569, padding 8 px, radius 4; icon 16 px brand blue, 8 px before the label.
+   Active: background rgba(99, 102, 241, .08), 4 px left border #4f46e5, text #4338ca 600. Section titles 14 px 600 #1e293b. */
 .sidebar-2col { background: #fff !important; border-right: 1px solid var(--fd-border); }
 .mu-views { padding: 12px 8px 16px; font-size: 14px; }
 .mu-views-search { position: relative; margin: 0 0 8px; }
 .mu-views-search .mu-i { position: absolute; left: 11px; top: 11px; color: var(--fd-text-2); }
-.mu-views-filter { width: 100%; height: 38px; border: 1px solid var(--fd-input-border); border-radius: 8px; padding: 6px 12px 6px 34px; font-size: 14px; color: var(--fd-text); outline: 0; background: #fff; }
+.mu-views-filter { width: 100%; height: 38px; border: 1px solid var(--fd-input-border); border-radius: 5px; padding: 6px 12px 6px 34px; font-size: 14px; color: var(--fd-text); outline: 0; background: #fff; }
 .mu-views-filter:focus { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
 .mu-views-filter::placeholder { color: var(--fd-muted); }
 .mu-views-sec { border-bottom: 1px solid var(--fd-border); padding: 4px 0 8px; margin-bottom: 4px; }
@@ -394,7 +394,7 @@ body.mu-conv #conv-layout-main { flex: 1; min-height: 0; overflow-y: auto; }
 .mu-views-sec.collapsed .mu-views-list { display: none; }
 .mu-v { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 12px; border-left: 4px solid transparent; border-radius: 4px; color: var(--fd-text-2) !important; font-size: 14px; font-weight: 400; line-height: 24px; text-decoration: none !important; cursor: pointer; }
 .mu-v .mu-i { color: var(--fd-brand); }
-.mu-v:hover { background: #f3f5f6; color: var(--fd-text) !important; }
+.mu-v:hover { background: #f6f7fb; color: var(--fd-text) !important; }
 .mu-v.active { background: var(--fd-active-bg) !important; border-left-color: var(--fd-primary); color: var(--fd-brand) !important; font-weight: 600; }
 .mu-v-label { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mu-v-count { flex: none; font-size: 12px; font-weight: 600; color: var(--fd-text-2); min-width: 20px; text-align: right; }
@@ -407,10 +407,10 @@ body.mu-views-hidden .content-2col { margin-left: 0 !important; left: 0 !importa
 
 /* ---------------------------------------------------------------- view bar: [views] All tickets  (152) */
 .mu-viewbar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
-.mu-sqbtn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid var(--fd-input-border); border-radius: 8px; background: #fff; color: var(--fd-text); cursor: pointer; padding: 0; }
-.mu-sqbtn:hover { background: #f3f5f6; }
+.mu-sqbtn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid var(--fd-input-border); border-radius: 5px; background: #fff; color: var(--fd-text); cursor: pointer; padding: 0; }
+.mu-sqbtn:hover { background: #f6f7fb; }
 .mu-viewbar-title { font-size: 14px; font-weight: 600; line-height: 21px; color: var(--fd-text); margin: 0; }
-.mu-pill { display: inline-block; background: #2b3640; color: #fff; font-size: 12px; font-weight: 600; line-height: 20px; padding: 0 8px; border-radius: 10px; }
+.mu-pill { display: inline-block; background: #1e293b; color: #fff; font-size: 12px; font-weight: 600; line-height: 20px; padding: 0 8px; border-radius: 6px; }
 
 /* ---------------------------------------------------------------- list + Filters panel layout */
 .mu-list-layout { display: flex; align-items: flex-start; border-top: 1px solid var(--fd-border); }
@@ -438,16 +438,16 @@ body.mu-shell #app .layout-2col:has(.mu-list-layout) { height: calc(100vh - 65px
 .mu-f label { display: block; font-size: 12px; font-weight: 500; line-height: 18px; color: var(--fd-text-2); margin: 0 0 8px; }
 .mu-search { position: relative; }
 .mu-search .mu-i { position: absolute; left: 12px; top: 11px; color: var(--fd-text-2); }
-.mu-f-q, .mu-input, .mu-select { width: 100%; height: 38px; border: 1px solid var(--fd-input-border); border-radius: 8px; padding: 6px 12px; font-size: 14px; color: var(--fd-text); background: #fff; outline: 0; }
+.mu-f-q, .mu-input, .mu-select { width: 100%; height: 38px; border: 1px solid var(--fd-input-border); border-radius: 5px; padding: 6px 12px; font-size: 14px; color: var(--fd-text); background: #fff; outline: 0; }
 .mu-f-q { padding-left: 34px; }
 .mu-f-q:focus, .mu-input:focus, .mu-select:focus { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
-.mu-select { -webkit-appearance: none; appearance: none; background: #fff url(../../modules/modernui/icons/fd-select-arrow.svg) no-repeat right 12px center / 9px auto; padding-right: 32px; } /* Freshdesk arrow: 1px stroke #2b3640 (theirs is a 5px square bordered top+right rotated 135°) */
-.mu-btn-primary { display: block; width: 100%; height: 32px; border: 0; border-radius: 8px; background: var(--fd-primary); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+.mu-select { -webkit-appearance: none; appearance: none; background: #fff url(../../modules/modernui/icons/fd-select-arrow.svg) no-repeat right 12px center / 9px auto; padding-right: 32px; } /* Freshdesk arrow: 1px stroke #1e293b (theirs is a 5px square bordered top+right rotated 135°) */
+.mu-btn-primary { display: block; width: 100%; height: 32px; border: 0; border-radius: 5px; background: var(--fd-primary); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
 .mu-btn-primary:hover { background: var(--fd-primary-h); }
 /* select2 (multi) to Freshdesk spec */
-.mu-filters .select2-container--default .select2-selection--multiple { min-height: 38px; border: 1px solid var(--fd-input-border); border-radius: 8px; padding: 2px 6px; }
+.mu-filters .select2-container--default .select2-selection--multiple { min-height: 38px; border: 1px solid var(--fd-input-border); border-radius: 5px; padding: 2px 6px; }
 .mu-filters .select2-container--default.select2-container--focus .select2-selection--multiple { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
-.mu-filters .select2-container--default .select2-selection--multiple .select2-selection__choice { background: #ebeff3; border: 0; border-radius: 4px; color: var(--fd-text); font-size: 12px; margin-top: 5px; }
+.mu-filters .select2-container--default .select2-selection--multiple .select2-selection__choice { background: #f1f4f9; border: 0; border-radius: 4px; color: var(--fd-text); font-size: 12px; margin-top: 5px; }
 .mu-filters .select2-search__field { font-size: 14px; margin-top: 6px !important; }
 .mu-filters .select2-search__field::placeholder { color: var(--fd-muted); }
 
@@ -455,20 +455,20 @@ body.mu-shell #app .layout-2col:has(.mu-list-layout) { height: calc(100vh - 65px
 .mu-toolbar { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-bottom: 1px solid var(--fd-border); background: #fff; min-height: 52px; }
 .mu-cb-all { position: relative; margin: 0; width: 16px; height: 16px; cursor: pointer; }
 .mu-cb-all input { position: absolute; opacity: 0; width: 16px; height: 16px; margin: 0; cursor: pointer; }
-.mu-cb-all span { display: block; width: 16px; height: 16px; border: 1px solid #8e9dac; border-radius: 4px; background: #fff; }
+.mu-cb-all span { display: block; width: 16px; height: 16px; border: 1px solid #94a3b8; border-radius: 4px; background: #fff; }
 .mu-cb-all input:checked + span { background: var(--fd-primary); border-color: var(--fd-primary); }
 .mu-sort { display: flex; align-items: center; gap: 6px; font-size: 14px; }
 .mu-sort-label { color: var(--fd-text-2); }
 .mu-sort-current { color: var(--fd-text) !important; font-weight: 600; text-decoration: none !important; display: inline-flex; align-items: center; gap: 6px; }
 .mu-toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 .mu-range { font-size: 14px; color: var(--fd-text); }
-.mu-pager { display: inline-flex; border: 1px solid var(--fd-input-border); border-radius: 8px; overflow: hidden; }
+.mu-pager { display: inline-flex; border: 1px solid var(--fd-input-border); border-radius: 5px; overflow: hidden; }
 .mu-pager-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 30px; color: var(--fd-text) !important; background: #fff; }
 .mu-pager-btn + .mu-pager-btn { border-left: 1px solid var(--fd-input-border); }
-.mu-pager-btn:hover { background: #f3f5f6; }
-.mu-pager-btn.disabled { color: #c9d3db !important; pointer-events: none; }
-.mu-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--fd-input-border); border-radius: 8px; background: #fff; color: var(--fd-text); font-size: 14px; font-weight: 600; cursor: pointer; }
-.mu-btn:hover { background: #f3f5f6; }
+.mu-pager-btn:hover { background: #f6f7fb; }
+.mu-pager-btn.disabled { color: #e3e8ef !important; pointer-events: none; }
+.mu-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--fd-input-border); border-radius: 5px; background: #fff; color: var(--fd-text); font-size: 14px; font-weight: 600; cursor: pointer; }
+.mu-btn:hover { background: #f6f7fb; }
 /* In the module's views: native table header (replaced by the toolbar) and native AJAX pager hidden
    (it would reload the native folders). The native #toggle-all checkbox stays in the DOM, driven by the toolbar. */
 .mu-list-scroll .table-conversations thead th { height: 0 !important; padding: 0 !important; font-size: 0 !important; overflow: hidden; }
@@ -491,24 +491,27 @@ body.mu-shell #app .layout-2col:has(.mu-list-layout) { height: calc(100vh - 65px
 .mu-meta-overdue .mu-i { color: var(--fd-text-2); }
 
 /* ================================================================ Freshdesk shell (rail + gray top bar, content as a white card)
-   Freshdesk measurements: rail 65 px #f3f5f6, logo 48 px at 8 px; links 41×42 radius 12, active rgba(197,205,211,.7);
-   top bar 65 px #f3f5f6; white content, border #dde3e9, large top-left rounded corner. */
-body.mu-shell { background: #f3f5f6 !important; padding-left: 65px; }
-.mu-rail { position: fixed; left: 0; top: 0; bottom: 0; width: 65px; background: #f3f5f6; z-index: 1031; display: flex; flex-direction: column; align-items: center; padding: 8px 0 12px; }
+   Freshdesk measurements: rail 65 px #f6f7fb, logo 48 px at 8 px; links 41×42 radius 12, active rgba(197,205,211,.7);
+   top bar 65 px #f6f7fb; white content, border #e6eaf0, large top-left rounded corner. */
+body.mu-shell { background: #f6f7fb !important; padding-left: 65px; }
+.mu-rail { position: fixed; left: 0; top: 0; bottom: 0; width: 65px; background: #f6f7fb; z-index: 1031; display: flex; flex-direction: column; align-items: center; padding: 8px 0 12px; }
 .mu-rail-logo { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 4px; margin-bottom: 14px; }
 .mu-rail-logo img { width: 36px; height: 36px; object-fit: contain; visibility: visible !important; }
 .mu-rail-links { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.mu-rail-link { display: flex; align-items: center; justify-content: center; width: 41px; height: 42px; border-radius: 12px; border: 1px solid transparent; color: #2b3640 !important; }
+.mu-rail-link { display: flex; align-items: center; justify-content: center; width: 41px; height: 42px; border-radius: 7px; border: 1px solid transparent; color: #1e293b !important; }
 .mu-rail-link .mu-i { width: 20px; height: 20px; }
 .mu-rail-link:hover { background: rgba(197, 205, 211, .45); }
 .mu-rail-link.active { background: rgba(197, 205, 211, .7); }
 .mu-rail-bottom { margin-top: auto; }
 .mu-rail-menu { left: 52px !important; bottom: 0 !important; top: auto !important; min-width: 220px; }
+.mu-rail-menu > li > a { display: flex !important; align-items: center; gap: 10px; }
+.mu-rail-menu > li > a > .mu-i { flex: none; width: 16px; height: 16px; color: var(--fd-text-2); }
+.mu-rail-menu > li.active > a > .mu-i, .mu-rail-menu > li > a:hover > .mu-i { color: inherit; }
 /* Logo in the rail: the top bar one (black background + text) is removed from the top bar */
 body.mu-shell .navbar-header .navbar-brand { display: none !important; }
 
 /* Top bar: gray, no border or shadow, 65 px; native text links hidden (All tickets → rail, Manage → rail) */
-body.mu-shell .navbar.navbar-default { background: #f3f5f6 !important; border: 0 !important; box-shadow: none !important; min-height: 65px; margin: 0; }
+body.mu-shell .navbar.navbar-default { background: #f6f7fb !important; border: 0 !important; box-shadow: none !important; min-height: 65px; margin: 0; }
 body.mu-shell .navbar > .container { width: 100%; max-width: none; padding: 0 10px 0 0; display: flex; align-items: center; min-height: 65px; }
 body.mu-shell .navbar-header { float: none; }
 body.mu-shell .navbar-collapse { flex: 1; display: flex !important; align-items: center; justify-content: flex-end; padding: 0; }
@@ -521,22 +524,22 @@ body.mu-shell .navbar-right > li > a { background: transparent !important; paddi
 .mu-crumb { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
 .mu-crumb a { color: var(--fd-brand) !important; }
 .mu-crumb span { color: var(--fd-text); }
-.mu-crumb .mu-i { --mu-i: url(../../modules/modernui/icons/fd-crumb.svg); width: 13px; height: 13px; color: #2b3640; } /* Freshdesk's exact separator (13px, #2b3640) */
+.mu-crumb .mu-i { --mu-i: url(../../modules/modernui/icons/fd-crumb.svg); width: 13px; height: 13px; color: #1e293b; } /* Freshdesk's exact separator (13px, #1e293b) */
 .mu-head-btns { display: flex !important; align-items: center; gap: 12px; margin-right: 10px; }
-.mu-hbtn { display: inline-flex !important; align-items: center; gap: 6px; height: 32px; padding: 0 12px !important; border: 1px solid var(--fd-input-border); border-radius: 8px; background: #fff !important; color: var(--fd-text) !important; font-size: 14px; font-weight: 600; }
-.mu-hbtn:hover { background: #f8fafb !important; }
+.mu-hbtn { display: inline-flex !important; align-items: center; gap: 6px; height: 32px; padding: 0 12px !important; border: 1px solid var(--fd-input-border); border-radius: 5px; background: #fff !important; color: var(--fd-text) !important; font-size: 14px; font-weight: 600; }
+.mu-hbtn:hover { background: #f8fafc !important; }
 /* native search (magnifier only): duplicate of the "Search" button */
 body.mu-shell .navbar-right > li > a > .glyphicon-search { display: none; }
 
 /* Content: white card on gray, border and rounded top-left corner */
 body.mu-shell #app .layout-2col,
-body.mu-shell #app > .content { background: #fff; border: 1px solid #dde3e9; border-right: 0; border-bottom: 0; border-radius: 18px 0 0 0; overflow: hidden; min-height: calc(100vh - 65px); }
-body.mu-shell .sidebar-2col { border-radius: 18px 0 0 0; }
+body.mu-shell #app > .content { background: #fff; border: 1px solid #e6eaf0; border-right: 0; border-bottom: 0; border-radius: 11px 0 0 0; overflow: hidden; min-height: calc(100vh - 65px); }
+body.mu-shell .sidebar-2col { border-radius: 11px 0 0 0; }
 body.mu-shell .footer { display: none; }
 
 /* ================================================================ ticket page, Freshdesk clone
    Views column hidden (button at the top of the bar to show it); labeled button bar; title 20/700 + channel icon;
-   threads: customer without a card, agent card #f5f7f9, note orange card, avatar 32 px outside the card; two columns
+   threads: customer without a card, agent card #f8fafc, note orange card, avatar 32 px outside the card; two columns
    on the right, 227 px (status + properties) and 259 px (contact). */
 body.mu-conv:not(.mu-views-shown) .sidebar-2col { display: none !important; }
 
@@ -545,10 +548,10 @@ body.mu-conv #conv-toolbar { background: #fff !important; border-bottom: 1px sol
 body.mu-conv #conv-toolbar > .conv-actions,
 body.mu-conv #conv-toolbar > .conv-info { display: none !important; }
 .mu-tb { display: flex; align-items: center; gap: 4px; padding: 12px 16px; }
-.mu-tb .mu-btn { height: 32px; padding: 2px 10px 3px 8px; border: 1px solid #eaeef2; border-radius: 8px; font-weight: 500; margin: 0 2px; }
+.mu-tb .mu-btn { height: 32px; padding: 2px 10px 3px 8px; border: 1px solid #eef1f6; border-radius: 5px; font-weight: 500; margin: 0 2px; }
 .mu-tb .mu-btn .mu-i { margin-right: 2px; }
-.mu-tb .mu-sqbtn { border-color: #eaeef2; }
-.mu-tb-sep { width: 1px; height: 20px; background: #eaeef2; margin: 0 10px; }
+.mu-tb .mu-sqbtn { border-color: #eef1f6; }
+.mu-tb-sep { width: 1px; height: 20px; background: #eef1f6; margin: 0 10px; }
 .mu-tb-star.on { color: var(--fs-gold); }
 .mu-tb-star.on .mu-i { --mu-i: url(../../modules/modernui/icons/fd-star-filled.svg); }
 .mu-tb-more { position: relative; }
@@ -560,7 +563,7 @@ body.mu-conv #conv-toolbar > .conv-info { display: none !important; }
 
 /* title */
 body.mu-conv #conv-subject { display: flex; align-items: flex-start; gap: 18px; padding: 20px 24px 8px !important; border-bottom: 0 !important; background: #fff; }
-.mu-chan { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #2b3640; margin-top: -1px; }
+.mu-chan { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #1e293b; margin-top: -1px; }
 .mu-chan .mu-i { width: 24px; height: 24px; }
 body.mu-conv .conv-subj-block { flex: 1; min-width: 0; }
 body.mu-conv .conv-subjtext, body.mu-conv .conv-subjtext > span { font-size: 20px !important; font-weight: 700 !important; line-height: 30px !important; color: var(--fd-text) !important; }
@@ -572,10 +575,10 @@ body.mu-conv #conv-layout-main { background: #fff !important; padding-top: 4px; 
 body.mu-conv #conv-layout-main > .thread { position: relative; background: transparent !important; border: 0 !important; border-radius: 0 !important; margin: 0 16px 16px 24px !important; padding: 0 0 0 48px !important; box-shadow: none !important; }
 body.mu-conv #conv-layout-main > .thread .thread-photo { position: absolute !important; left: 0; top: 12px; padding: 0 !important; width: 32px; }
 .mu-av-32 { width: 32px !important; height: 32px !important; font-size: 14px !important; font-weight: 500; }
-body.mu-conv #conv-layout-main > .thread .thread-message { margin: 0 !important; padding: 12px !important; border-radius: 8px; background: #fff; }
+body.mu-conv #conv-layout-main > .thread .thread-message { margin: 0 !important; padding: 12px !important; border-radius: 5px; background: #fff; }
 body.mu-conv #conv-layout-main > .thread.thread-type-customer .thread-message { padding: 12px 12px 12px 0 !important; }
-body.mu-conv #conv-layout-main > .thread.thread-type-message .thread-message { background: #f5f7f9; }
-body.mu-conv #conv-layout-main > .thread.thread-type-note .thread-message { background: #feefd9; }
+body.mu-conv #conv-layout-main > .thread.thread-type-message .thread-message { background: #f8fafc; }
+body.mu-conv #conv-layout-main > .thread.thread-type-note .thread-message { background: #fef6e4; }
 body.mu-conv #conv-layout-main > .thread.thread-type-note { background: transparent !important; }
 body.mu-conv .thread-header { padding: 0 !important; min-height: 0 !important; display: flex; align-items: flex-start; }
 body.mu-conv .thread-title { flex: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; }
@@ -592,13 +595,13 @@ body.mu-conv .thread-body { margin: 8px 0 0 !important; padding: 0 !important; f
 
 /* reply area at the bottom: tabbed card */
 body.mu-conv #conv-layout-main > .conv-action-wrapper { margin: 0 16px 24px 72px; width: auto !important; }
-.mu-reply-card { border: 1px solid #cfdcec; border-radius: 8px; background: #fff; padding: 10px 12px; box-shadow: 0 1px 2px rgba(18, 52, 77, .06); }
+.mu-reply-card { border: 1px solid #e3e8ef; border-radius: 5px; background: #fff; padding: 10px 12px; box-shadow: 0 1px 2px rgba(15, 23, 42, .06); }
 .mu-reply-tabs { display: flex; gap: 4px; }
-.mu-reply-tab { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 0; border-radius: 6px; background: #f3f5f6; color: var(--fd-text-2); font-size: 14px; font-weight: 500; cursor: pointer; }
-.mu-reply-tab.active { background: #e5f2fd; color: #2c5cc5; }
+.mu-reply-tab { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 0; border-radius: 6px; background: #f6f7fb; color: var(--fd-text-2); font-size: 14px; font-weight: 500; cursor: pointer; }
+.mu-reply-tab.active { background: #eef2ff; color: #4f46e5; }
 .mu-reply-placeholder { padding: 14px 2px 6px; color: var(--fd-muted); font-size: 14px; cursor: text; }
 .mu-reply-card.editing .mu-reply-placeholder { display: none; }
-body.mu-conv .conv-action-wrapper .conv-action-block { margin: 8px 0 0 !important; border: 1px solid var(--fd-border); border-radius: 8px; }
+body.mu-conv .conv-action-wrapper .conv-action-block { margin: 8px 0 0 !important; border: 1px solid var(--fd-border); border-radius: 5px; }
 
 /* right panels: 227 px + 259 px */
 body.mu-conv #conv-layout-customer { width: 486px !important; padding: 0 !important; background: #fff !important; box-shadow: none !important; border-left: 1px solid var(--fd-border); }
@@ -610,12 +613,12 @@ body.mu-conv #conv-layout-header, body.mu-conv #conv-layout-main { padding-right
 .mu-rp-status { padding: 14px 16px 8px; }
 .mu-rp-status-name { font-size: 18px; font-weight: 400; line-height: 27px; color: var(--fd-text); }
 .mu-rp-sla { display: flex; gap: 8px; padding: 2px 16px 16px; font-size: 12px; line-height: 18px; color: var(--fd-text); border-bottom: 1px solid var(--fd-border); }
-.mu-rp-sla .mu-i { color: #00a886; width: 14px; height: 14px; margin-top: 2px; }
-.mu-rp-sla-late .mu-i { color: #d72d30; }
+.mu-rp-sla .mu-i { color: #22c55e; width: 14px; height: 14px; margin-top: 2px; }
+.mu-rp-sla-late .mu-i { color: #e11d48; }
 .mu-rp-title { font-size: 12px; font-weight: 500; line-height: 18px; text-transform: uppercase; color: var(--fd-text); padding: 14px 16px 12px; }
 .mu-rp-f { padding: 0 16px 16px; }
 .mu-rp-f label { display: block; font-size: 12px; font-weight: 400; line-height: 18px; color: var(--fd-text-2); margin: 0 0 4px; }
-.mu-req { color: #d72d30; }
+.mu-req { color: #e11d48; }
 .mu-rp .mu-select { height: 32px; border-radius: 6px; font-size: 14px; padding: 4px 28px 4px 10px; background-position: right 10px center; }
 .mu-rp-prio-wrap { position: relative; }
 .mu-rp-prio-sq { position: absolute; left: 10px; top: 12px; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; }
@@ -632,7 +635,7 @@ body.mu-conv #conv-layout-header, body.mu-conv #conv-layout-main { padding-right
 .mu-rp-sec { padding: 12px 16px 20px; border-bottom: 1px solid var(--fd-border); }
 .mu-rp-sec-head { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; line-height: 21px; color: var(--fd-text-2); margin-bottom: 14px; }
 .mu-rp-sec-head .mu-i { color: var(--fd-text-2); }
-.mu-rp-sep { color: #c9d3db; font-weight: 400; }
+.mu-rp-sep { color: #e3e8ef; font-weight: 400; }
 .mu-rp-sec-head a { color: var(--fd-brand) !important; font-weight: 600; }
 .mu-rp-person { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .mu-rp-person-name { font-size: 14px; font-weight: 700; color: var(--fd-brand) !important; }
@@ -641,12 +644,12 @@ body.mu-conv #conv-layout-header, body.mu-conv #conv-layout-main { padding-right
 .mu-rp-kv > div { font-size: 14px; font-weight: 600; color: var(--fd-text); word-break: break-all; }
 .mu-copyable { display: flex; align-items: center; gap: 6px; }
 .mu-copy { border: 0; background: none; padding: 0; color: var(--fd-text-2); cursor: pointer; line-height: 0; }
-.mu-copy.copied { color: #00a886; }
+.mu-copy.copied { color: #22c55e; }
 .mu-rp-more { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--fd-brand) !important; }
 .mu-rp-timeline { position: relative; }
 .mu-rp-tl-item { position: relative; display: flex; gap: 10px; padding-bottom: 14px; color: var(--fd-text) !important; text-decoration: none !important; }
-.mu-rp-tl-item:not(:last-child)::before { content: ""; position: absolute; left: 13px; top: 28px; bottom: 0; width: 1px; background: #dde3e8; }
-.mu-rp-tl-dot { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 27px; height: 27px; border-radius: 50%; background: #ebeff3; color: var(--fd-text-2); }
+.mu-rp-tl-item:not(:last-child)::before { content: ""; position: absolute; left: 13px; top: 28px; bottom: 0; width: 1px; background: #e6eaf0; }
+.mu-rp-tl-dot { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 27px; height: 27px; border-radius: 50%; background: #f1f4f9; color: var(--fd-text-2); }
 .mu-rp-tl-body { display: flex; flex-direction: column; min-width: 0; }
 .mu-rp-tl-subj { font-size: 14px; font-weight: 600; line-height: 21px; }
 .mu-rp-tl-item.current .mu-rp-tl-subj { color: var(--fd-brand); }
@@ -663,7 +666,7 @@ body.mu-conv #conv-layout-main > .conv-action-wrapper { position: relative; }
 
 /* Single-piece reply card when the editor is open (tabs + editor), like Freshdesk */
 .mu-reply-card.editing { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 0; box-shadow: none; }
-.mu-reply-card.editing + .conv-block, .mu-reply-card.editing ~ .conv-action-block { margin-top: 0 !important; border-top: 0 !important; border-radius: 0 0 8px 8px !important; border-color: #cfdcec !important; }
+.mu-reply-card.editing + .conv-block, .mu-reply-card.editing ~ .conv-action-block { margin-top: 0 !important; border-top: 0 !important; border-radius: 0 0 5px 5px !important; border-color: #e3e8ef !important; }
 
 /* Card dropdown menus (priority / agent / status): label + chevron, clickable without opening the ticket */
 .mu-dd { display: flex !important; align-items: center; height: 22px; cursor: pointer; max-width: 100%; }
@@ -681,12 +684,12 @@ body.mu-conv #conv-layout-main > .conv-action-wrapper { position: relative; }
 body.mu-searching .mu-hsearch-box { display: block; }
 body.mu-searching .mu-head-btns .mu-hsearch { display: none !important; }
 .mu-hsearch-box .mu-i-search { position: absolute; left: 12px; top: 11px; color: var(--fd-text-2); }
-.mu-hsearch-box input[type=text] { width: 100%; height: 38px; border: 1px solid var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); border-radius: 8px; padding: 6px 36px 6px 36px; font-size: 14px; color: var(--fd-text); background: #fff; outline: 0; }
+.mu-hsearch-box input[type=text] { width: 100%; height: 38px; border: 1px solid var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); border-radius: 5px; padding: 6px 36px 6px 36px; font-size: 14px; color: var(--fd-text); background: #fff; outline: 0; }
 .mu-hsearch-close { position: absolute; right: 8px; top: 7px; width: 24px; height: 24px; border: 0; background: none; color: var(--fd-text-2); cursor: pointer; }
 /* Dashboard: the title is already in the top bar */
 body.mu-shell .container > .heading:first-child { display: none; }
 
-/* Theme section headers (light blue #deecf9, style.css): white + border, like Freshdesk */
+/* Theme section headers (light blue #eef2ff, style.css): white + border, like Freshdesk */
 .main-heading, .section-heading { background-color: #fff !important; border-bottom: 1px solid var(--fd-border); color: var(--fd-text); }
 .main-heading .btn-primary, .section-heading .btn-primary { height: 32px; padding: 0 12px; line-height: 30px; }
 
@@ -707,7 +710,7 @@ body.mu-shell .container > .heading:first-child { display: none; }
 .mu-layout-table .mu-list-scroll { padding-top: 0; }
 .mu-layout-table .table.table-conversations { border-collapse: collapse !important; border-spacing: 0 !important; width: 100% !important; margin: 0 !important; }
 .mu-layout-table .mu-list-scroll .table-conversations thead { display: table-header-group; }
-.mu-layout-table .mu-list-scroll .table-conversations thead th { height: 36px !important; padding: 0 8px !important; font-size: 12px !important; font-weight: 600; color: var(--fd-text-2) !important; background: #f3f5f6 !important; border-bottom: 1px solid var(--fd-border) !important; vertical-align: middle !important; }
+.mu-layout-table .mu-list-scroll .table-conversations thead th { height: 36px !important; padding: 0 8px !important; font-size: 12px !important; font-weight: 600; color: var(--fd-text-2) !important; background: #f6f7fb !important; border-bottom: 1px solid var(--fd-border) !important; vertical-align: middle !important; }
 .mu-layout-table .mu-list-scroll .table-conversations thead th * { visibility: visible; }
 .mu-layout-table .mu-list-scroll .table-conversations thead th.conv-number *, .mu-layout-table .mu-list-scroll .table-conversations thead th.conv-owner *,
 .mu-layout-table .mu-list-scroll .table-conversations thead th.conv-date *, .mu-layout-table .mu-list-scroll .table-conversations thead th.conv-attachment * { visibility: hidden; }
@@ -733,7 +736,7 @@ body.mu-shell .container > .heading:first-child { display: none; }
 .mu-layout-table .mu-side > .mu-side-prio { width: 110px; flex: none; }
 .mu-layout-table .mu-side > .mu-side-agent { width: 190px; flex: none; }
 .mu-layout-table .mu-side > .mu-side-status { width: 110px; flex: none; }
-.mu-layout-table .table-conversations tbody tr:hover td { background: #f8fafb !important; }
+.mu-layout-table .table-conversations tbody tr:hover td { background: #f8fafc !important; }
 
 /* ---------------------------------------------------------------- bulk actions in the toolbar (Freshdesk)
    Native bar moved into .mu-toolbar: shown only when there's a selection, in place of "Sort by". */
@@ -742,9 +745,9 @@ body.mu-shell .container > .heading:first-child { display: none; }
 .mu-toolbar.mu-selecting .mu-sort, .mu-toolbar.mu-selecting .mu-toolbar-right > *:not(.mu-toggle-filters) { display: none !important; }
 .mu-toolbar #conversations-bulk-actions > .btn-group { display: flex; gap: 8px; background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
 .mu-toolbar #conversations-bulk-actions > .btn-group > .btn,
-.mu-toolbar #conversations-bulk-actions > .btn-group > .btn-group > .btn { height: 32px; padding: 2px 10px 3px 8px !important; border: 1px solid #eaeef2 !important; border-radius: 8px !important; background: #fff !important; color: var(--fd-text) !important; font-size: 14px; font-weight: 600 !important; margin: 0 !important; float: none; display: inline-flex; align-items: center; gap: 4px; }
+.mu-toolbar #conversations-bulk-actions > .btn-group > .btn-group > .btn { height: 32px; padding: 2px 10px 3px 8px !important; border: 1px solid #eef1f6 !important; border-radius: 5px !important; background: #fff !important; color: var(--fd-text) !important; font-size: 14px; font-weight: 600 !important; margin: 0 !important; float: none; display: inline-flex; align-items: center; gap: 4px; }
 .mu-toolbar #conversations-bulk-actions > .btn-group > .btn:hover,
-.mu-toolbar #conversations-bulk-actions > .btn-group > .btn-group > .btn:hover { background: #f3f5f6 !important; }
+.mu-toolbar #conversations-bulk-actions > .btn-group > .btn-group > .btn:hover { background: #f6f7fb !important; }
 .mu-toolbar #conversations-bulk-actions .glyphicon { color: var(--fd-text-2); font-size: 12px; }
 .mu-toolbar #conversations-bulk-actions .conv-checkbox-clear { order: 99; }
 /* selected card: cream background, like Freshdesk */
@@ -756,7 +759,7 @@ body.mu-shell .container > .heading:first-child { display: none; }
 /* ---------------------------------------------------------------- status panel: collapse button + SLA pencil */
 .mu-rp-status { display: flex; align-items: center; justify-content: space-between; }
 .mu-rp-collapse { border: 0; background: none; color: var(--fd-text-2); padding: 4px; border-radius: 4px; cursor: pointer; line-height: 0; }
-.mu-rp-collapse:hover { background: #f3f5f6; }
+.mu-rp-collapse:hover { background: #f6f7fb; }
 .mu-rp-sla { position: relative; padding-right: 36px; }
 .mu-rp-sla > div { flex: 1; }
 .mu-rp-sla-edit { position: absolute; right: 14px; top: 20px; border: 0; background: none; color: var(--fd-brand); cursor: pointer; padding: 2px; line-height: 0; }
@@ -775,12 +778,12 @@ body.mu-conv.mu-rp-collapsed .mu-rp-props > .mu-rp-scroll { display: block; over
 body.mu-conv.mu-rp-collapsed .mu-rp-scroll > * { display: none; }
 body.mu-conv.mu-rp-collapsed .mu-rp-scroll > .mu-rp-status { display: flex; padding: 0; }
 body.mu-conv.mu-rp-collapsed .mu-rp-status-name { display: none; }
-body.mu-conv.mu-rp-collapsed .mu-rp-collapse { background: #fff; border: 1px solid var(--fd-input-border); border-radius: 8px; padding: 7px; transform: scaleX(-1); }
+body.mu-conv.mu-rp-collapsed .mu-rp-collapse { background: #fff; border: 1px solid var(--fd-input-border); border-radius: 5px; padding: 7px; transform: scaleX(-1); }
 body.mu-conv.mu-rp-collapsed #conv-layout-header, body.mu-conv.mu-rp-collapsed #conv-layout-main { padding-right: 56px !important; }
 /* ---------------------------------------------------------------- top bar search suggestions */
-.mu-hsearch-sugg { display: none; position: absolute; top: 44px; left: 0; right: 0; background: #fff; border: 1px solid var(--fd-border); border-radius: 8px; box-shadow: 0 8px 28px rgba(18, 52, 77, .16); padding: 6px 0; z-index: 1070; max-height: 70vh; overflow-y: auto; }
+.mu-hsearch-sugg { display: none; position: absolute; top: 44px; left: 0; right: 0; background: #fff; border: 1px solid var(--fd-border); border-radius: 5px; box-shadow: 0 8px 28px rgba(15, 23, 42, .16); padding: 6px 0; z-index: 1070; max-height: 70vh; overflow-y: auto; }
 .mu-sugg-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 14px; color: var(--fd-text) !important; text-decoration: none !important; }
-.mu-sugg-item:hover { background: #f3f5f6; }
+.mu-sugg-item:hover { background: #f6f7fb; }
 .mu-sugg-item .mu-i { color: var(--fd-brand); margin-top: 3px; }
 .mu-sugg-item.closed .mu-sugg-subj { color: var(--fd-muted); }
 .mu-sugg-text { display: flex; flex-direction: column; min-width: 0; }
@@ -794,40 +797,40 @@ body.mu-conv.mu-rp-collapsed #conv-layout-header, body.mu-conv.mu-rp-collapsed #
 .mu-rp-sla-late .mu-rp-sla-edit .mu-i, .mu-rp-sla .mu-rp-sla-edit .mu-i { color: var(--fd-brand) !important; }
 
 /* ================================================================ dashboard, Freshdesk clone
-   Gray background #f3f5f6; white cards radius 8; tiles: label 14 px on top, number 20 px 700 below. */
-body.mu-shell .container:has(> .mu-dash), body.mu-shell .content:has(.mu-dash) { background: #f3f5f6 !important; }
+   Gray background #f6f7fb; white cards radius 8; tiles: label 14 px on top, number 20 px 700 below. */
+body.mu-shell .container:has(> .mu-dash), body.mu-shell .content:has(.mu-dash) { background: #f6f7fb !important; }
 body.mu-shell .container:has(> .mu-dash) { width: 100%; max-width: none; padding: 8px 16px 24px; }
 body.mu-shell .container:has(> .mu-dash) > .dash-cards { display: none; }
 .mu-dash .mu-tiles { grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 0 0 12px; }
-.mu-dash .mu-tile { border: 0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(18, 52, 77, .05); }
+.mu-dash .mu-tile { border: 0; border-radius: 5px; padding: 16px; box-shadow: 0 1px 2px rgba(15, 23, 42, .05); }
 .mu-dash .mu-tile-label { order: -1; color: var(--fd-text); font-size: 14px; margin: 0 0 10px; }
 .mu-dash .mu-tile { display: flex; flex-direction: column; }
 .mu-dash .mu-tile-count { font-size: 20px; font-weight: 700; color: var(--fd-text); }
-.mu-dash .mu-tile-zero .mu-tile-count { color: #92a2b1; }
+.mu-dash .mu-tile-zero .mu-tile-count { color: #94a3b8; }
 .mu-dash .mu-tile-overdue .mu-tile-count, .mu-dash .mu-tile-due-today .mu-tile-count { color: var(--fd-text); }
-.mu-dash .mu-tile-overdue:not(.mu-tile-zero) .mu-tile-count { color: #d72d30; }
-.mu-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 2px rgba(18, 52, 77, .05); }
+.mu-dash .mu-tile-overdue:not(.mu-tile-zero) .mu-tile-count { color: #e11d48; }
+.mu-card { background: #fff; border-radius: 5px; box-shadow: 0 1px 2px rgba(15, 23, 42, .05); }
 .mu-card-title { font-size: 14px; font-weight: 500; color: var(--fd-text); }
 .mu-trends { display: grid; grid-template-columns: 1.9fr 1fr; gap: 24px; padding: 20px 16px 16px; margin-bottom: 12px; }
 .mu-chart { width: 100%; height: auto; margin-top: 12px; overflow: visible; }
-.mu-chart-grid { stroke: #ebeff3; stroke-width: 1; }
-.mu-chart-lbl { font-size: 11px; fill: #92a2b1; }
-.mu-chart-val { font-size: 11px; fill: #475867; }
-.mu-chart-today { fill: none; stroke: #1f5fd6; stroke-width: 2; }
-.mu-chart-today-dot { fill: #1f5fd6; }
-.mu-chart-yest { fill: none; stroke: #8cb6f7; stroke-width: 2; }
-.mu-chart-yest-dot { fill: #8cb6f7; }
+.mu-chart-grid { stroke: #f1f4f9; stroke-width: 1; }
+.mu-chart-lbl { font-size: 11px; fill: #94a3b8; }
+.mu-chart-val { font-size: 11px; fill: #475569; }
+.mu-chart-today { fill: none; stroke: #4f46e5; stroke-width: 2; }
+.mu-chart-today-dot { fill: #4f46e5; }
+.mu-chart-yest { fill: none; stroke: #a5b4fc; stroke-width: 2; }
+.mu-chart-yest-dot { fill: #a5b4fc; }
 .mu-chart-legend { display: flex; gap: 16px; justify-content: flex-end; font-size: 12px; color: var(--fd-text-2); margin-top: -4px; }
 .mu-chart-legend span::before { content: ""; display: inline-block; width: 14px; height: 2px; vertical-align: middle; margin-right: 6px; }
-.mu-lg-today::before { background: #1f5fd6; }
-.mu-lg-yest::before { background: #8cb6f7; }
+.mu-lg-today::before { background: #4f46e5; }
+.mu-lg-yest::before { background: #a5b4fc; }
 .mu-chart-axis { text-align: center; font-size: 12px; color: var(--fd-text); margin-top: 6px; }
 .mu-trends-kpis { display: grid; grid-template-columns: 1fr 1fr; align-content: center; gap: 56px 16px; text-align: center; }
 .mu-kpi-label { font-size: 12px; color: var(--fd-text-2); margin-bottom: 10px; }
 .mu-kpi-value { font-size: 22px; font-weight: 700; color: var(--fd-text); }
 .mu-kpi-delta { font-size: 12px; font-weight: 600; margin-left: 8px; }
-.mu-kpi-delta.good { color: #00a886; }
-.mu-kpi-delta.bad { color: #e43538; }
+.mu-kpi-delta.good { color: #22c55e; }
+.mu-kpi-delta.bad { color: #e11d48; }
 .mu-kpi-arrow { display: inline-block; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; margin-right: 3px; vertical-align: 1px; }
 .mu-kpi-arrow.up { border-bottom: 7px solid currentColor; }
 .mu-kpi-arrow.down { border-top: 7px solid currentColor; }
@@ -836,11 +839,11 @@ body.mu-shell .container:has(> .mu-dash) > .dash-cards { display: none; }
 .mu-widget-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
 .mu-widget-head a { font-size: 14px; color: var(--fd-brand) !important; }
 .mu-widget-sub { font-size: 12px; color: var(--fd-text-2); }
-.mu-widget-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ebeff3; font-size: 14px; color: var(--fd-text) !important; text-decoration: none !important; }
+.mu-widget-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f4f9; font-size: 14px; color: var(--fd-text) !important; text-decoration: none !important; }
 .mu-widget-row:last-child { border-bottom: 0; }
-a.mu-widget-row:hover { background: #f8fafb; }
+a.mu-widget-row:hover { background: #f8fafc; }
 .mu-widget-th { color: var(--fd-text-2) !important; font-size: 13px; }
-.mu-widget-n { color: #d72d30; font-weight: 600; }
+.mu-widget-n { color: #e11d48; font-weight: 600; }
 .mu-dash .mu-dash-list { padding: 16px; }
 @media (max-width: 1200px) { .mu-trends { grid-template-columns: 1fr; } .mu-dash .mu-tiles { grid-template-columns: repeat(3, 1fr); } }
 
@@ -849,12 +852,12 @@ a.mu-widget-row:hover { background: #f8fafb; }
 .mu-contacts .mu-tb-sep { margin: 0 4px; }
 .mu-contacts-search { position: relative; margin: 0; }
 .mu-contacts-search .mu-i { position: absolute; left: 10px; top: 9px; color: var(--fd-text-2); width: 14px; height: 14px; }
-.mu-contacts-search input { width: 260px; height: 32px; border: 1px solid var(--fd-input-border); border-radius: 8px; padding: 4px 10px 4px 30px; font-size: 13px; color: var(--fd-text); outline: 0; }
+.mu-contacts-search input { width: 260px; height: 32px; border: 1px solid var(--fd-input-border); border-radius: 5px; padding: 4px 10px 4px 30px; font-size: 13px; color: var(--fd-text); outline: 0; }
 .mu-contacts-search input:focus { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
 .mu-ctable { width: 100%; border-collapse: collapse; font-size: 13px; color: var(--fd-text); }
 .mu-ctable thead th { font-size: 14px; font-weight: 600; color: var(--fd-text); padding: 14px 12px; border-bottom: 1px solid var(--fd-border); text-align: left; background: #fff; position: sticky; top: 0; z-index: 2; }
-.mu-ctable tbody td { padding: 8px 12px; border-bottom: 1px solid #ebeff3; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
-.mu-ctable tbody tr:hover td { background: #f8fafb; }
+.mu-ctable tbody td { padding: 8px 12px; border-bottom: 1px solid #f1f4f9; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+.mu-ctable tbody tr:hover td { background: #f8fafc; }
 .mu-ct-cb { width: 44px; padding-left: 16px !important; }
 .mu-ct-name { font-weight: 600; } /* normal table cell (not flex: the bottom border would be interrupted) */
 .mu-ct-name .mu-av { display: inline-flex; vertical-align: middle; margin-right: 10px; }
@@ -863,13 +866,13 @@ a.mu-widget-row:hover { background: #f8fafb; }
 .mu-av-28 { width: 28px !important; height: 28px !important; font-size: 12px !important; font-weight: 500; flex: none; }
 .mu-ct-menu { width: 48px; text-align: center; }
 .mu-ct-more { color: var(--fd-text) !important; display: inline-flex; padding: 4px; border-radius: 4px; }
-.mu-ct-more:hover { background: #ebeff3; }
+.mu-ct-more:hover { background: #f1f4f9; }
 .mu-ct-empty { text-align: center; color: var(--fd-muted); padding: 40px !important; }
 body.mu-shell #app > .content.mu-contacts-page { padding: 0; }
 
 /* Collapsed quoted history ("•••" button like Freshdesk) */
-.mu-quote-toggle { display: inline-flex; align-items: center; justify-content: center; height: 16px; padding: 0 8px; margin: 8px 0 0; border: 1px solid #dde3e8; border-radius: 8px; background: #fff; color: var(--fd-text-2); font-size: 10px; letter-spacing: 1px; line-height: 1; cursor: pointer; }
-.mu-quote-toggle:hover { background: #f3f5f6; }
+.mu-quote-toggle { display: inline-flex; align-items: center; justify-content: center; height: 16px; padding: 0 8px; margin: 8px 0 0; border: 1px solid #e6eaf0; border-radius: 5px; background: #fff; color: var(--fd-text-2); font-size: 10px; letter-spacing: 1px; line-height: 1; cursor: pointer; }
+.mu-quote-toggle:hover { background: #f6f7fb; }
 .mu-quote { margin-top: 8px; color: var(--fd-text-2); }
 /* Message preview in the list: up to 2 lines */
 .table-conversations td .conv-preview { display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal !important; overflow: hidden; }
@@ -882,11 +885,11 @@ body.mu-conv #conv-layout-main > .thread .thread-photo { top: 7px !important; }
 
 /* ---- list */
 .mu-pill { font-size: 14px !important; line-height: 20px; background: #264a67 !important; padding: 0 8px; }            /* 14/600 background rgb(38,74,103) */
-.mu-sort:not(.mu-layout-dd) .mu-sort-label { font-size: 13px; font-weight: 500; }                                 /* "Sort by:" 13/500 #485a68 */
+.mu-sort:not(.mu-layout-dd) .mu-sort-label { font-size: 13px; font-weight: 500; }                                 /* "Sort by:" 13/500 #475569 */
 .mu-sort:not(.mu-layout-dd) .mu-sort-current { font-size: 13px; font-weight: 500 !important; }                     /* value 13/500 */
-.mu-layout-dd .mu-sort-current { font-size: 13px; font-weight: 500 !important; color: var(--fd-text-2) !important; } /* "Card view" 13/500 #485a68 */
+.mu-layout-dd .mu-sort-current { font-size: 13px; font-weight: 500 !important; color: var(--fd-text-2) !important; } /* "Card view" 13/500 #475569 */
 .mu-toolbar-right a.mu-btn, .mu-hbtn { font-weight: 500 !important; }                                             /* Export, New, Search: 500 */
-.mu-range { color: var(--fd-text-2); }                                                                              /* "1 - 30 of 154" #485a68 */
+.mu-range { color: var(--fd-text-2); }                                                                              /* "1 - 30 of 154" #475569 */
 .table-conversations td.conv-subject p { font-size: 14px; }                                                          /* the theme uses 13.4 px */
 /* card priority / agent / status: 400 (the theme bolds active tickets) */
 .mu-side, .mu-side *, .table-conversations .conv-active .mu-side .mu-dd-label { font-weight: 400 !important; }
@@ -902,14 +905,14 @@ body.mu-conv .thread-recipients strong, body.mu-conv .thread-recipients b, body.
 .mu-rp-save { font-weight: 500 !important; }                                                                        /* "Update" 500 */
 .mu-crumb span { font-weight: 500; }                                                                                /* breadcrumb number 500 (link 600) */
 .mu-author strong { font-weight: 500; }                                                                             /* author 14/500 */
-.mu-rp-tags #conv_tags .tag { font-size: 11px !important; font-weight: 600; line-height: 16.5px; padding: 0 5px !important; background: #fff !important; border: 1px solid #c9d3db !important; border-radius: 4px !important; color: #2b3640 !important; }
-.mu-rp-tags #conv_tags .tag a { color: #2b3640 !important; font-size: 11px !important; }
+.mu-rp-tags #conv_tags .tag { font-size: 11px !important; font-weight: 600; line-height: 16.5px; padding: 0 5px !important; background: #fff !important; border: 1px solid #e3e8ef !important; border-radius: 4px !important; color: #1e293b !important; }
+.mu-rp-tags #conv_tags .tag a { color: #1e293b !important; font-size: 11px !important; }
 
 /* ---- dashboard */
 .mu-dash .mu-tile-label { font-weight: 500; }                                                                      /* label 14/500 */
 .mu-dash .mu-tile-count { font-size: 24px !important; line-height: 36px; }                                         /* number 24/700 */
 .mu-widget-head a { font-weight: 500; }                                                                             /* "View details" 14/500 */
-.mu-widget-th { font-size: 14px !important; }                                                                       /* headers 14/400 #485a68 */
+.mu-widget-th { font-size: 14px !important; }                                                                       /* headers 14/400 #475569 */
 .mu-widget-row > span:first-child { font-weight: 500; }                                                             /* names 14/500 */
 .mu-widget-th > span:first-child { font-weight: 400; }
 
@@ -926,7 +929,7 @@ body.mu-conv .thread-recipients strong, body.mu-conv .thread-recipients b, body.
 .table-conversations tr.conv-closed .mu-num { color: inherit !important; }
 .table-conversations tr.conv-closed .conv-subject a { color: var(--fd-text) !important; }
 .table-conversations tr.conv-closed .mu-status-line, .table-conversations tr.conv-closed .mu-num { color: var(--fd-text-2) !important; }
-.table-conversations tr.conv-closed .mu-av { background: #ebeff3 !important; border-color: #dfe5ea !important; color: var(--fd-text-2) !important; }
+.table-conversations tr.conv-closed .mu-av { background: #f1f4f9 !important; border-color: #e8ecf2 !important; color: var(--fd-text-2) !important; }
 
 /* Dashboard: Freshdesk doesn't use red — tile numbers in navy blue (zero in gray),
    widget counters in gray 14/400. */
@@ -935,7 +938,7 @@ body.mu-conv .thread-recipients strong, body.mu-conv .thread-recipients b, body.
 .mu-dash .mu-tile-due-today .mu-tile-count,
 .mu-dash .mu-tile-new .mu-tile-count,
 .mu-dash .mu-tile-pending .mu-tile-count { color: var(--fd-text) !important; }
-.mu-dash .mu-tile-zero .mu-tile-count { color: #6f8396 !important; }
+.mu-dash .mu-tile-zero .mu-tile-count { color: #64748b !important; }
 .mu-widget-n { color: var(--fd-text-2) !important; font-weight: 400 !important; font-size: 14px; }
 
 /* Collapsible sections of the contact panel (chevron on the right, like Freshdesk) */
@@ -955,34 +958,34 @@ body.mu-conv .thread-recipients strong, body.mu-conv .thread-recipients b, body.
 .mu-rp-cobrowse .panel-body { padding: 12px 0 0 !important; }
 
 /* ---------------------------------------------------------------- reply editor, Freshdesk-style (see skinEditor in the provider)
-   Measured on Freshdesk: active tab #def0ff / border #c1e2ff / text #276cf0, inactive #f6f7f8 / #485a68; labels 14 px #485a68;
-   Cc / Bcc / Clear links 12 px 500 #003fd2; borders #eaeef2; bottom bar padding 12 px; Send button #276cf0 32 px radius 8. */
-.mu-reply-tab { padding: 2px 10px 3px 8px; border: 1px solid transparent; background: #f6f7f8; color: #485a68; }
-.mu-reply-tab.active { background: #def0ff; border-color: #c1e2ff; color: #276cf0; }
-.mu-reply-card.editing { border-bottom: 1px solid #eaeef2; padding-bottom: 12px; }
+   Measured on Freshdesk: active tab #eef2ff / border #c7d2fe / text #4f46e5, inactive #f8fafc / #475569; labels 14 px #475569;
+   Cc / Bcc / Clear links 12 px 500 #4338ca; borders #eef1f6; bottom bar padding 12 px; Send button #4f46e5 32 px radius 8. */
+.mu-reply-tab { padding: 2px 10px 3px 8px; border: 1px solid transparent; background: #f8fafc; color: #475569; }
+.mu-reply-tab.active { background: #eef2ff; border-color: #c7d2fe; color: #4f46e5; }
+.mu-reply-card.editing { border-bottom: 1px solid #eef1f6; padding-bottom: 12px; }
 .conv-action-wrapper .mu-reply-card, .conv-action-wrapper .conv-action-block { transition: border-color .15s; }
-.conv-action-wrapper:focus-within .mu-reply-card, .conv-action-wrapper:focus-within .mu-reply-card.editing ~ .conv-action-block { border-color: #2c5cc5 !important; }
-.conv-action-wrapper:focus-within .mu-reply-card.editing { border-bottom-color: #eaeef2 !important; } /* the border below the tabs stays gray */
+.conv-action-wrapper:focus-within .mu-reply-card, .conv-action-wrapper:focus-within .mu-reply-card.editing ~ .conv-action-block { border-color: #4f46e5 !important; }
+.conv-action-wrapper:focus-within .mu-reply-card.editing { border-bottom-color: #eef1f6 !important; } /* the border below the tabs stays gray */
 .conv-action-wrapper .conv-reply-block > .col-xs-12 { padding: 0; }
 .conv-action-wrapper .form-reply { margin: 0; }
 .conv-action-wrapper .form-reply > .form-group { margin: 0; } /* cancels the negative margins of .form-horizontal (13px -15px 5px on the body) */
 
 /* From / To / Cc / Bcc header */
-.mu-ed-head { padding: 4px 0; border-bottom: 1px solid #eaeef2; }
+.mu-ed-head { padding: 4px 0; border-bottom: 1px solid #eef1f6; }
 .mu-ed-head > .mu-ed-row, .mu-ed-head > .form-group { display: flex; align-items: center; min-height: 36px; margin: 0; padding: 0 16px; font-size: 14px; color: var(--fd-text); }
 .mu-ed-head > .form-group.hidden, .mu-ed-hidden { display: none !important; }
-.mu-ed-lbl, .mu-ed-head > .form-group > .control-label { position: relative; flex: none; float: none; width: 56px; margin: 0; padding: 0 !important; text-align: left !important; font-size: 14px; font-weight: 400; color: #485a68; }
+.mu-ed-lbl, .mu-ed-head > .form-group > .control-label { position: relative; flex: none; float: none; width: 56px; margin: 0; padding: 0 !important; text-align: left !important; font-size: 14px; font-weight: 400; color: #475569; }
 .mu-ed-lbl::after, .mu-ed-head > .form-group > .control-label::after { content: ':'; position: absolute; left: 40px; } /* colons aligned in a column, like Freshdesk */
 .mu-ed-head .conv-reply-field { flex: 1; min-width: 0; float: none; width: auto; margin: 0; padding: 0; }
 .mu-ed-val { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mu-ed-val strong { font-weight: 500; }
-.mu-ed-muted { color: #485a68; }
+.mu-ed-muted { color: #475569; }
 .mu-ed-cclinks { display: flex; flex: none; gap: 12px; margin-left: 12px; }
-.mu-ed-cclinks a, .mu-ed-clear { font-size: 12px; font-weight: 500; color: #003fd2 !important; }
+.mu-ed-cclinks a, .mu-ed-clear { font-size: 12px; font-weight: 500; color: #4338ca !important; }
 .mu-ed-clear { flex: none; margin-left: 12px; }
 .mu-ed-head .select2-container--default .select2-selection--multiple { min-height: 30px; border: 0 !important; box-shadow: none !important; padding: 0; background: transparent; }
-.mu-ed-head .select2-container--default .select2-selection--multiple .select2-selection__choice { height: 26px; line-height: 24px; margin: 2px 6px 2px 0; padding: 0 10px; border: 1px solid #dde3e8; border-radius: 13px; background: #f3f5f6; color: var(--fd-text); font-size: 13px; }
-.mu-ed-head .select2-container--default .select2-selection--multiple .select2-selection__choice__remove { float: right; margin: 0 0 0 6px; color: #92a2b1; }
+.mu-ed-head .select2-container--default .select2-selection--multiple .select2-selection__choice { height: 26px; line-height: 24px; margin: 2px 6px 2px 0; padding: 0 10px; border: 1px solid #e6eaf0; border-radius: 8px; background: #f6f7fb; color: var(--fd-text); font-size: 13px; }
+.mu-ed-head .select2-container--default .select2-selection--multiple .select2-selection__choice__remove { float: right; margin: 0 0 0 6px; color: #94a3b8; }
 
 /* Body: text, signature, then formatting bar (below the text, like Freshdesk) */
 .mu-ed.note-editor { display: flex; flex-direction: column; margin: 0; border: 0 !important; box-shadow: none !important; }
@@ -994,34 +997,34 @@ body.mu-conv .thread-recipients strong, body.mu-conv .thread-recipients b, body.
 .mu-ed.mu-ed-notb .note-toolbar { display: none; } /* "Aa" button in the bottom bar */
 .mu-ed .note-editable { padding: 16px !important; font-size: 14px; line-height: 21px; color: var(--fd-text); }
 .mu-ed .note-toolbar .note-btn-group { margin: 0 2px 0 0; }
-.mu-ed .note-toolbar .note-btn { height: 28px; min-width: 28px; padding: 0 6px; border: 0 !important; border-radius: 6px !important; background: none !important; box-shadow: none !important; color: #2b3640; }
-.mu-ed .note-toolbar .note-btn:hover, .mu-ed .note-toolbar .note-btn.active { background: #f3f5f6 !important; }
+.mu-ed .note-toolbar .note-btn { height: 28px; min-width: 28px; padding: 0 6px; border: 0 !important; border-radius: 6px !important; background: none !important; box-shadow: none !important; color: #1e293b; }
+.mu-ed .note-toolbar .note-btn:hover, .mu-ed .note-toolbar .note-btn.active { background: #f6f7fb !important; }
 
 /* Bottom bar: [Aa][paperclip][canned responses] … [Saved][trash][Send ▾]; native status and assignment hidden
    (status is chosen from the "Send and set as" menu, assignment keeps the mailbox's default setting) */
-.mu-ed .note-statusbar { display: flex !important; align-items: center; gap: 8px; padding: 12px !important; border-top: 1px solid #eaeef2 !important; background: #fff !important; }
+.mu-ed .note-statusbar { display: flex !important; align-items: center; gap: 8px; padding: 12px !important; border-top: 1px solid #eef1f6 !important; background: #fff !important; }
 .mu-ed .note-statusbar > .editor-btm-text, .mu-ed .note-statusbar > select, .mu-ed .note-statusbar > .note-bottom-div, .mu-ed .note-btn-save-draft { display: none !important; }
 .mu-ed-tools { display: flex; align-items: center; gap: 4px; margin-right: auto; }
 .mu-ed-tools > .btn-group { float: none; }
-.mu-ed .mu-ed-ic { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0 !important; border: 0 !important; border-radius: 6px !important; background: none !important; box-shadow: none !important; color: #2b3640 !important; }
-.mu-ed .mu-ed-ic:hover { background: #f3f5f6 !important; }
+.mu-ed .mu-ed-ic { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0 !important; border: 0 !important; border-radius: 6px !important; background: none !important; box-shadow: none !important; color: #1e293b !important; }
+.mu-ed .mu-ed-ic:hover { background: #f6f7fb !important; }
 .mu-ed .note-actions { display: flex; align-items: center; gap: 8px; float: none; margin: 0; position: static; } /* the native rule places it absolute on the right of the bar */
-.mu-ed .draft-saved { font-size: 12px; color: #6f8396; }
-.mu-ed .note-actions .mu-ed-trash { border: 1px solid #dde3e8 !important; border-radius: 8px !important; }
+.mu-ed .draft-saved { font-size: 12px; color: #64748b; }
+.mu-ed .note-actions .mu-ed-trash { border: 1px solid #e6eaf0 !important; border-radius: 5px !important; }
 .mu-ed .btn-group-send { float: none; display: flex; margin: 0; }
-.mu-ed .btn-group-send .btn-primary { height: 32px; padding: 5px 15px; border: 0; border-radius: 8px 0 0 8px; background: #276cf0; font-size: 14px; font-weight: 500; line-height: 22px; }
+.mu-ed .btn-group-send .btn-primary { height: 32px; padding: 5px 15px; border: 0; border-radius: 5px 0 0 5px; background: #4f46e5; font-size: 14px; font-weight: 500; line-height: 22px; }
 .mu-ed .btn-group-send .btn-primary .mu-i { margin-right: 6px; }
-.mu-ed .btn-group-send .btn-primary:hover { background: #1d59d8; }
-.mu-ed .btn-group-send .btn-send-menu { position: relative; width: 32px; padding: 5px 8px; border-left: 0 !important; background: #276cf0; }
+.mu-ed .btn-group-send .btn-primary:hover { background: #4338ca; }
+.mu-ed .btn-group-send .btn-send-menu { position: relative; width: 32px; padding: 5px 8px; border-left: 0 !important; background: #4f46e5; }
 /* separator line drawn separately: a border would get recolored on hover by the global rule .btn-primary:hover { border-color … !important } → the arrow appeared to grow */
 .mu-ed .btn-group-send .btn-send-menu::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: rgba(255, 255, 255, .3); } /* same blue as the button on Freshdesk (the dark shade is only the active state) */
-.mu-ed .btn-group-send .btn-send-menu:hover, .mu-ed .btn-group-send.open .btn-send-menu { background: #1d59d8; }
+.mu-ed .btn-group-send .btn-send-menu:hover, .mu-ed .btn-group-send.open .btn-send-menu { background: #4338ca; }
 /* !important required: Bootstrap resets the corners to 0 (.btn-group > .btn:not(:first-child):not(:last-child)…, specificity 0,5,0) and the
    send button is never the first child (a native <button class="hidden"> precedes it) */
-.mu-ed .btn-group-send .btn-reply-submit { border-radius: 8px 0 0 8px !important; }
-.mu-ed .btn-group-send .btn-send-menu { border-radius: 0 8px 8px 0 !important; }
+.mu-ed .btn-group-send .btn-reply-submit { border-radius: 5px 0 0 5px !important; }
+.mu-ed .btn-group-send .btn-send-menu { border-radius: 0 5px 5px 0 !important; }
 .mu-ed .btn-group-send .btn-send-menu .mu-i { margin: 0; }
-.mu-ed .dropdown-after-send > .dropdown-header { padding: 8px 16px 6px; font-size: 12px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: #485a68; }
+.mu-ed .dropdown-after-send > .dropdown-header { padding: 8px 16px 6px; font-size: 12px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: #475569; }
 
 /* Formatting bar: Freshdesk icons (Froala, 14 px) instead of the summernote icon font */
 .mu-ed .note-toolbar .note-btn > [class^="note-icon-"]:not([class*="caret"]) { display: inline-block; width: 14px; height: 14px; background-color: currentColor; -webkit-mask: var(--mu-i) center / contain no-repeat; mask: var(--mu-i) center / contain no-repeat; vertical-align: -2px; }
@@ -1042,23 +1045,23 @@ body.mu-conv .conv-action-wrapper .mu-reply-card.editing + .conv-action-block { 
 /* Bootstrap 3 states of the send button neutralized (:focus / :active / .open): it sets a #122b40 border, an inner shadow and a focus outline */
 .mu-ed .btn-group-send .btn-primary, .mu-ed .btn-group-send .btn-primary:focus, .mu-ed .btn-group-send .btn-primary:active,
 .mu-ed .btn-group-send .btn-primary:active:focus, .mu-ed .btn-group-send.open .btn-primary.dropdown-toggle { outline: 0 !important; box-shadow: none !important; border-top: 0; border-right: 0; border-bottom: 0; }
-.mu-ed .btn-group-send .btn-reply-submit:focus, .mu-ed .btn-group-send .btn-reply-submit:active { background: #1d59d8; border-left: 0; }
-.mu-ed .btn-group-send .btn-send-menu:focus, .mu-ed .btn-group-send .btn-send-menu:active, .mu-ed .btn-group-send.open .btn-send-menu { background: #1d59d8; }
-.mu-ed .btn-group-send .btn-primary:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #276cf0 !important; } /* keyboard focus only */
+.mu-ed .btn-group-send .btn-reply-submit:focus, .mu-ed .btn-group-send .btn-reply-submit:active { background: #4338ca; border-left: 0; }
+.mu-ed .btn-group-send .btn-send-menu:focus, .mu-ed .btn-group-send .btn-send-menu:active, .mu-ed .btn-group-send.open .btn-send-menu { background: #4338ca; }
+.mu-ed .btn-group-send .btn-primary:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #4f46e5 !important; } /* keyboard focus only */
 
-/* Editor modes (class set by syncPh) — Freshdesk: Note = orange (tab #fef1e1 / #fddbb5 / #d7461f, frame #fac386),
+/* Editor modes (class set by syncPh) — Freshdesk: Note = orange (tab #fef6e4 / #fde6b0 / #e11d48, frame #fcd581),
    Reply and Forward = blue. In Note mode, no recipients: the From / To / Cc header is hidden. */
-.conv-action-wrapper.mu-mode-note .mu-reply-tab.active { background: #fef1e1; border-color: #fddbb5; color: #d7461f; }
+.conv-action-wrapper.mu-mode-note .mu-reply-tab.active { background: #fef6e4; border-color: #fde6b0; color: #e11d48; }
 .conv-action-wrapper.mu-mode-note .mu-reply-card, .conv-action-wrapper.mu-mode-note .mu-reply-card.editing ~ .conv-action-block,
-.conv-action-wrapper.mu-mode-note:focus-within .mu-reply-card, .conv-action-wrapper.mu-mode-note:focus-within .mu-reply-card.editing ~ .conv-action-block { border-color: #fac386 !important; }
-.conv-action-wrapper.mu-mode-note .mu-reply-card.editing, .conv-action-wrapper.mu-mode-note:focus-within .mu-reply-card.editing { border-bottom-color: #eaeef2 !important; }
+.conv-action-wrapper.mu-mode-note:focus-within .mu-reply-card, .conv-action-wrapper.mu-mode-note:focus-within .mu-reply-card.editing ~ .conv-action-block { border-color: #fcd581 !important; }
+.conv-action-wrapper.mu-mode-note .mu-reply-card.editing, .conv-action-wrapper.mu-mode-note:focus-within .mu-reply-card.editing { border-bottom-color: #eef1f6 !important; }
 .conv-action-wrapper.mu-mode-note .mu-ed-head { display: none; }
 .mu-reply-tabs { align-items: center; }
 .mu-reply-private { display: none; align-items: center; gap: 6px; margin-left: auto; font-size: 14px; color: var(--fd-text); }
 .conv-action-wrapper.mu-mode-note .mu-reply-card.editing .mu-reply-private { display: inline-flex; }
 /* Forward: recipient entered in a bordered field (Freshdesk: outlined field, blue on focus) */
-.mu-ed-head .conv-recipient-to .select2-container--default .select2-selection--multiple { min-height: 32px; padding: 0 6px; border: 1px solid #dde3e8 !important; border-radius: 6px; background: #fff; }
-.mu-ed-head .conv-recipient-to .select2-container--default.select2-container--focus .select2-selection--multiple { border-color: #2c5cc5 !important; box-shadow: 0 0 0 1px #2c5cc5 !important; }
+.mu-ed-head .conv-recipient-to .select2-container--default .select2-selection--multiple { min-height: 32px; padding: 0 6px; border: 1px solid #e6eaf0 !important; border-radius: 6px; background: #fff; }
+.mu-ed-head .conv-recipient-to .select2-container--default.select2-container--focus .select2-selection--multiple { border-color: #4f46e5 !important; box-shadow: 0 0 0 1px #4f46e5 !important; }
 /* Added buttons (Public/js/editor.js): alignment, indent, Heading 1 / 2, color, table — Freshdesk icons */
 .mu-ed .note-icon-align-left { --mu-i: url(../../modules/modernui/icons/fd-ed-align-left.svg); }
 .mu-ed .note-icon-align-center { --mu-i: url(../../modules/modernui/icons/fd-ed-align-center.svg); }
@@ -1109,41 +1112,41 @@ body.mu-conv #conv-layout-main > .conv-action-wrapper { margin-bottom: auto !imp
 /* Message actions, Freshdesk-style (muThreadTools in the provider): the native ▾ menu disappears, two grouped icons
    (Forward, Split) in the top-right corner of the message, visible on hover only. */
 body.mu-conv #conv-layout-main .thread .thread-options { display: none !important; }
-.mu-th-tools { position: absolute; top: 12px; right: 16px; display: none; border: 1px solid #cfdcec; border-radius: 6px; background: #fff; overflow: hidden; z-index: 2; }
+.mu-th-tools { position: absolute; top: 12px; right: 16px; display: none; border: 1px solid #e3e8ef; border-radius: 6px; background: #fff; overflow: hidden; z-index: 2; }
 #conv-layout-main .thread:hover > .mu-th-tools { display: flex; }
-.mu-th-tool { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 28px; padding: 0; border: 0; background: #fff; color: #2b3640 !important; cursor: pointer; }
-.mu-th-tool + .mu-th-tool { border-left: 1px solid #cfdcec; }
-.mu-th-tool:hover { background: #f3f5f6; text-decoration: none; }
+.mu-th-tool { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 28px; padding: 0; border: 0; background: #fff; color: #1e293b !important; cursor: pointer; }
+.mu-th-tool + .mu-th-tool { border-left: 1px solid #e3e8ef; }
+.mu-th-tool:hover { background: #f6f7fb; text-decoration: none; }
 
 /* Merge from the list: "Merge tickets" side panel, based on Freshdesk (the "Merge" button in bulk actions) */
 .mu-toolbar .mu-bulk-merge { display: none; }
-.mu-merge-overlay { position: fixed; inset: 0; background: rgba(18, 52, 77, .25); z-index: 1060; }
+.mu-merge-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, .25); z-index: 1060; }
 .mu-merge-panel { position: fixed; top: 8px; right: 8px; bottom: 8px; width: 500px; max-width: calc(100vw - 16px); z-index: 1061; display: flex; flex-direction: column;
-  background: #fff; border-radius: 8px; box-shadow: 0 12px 40px rgba(18, 52, 77, .25); transform: translateX(110%); transition: transform .2s ease-out; }
+  background: #fff; border-radius: 5px; box-shadow: 0 12px 40px rgba(15, 23, 42, .25); transform: translateX(110%); transition: transform .2s ease-out; }
 .mu-merge-panel.open { transform: none; }
 .mu-merge-x { position: absolute; top: 8px; left: -34px; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%; background: #fff; color: var(--fd-text); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 /* SVG cross (cross-big) rather than the "×" glyph, whose position depends on the font and lands off-center in the circle */
 .mu-merge-x .mu-i { width: 10px; height: 10px; }
 .mu-merge-head { display: flex; align-items: center; gap: 10px; padding: 24px 32px 8px; font-size: 20px; font-weight: 600; color: var(--fd-text); }
-.mu-merge-head .mu-i { width: 20px; height: 20px; color: #485a68; }
+.mu-merge-head .mu-i { width: 20px; height: 20px; color: #475569; }
 .mu-merge-help { margin: 0; padding: 0 32px 20px; font-size: 13px; line-height: 19px; color: var(--fd-text); }
 .mu-merge-cards { flex: 1; min-height: 0; overflow-y: auto; padding: 0 32px; }
-.mu-merge-card { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 8px; padding: 14px 16px; border: 1px solid var(--fd-border); border-radius: 8px; }
-.mu-merge-rm { flex: none; width: 18px; height: 18px; margin-top: 12px; padding: 0; border: 0; border-radius: 50%; background: #fbe9e9; color: #d72d30; font-size: 16px; line-height: 16px; cursor: pointer; }
+.mu-merge-card { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 8px; padding: 14px 16px; border: 1px solid var(--fd-border); border-radius: 5px; }
+.mu-merge-rm { flex: none; width: 18px; height: 18px; margin-top: 12px; padding: 0; border: 0; border-radius: 50%; background: #fbe9e9; color: #e11d48; font-size: 16px; line-height: 16px; cursor: pointer; }
 .mu-merge-rm:disabled { opacity: .35; cursor: default; }
 .mu-merge-body { flex: 1; min-width: 0; font-size: 13px; line-height: 20px; color: var(--fd-text); }
 .mu-merge-num { color: var(--fd-text-2); }
 .mu-merge-subj { font-size: 14px; font-weight: 600; color: var(--fd-text); }
 .mu-merge-card.is-primary .mu-merge-subj { color: var(--fd-brand); }
 .mu-merge-meta { color: var(--fd-text); }
-.mu-merge-star { flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 56px; padding: 6px 0 0; border: 0; background: none; color: #92a2b1; font-size: 11px; cursor: pointer; }
+.mu-merge-star { flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 56px; padding: 6px 0 0; border: 0; background: none; color: #94a3b8; font-size: 11px; cursor: pointer; }
 .mu-merge-star .mu-i { width: 22px; height: 22px; }
 .mu-merge-star span { visibility: hidden; }
 .mu-merge-card.is-primary .mu-merge-star { color: var(--fd-brand); cursor: default; }
 .mu-merge-card.is-primary .mu-merge-star span { visibility: visible; color: var(--fd-text-2); }
 .mu-merge-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 32px; border-top: 1px solid var(--fd-border); }
-.mu-merge-foot .btn { height: 32px; border-radius: 8px; font-weight: 500; }
-.mu-merge-foot .btn-primary { background: #276cf0; border-color: #276cf0; }
+.mu-merge-foot .btn { height: 32px; border-radius: 5px; font-weight: 500; }
+.mu-merge-foot .btn-primary { background: #4f46e5; border-color: #4f46e5; }
 
 /* List bulk actions (native FreeScout buttons): icons centered on the label (the glyphicon font placed them ~3px
    too low) and replaced with the module's own, except the Tags label (no equivalent); dropdown menus (Assign,
@@ -1179,21 +1182,21 @@ body.mu-view-loading .mu-list-scroll { opacity: .45; pointer-events: none; }
 .mu-rp .mu-tag-box .select2-search--inline { flex: 1 1 60px; }
 .mu-rp .mu-tag-box .select2-search__field { width: 100% !important; margin: 0 !important; height: 26px; font-size: 14px; color: var(--fd-text); }
 .mu-rp .mu-tag-box .select2-search__field::placeholder { color: var(--fd-muted); }
-.select2-dropdown.mu-tag-dd { border: 1px solid var(--fd-border); border-radius: 6px; box-shadow: 0 4px 12px rgba(18, 52, 77, .12); overflow: hidden; font-size: 14px; }
+.select2-dropdown.mu-tag-dd { border: 1px solid var(--fd-border); border-radius: 6px; box-shadow: 0 4px 12px rgba(15, 23, 42, .12); overflow: hidden; font-size: 14px; }
 .select2-dropdown.mu-tag-dd .select2-results__option { padding: 8px 12px; color: var(--fd-text); }
 .select2-dropdown.mu-tag-dd .select2-results__option--highlighted[aria-selected] { background: var(--fd-active-bg); color: var(--fd-text); }
 
 /* "Edit ticket" window (⋯ › Edit ticket details, key e): the subject is no longer edited inline on click */
-.mu-subj-modal { position: fixed; inset: 0; z-index: 1060; display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh; background: rgba(18, 52, 77, .45); }
-.mu-subj-dlg { width: 600px; max-width: calc(100vw - 32px); border-radius: 8px; background: #fff; box-shadow: 0 8px 28px rgba(18, 52, 77, .28); font-family: var(--fd-font); color: var(--fd-text); }
+.mu-subj-modal { position: fixed; inset: 0; z-index: 1060; display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh; background: rgba(15, 23, 42, .45); }
+.mu-subj-dlg { width: 600px; max-width: calc(100vw - 32px); border-radius: 5px; background: #fff; box-shadow: 0 8px 28px rgba(15, 23, 42, .28); font-family: var(--fd-font); color: var(--fd-text); }
 .mu-subj-head { display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 0 12px 0 24px; border-bottom: 1px solid var(--fd-border); font-size: 16px; font-weight: 600; }
 .mu-subj-x { width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; font-size: 22px; line-height: 1; color: var(--fd-text-2); cursor: pointer; }
-.mu-subj-x:hover { background: #f3f5f6; }
+.mu-subj-x:hover { background: #f6f7fb; }
 .mu-subj-body { padding: 20px 24px 24px; }
 .mu-subj-body label { display: block; margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--fd-text); }
-.mu-req { margin-left: 2px; color: #d72d30; }
+.mu-req { margin-left: 2px; color: #e11d48; }
 .mu-subj-body .mu-input { width: 100%; height: 36px; padding: 0 12px; border: 1px solid var(--fd-input-border); border-radius: 6px; font-size: 14px; color: var(--fd-text); outline: 0; }
-.mu-subj-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 24px; border-top: 1px solid var(--fd-border); border-radius: 0 0 8px 8px; background: #f5f7f9; }
+.mu-subj-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 24px; border-top: 1px solid var(--fd-border); border-radius: 0 0 5px 5px; background: #f8fafc; }
 .mu-subj-foot .mu-subj-ok { border-color: var(--fd-primary); background: var(--fd-primary); color: #fff; }
 .mu-subj-foot .mu-subj-ok:hover { background: var(--fd-primary-h); }
 .mu-subj-foot .mu-subj-ok:disabled { opacity: .6; cursor: default; }
@@ -1201,57 +1204,57 @@ body.mu-view-loading .mu-list-scroll { opacity: .45; pointer-events: none; }
 /* PWA / Web Push: "Notifications on this device" box (Profile → Notifications) and invitation banner in the
    installed app. See "PWA Support" in the provider. */
 .mu-push-box { margin: 0 0 20px; padding: 16px; border: 1px solid var(--fd-border); border-radius: 6px; background: #fff; color: var(--fd-text); }
-.mu-push-box.is-on { border-color: #b7e4d5; background: #f3fbf8; }
+.mu-push-box.is-on { border-color: #bbf7d0; background: #f3fbf8; }
 .mu-push-head { display: flex; align-items: center; gap: 6px; font-size: 15px; }
 .mu-push-state { margin: 8px 0 12px; }
 .mu-push-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 .mu-push-help { margin: 12px 0 0; font-size: 13px; color: var(--fd-text-2); }
-.mu-push-ask { position: fixed; left: 12px; right: 12px; bottom: calc(68px + env(safe-area-inset-bottom)); z-index: 1060; display: flex; align-items: center; gap: 8px; padding: 12px 12px 12px 16px; border-radius: 10px; background: #12344d; color: #fff; font-size: 14px; box-shadow: 0 4px 12px rgba(18, 52, 77, .3); }
+.mu-push-ask { position: fixed; left: 12px; right: 12px; bottom: calc(68px + env(safe-area-inset-bottom)); z-index: 1060; display: flex; align-items: center; gap: 8px; padding: 12px 12px 12px 16px; border-radius: 6px; background: #1e293b; color: #fff; font-size: 14px; box-shadow: 0 4px 12px rgba(15, 23, 42, .3); }
 .mu-push-ask span { flex: 1; }
 .mu-push-ask button { flex: none; padding: 6px 10px; border: 0; border-radius: 6px; background: transparent; color: #fff; font-weight: 600; }
-.mu-push-ask .mu-push-ask-yes { background: #fff; color: #12344d; }
+.mu-push-ask .mu-push-ask-yes { background: #fff; color: #1e293b; }
 
 /* Floating messages ("Ticket updated", "Settings saved"…) as a Freshdesk toast, desktop and mobile. Measured
    on Freshdesk (.nucleus-toast-message): white 400 px card centered 16 px from the top, 4 px top
-   border in the type's color, 1 px border #eaeef2, radius 8 px, shadow 0 0 22px, 14 px icon, text 14/21
-   #12344d, close cross on the right (added by the provider's JS). Replaces the native pale green banner (style.css:3033); the
+   border in the type's color, 1 px border #eef1f6, radius 8 px, shadow 0 0 22px, 14 px icon, text 14/21
+   #1e293b, close cross on the right (added by the provider's JS). Replaces the native pale green banner (style.css:3033); the
    body .alert.alert-floating selector beats the native .alert-floating.alert-success without !important. */
-body .alert.alert-floating { align-items: center; gap: 10px; width: 400px; max-width: calc(100vw - 32px); margin: 0 0 8px; /* 8 px between stacked toasts (fsFloatingAlertsInit counts outerHeight(true)) */ padding: 10px 10px 10px 16px; border: 1px solid #eaeef2; border-top: 4px solid #009272; border-radius: 8px; background: #fff; color: #12344d; font-size: 14px; line-height: 21px; text-align: left; box-shadow: 0 0 22px rgba(18, 51, 76, .1); }
-body .alert.alert-floating.alert-danger { border-top-color: #d72d30; }
-body .alert.alert-floating.alert-warning { border-top-color: #e86f25; }
-body .alert.alert-floating.alert-info { border-top-color: #2c5cc5; }
+body .alert.alert-floating { align-items: center; gap: 10px; width: 400px; max-width: calc(100vw - 32px); margin: 0 0 8px; /* 8 px between stacked toasts (fsFloatingAlertsInit counts outerHeight(true)) */ padding: 10px 10px 10px 16px; border: 1px solid #eef1f6; border-top: 4px solid #009272; border-radius: 5px; background: #fff; color: #1e293b; font-size: 14px; line-height: 21px; text-align: left; box-shadow: 0 0 22px rgba(18, 51, 76, .1); }
+body .alert.alert-floating.alert-danger { border-top-color: #e11d48; }
+body .alert.alert-floating.alert-warning { border-top-color: #d97706; }
+body .alert.alert-floating.alert-info { border-top-color: #4f46e5; }
 body .alert.alert-floating > div { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
 /* icon: the native glyphicon becomes the Freshdesk icon (circled ✓ / alert) via mask, colored by type */
-body .alert.alert-floating .glyphicon { flex: none; top: 0; width: 14px; height: 14px; margin: 0; font-size: 0; background-color: #00795b; -webkit-mask: url(../../modules/modernui/icons/fd-check-circle.svg) center / contain no-repeat; mask: url(../../modules/modernui/icons/fd-check-circle.svg) center / contain no-repeat; }
+body .alert.alert-floating .glyphicon { flex: none; top: 0; width: 14px; height: 14px; margin: 0; font-size: 0; background-color: #15803d; -webkit-mask: url(../../modules/modernui/icons/fd-check-circle.svg) center / contain no-repeat; mask: url(../../modules/modernui/icons/fd-check-circle.svg) center / contain no-repeat; }
 body .alert.alert-floating.alert-danger .glyphicon,
 body .alert.alert-floating.alert-warning .glyphicon { -webkit-mask-image: url(../../modules/modernui/icons/fd-alert.svg); mask-image: url(../../modules/modernui/icons/fd-alert.svg); }
-body .alert.alert-floating.alert-danger .glyphicon { background-color: #d72d30; }
-body .alert.alert-floating.alert-warning .glyphicon { background-color: #e86f25; }
-body .alert.alert-floating a, body .alert.alert-floating a:hover, body .alert.alert-floating a:focus { color: #2c5cc5; font-weight: 600; text-decoration: none; }
-.mu-toast-x { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 4px; background: none; color: #12344d; cursor: pointer; }
+body .alert.alert-floating.alert-danger .glyphicon { background-color: #e11d48; }
+body .alert.alert-floating.alert-warning .glyphicon { background-color: #d97706; }
+body .alert.alert-floating a, body .alert.alert-floating a:hover, body .alert.alert-floating a:focus { color: #4f46e5; font-weight: 600; text-decoration: none; }
+.mu-toast-x { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 4px; background: none; color: #1e293b; cursor: pointer; }
 .mu-toast-x .mu-i { width: 10px; height: 10px; }
-.mu-toast-x:hover { background: #f5f7f9; }
+.mu-toast-x:hover { background: #f8fafc; }
 
 /* Draft in the thread: the native "Edit / Discard" text buttons (conversations/partials/thread.blade.php,
    .draft-actions) become two icons, pencil / trash, in the same bordered group top-right as the on-hover
    message actions (.mu-th-tools), but always visible. Text hidden via font-size 0; tooltips added in JS. */
 #conv-layout-main .thread-type-draft { position: relative; }
-#conv-layout-main .thread-type-draft .draft-actions { position: absolute; top: 12px; right: 16px; z-index: 2; display: flex; float: none; margin: 0; border: 1px solid #cfdcec; border-radius: 6px; background: #fff; overflow: hidden; }
-#conv-layout-main .thread-type-draft .draft-actions > .btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 28px; margin: 0; padding: 0; border: 0; border-radius: 0; background: #fff; color: #2b3640; font-size: 0; box-shadow: none; }
-#conv-layout-main .thread-type-draft .draft-actions > .btn + .btn { border-left: 1px solid #cfdcec; }
-#conv-layout-main .thread-type-draft .draft-actions > .btn:hover { background: #f3f5f6; }
+#conv-layout-main .thread-type-draft .draft-actions { position: absolute; top: 12px; right: 16px; z-index: 2; display: flex; float: none; margin: 0; border: 1px solid #e3e8ef; border-radius: 6px; background: #fff; overflow: hidden; }
+#conv-layout-main .thread-type-draft .draft-actions > .btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 28px; margin: 0; padding: 0; border: 0; border-radius: 0; background: #fff; color: #1e293b; font-size: 0; box-shadow: none; }
+#conv-layout-main .thread-type-draft .draft-actions > .btn + .btn { border-left: 1px solid #e3e8ef; }
+#conv-layout-main .thread-type-draft .draft-actions > .btn:hover { background: #f6f7fb; }
 #conv-layout-main .thread-type-draft .draft-actions > .btn::before { content: ''; width: 16px; height: 16px; background-color: currentColor; -webkit-mask: url(../../modules/modernui/icons/fd-edit.svg) center / contain no-repeat; mask: url(../../modules/modernui/icons/fd-edit.svg) center / contain no-repeat; }
 #conv-layout-main .thread-type-draft .draft-actions > .discard-draft-trigger::before { -webkit-mask-image: url(../../modules/modernui/icons/fd-trash.svg); mask-image: url(../../modules/modernui/icons/fd-trash.svg); }
-#conv-layout-main .thread-type-draft .draft-actions > .discard-draft-trigger:hover { color: #d72d30; }
+#conv-layout-main .thread-type-draft .draft-actions > .discard-draft-trigger:hover { color: #e11d48; }
 /* "Cancel" link on sending toasts (native text-danger class): keeps the red, other links stay blue */
-body .alert.alert-floating a.text-danger { color: #d72d30; }
+body .alert.alert-floating a.text-danger { color: #e11d48; }
 
 /* Account menu (top bar, name ▾): the Bootstrap triangle (.caret, borders) becomes the Freshdesk chevron, like "Sort by" */
 body .navbar .dropdown-toggle-account .caret { width: 12px; height: 12px; margin-left: 6px; border: 0; vertical-align: -1px; background-color: currentColor; -webkit-mask: url(../../modules/modernui/icons/fd-chevron-down.svg) center / contain no-repeat; mask: url(../../modules/modernui/icons/fd-chevron-down.svg) center / contain no-repeat; }
 
 /* Native accordion blocks in the right panel (Co-browsing / Cobrowse…): Bootstrap triangle → panel section chevron
-   (.mu-rp-sec-toggle: 12 px, #485a68), pointing up when open, down when collapsed (.collapsed link) */
-body .mu-rp .panel-title .caret { display: inline-block; flex: none; width: 12px; height: 12px; margin: 0; border: 0; vertical-align: middle; background-color: #485a68; -webkit-mask: url(../../modules/modernui/icons/fd-chevron-down.svg) center / contain no-repeat; mask: url(../../modules/modernui/icons/fd-chevron-down.svg) center / contain no-repeat; transform: rotate(180deg); transition: transform .15s; }
+   (.mu-rp-sec-toggle: 12 px, #475569), pointing up when open, down when collapsed (.collapsed link) */
+body .mu-rp .panel-title .caret { display: inline-block; flex: none; width: 12px; height: 12px; margin: 0; border: 0; vertical-align: middle; background-color: #475569; -webkit-mask: url(../../modules/modernui/icons/fd-chevron-down.svg) center / contain no-repeat; mask: url(../../modules/modernui/icons/fd-chevron-down.svg) center / contain no-repeat; transform: rotate(180deg); transition: transform .15s; }
 body .mu-rp .panel-title a.collapsed .caret { transform: none; }
 /* aligned with the section chevrons (.mu-rp-sec-toggle, 2 px from the edge): the Bootstrap link has 15 px right margin and the native .caret has right: 2px */
 body .mu-rp .panel-title > a { padding-right: 2px; }
@@ -1259,8 +1262,8 @@ body .mu-rp .panel-title .caret { right: 0; }
 
 /* "Split ticket": small centered confirmation dialog modelled on Freshdesk's (title, question, Cancel / Split on the
    right, cross at the top right). See .mu-th-split in the provider. */
-.mu-split-overlay { position: fixed; inset: 0; z-index: 1070; display: flex; align-items: center; justify-content: center; background: rgba(18, 52, 77, .45); }
-.mu-split-dlg { position: relative; width: 420px; max-width: calc(100vw - 32px); padding: 24px 24px 20px; border-radius: 6px; background: #fff; box-shadow: 0 8px 24px rgba(18, 52, 77, .2); font-family: var(--fd-font); color: var(--fd-text); }
+.mu-split-overlay { position: fixed; inset: 0; z-index: 1070; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, .45); }
+.mu-split-dlg { position: relative; width: 420px; max-width: calc(100vw - 32px); padding: 24px 24px 20px; border-radius: 6px; background: #fff; box-shadow: 0 8px 24px rgba(15, 23, 42, .2); font-family: var(--fd-font); color: var(--fd-text); }
 .mu-split-title { margin: 0 24px 16px 0; font-size: 18px; font-weight: 600; line-height: 24px; }
 .mu-split-text { margin: 0 0 24px; font-size: 14px; line-height: 20px; }
 .mu-split-foot { display: flex; justify-content: flex-end; gap: 8px; }
@@ -1277,3 +1280,104 @@ body:not(.mu-views-hidden) .mu-toggle-views .mu-i, body.mu-conv.mu-views-shown .
 .mu-toolbar .mu-sort, .mu-toolbar .mu-sort-label, .mu-toolbar .mu-sort-current, .mu-toolbar .mu-range, .mu-toolbar .mu-btn { white-space: nowrap; }
 .mu-toolbar .mu-sort-current, .mu-toolbar .mu-range { flex-wrap: nowrap; }
 @media (max-width: 1500px) { .mu-list-layout:not(.mu-filters-closed) .mu-layout-dd .mu-sort-label { display: none; } }
+
+/* Icon-only side menu buttons of FreeScout (arrow under the mailbox settings menu…) get their tooltip as a label */
+.btn-sidebar.mu-btn-labelled { display: inline-flex; align-items: center; gap: 8px; width: auto; padding: 6px 12px; }
+.btn-sidebar .mu-btn-label { font-size: 13px; font-weight: 500; }
+
+/* ---------------------------------------------------------------- Modern UI identity (not a Freshdesk clone)
+   Slate + indigo palette, softer borders, small radii, round priority dots, rectangular badges. */
+.mu-badge { border-radius: 4px !important; padding-left: 6px !important; padding-right: 6px !important; font-weight: 500 !important; }
+.mu-sq, .mu-rp-prio-sq { border-radius: 50% !important; }
+.mu-btn, .mu-sqbtn, .mu-select, .mu-input, .form-control, .select2-container .select2-selection, .dropdown-menu { border-radius: 5px !important; }
+.mu-btn, .mu-sqbtn { border-color: #e6eaf0 !important; box-shadow: 0 1px 1px rgba(15, 23, 42, .03); }
+.mu-btn:hover, .mu-sqbtn:hover { background: #f6f7fb !important; border-color: #d8dee8 !important; }
+.mu-tile, .mu-card, .mu-widget { border-color: #eef1f6 !important; border-radius: 6px !important; box-shadow: 0 1px 2px rgba(15, 23, 42, .04) !important; }
+/* views panel: rounded highlight instead of Freshdesk's left bar */
+.mu-v { border-left: 0 !important; border-radius: 5px !important; padding-left: 12px !important; }
+.mu-v.active { background: #eef2ff !important; color: #4338ca !important; font-weight: 600; }
+.mu-v:hover { background: #f6f7fb; }
+.mu-rail-link { border-radius: 7px !important; }
+.mu-rail-link:hover { background: rgba(15, 23, 42, .05) !important; }
+.mu-rail-link.active { background: #eef2ff !important; color: #4f46e5 !important; }
+/* ticket cards: nearly invisible border, light shadow */
+.table-conversations tbody tr td { border-color: #eef1f6 !important; }
+.table-conversations tbody tr td:first-child { border-radius: 6px 0 0 6px !important; }
+.table-conversations tbody tr td:last-child { border-radius: 0 6px 6px 0 !important; }
+.table-conversations tbody tr.conv-row { filter: drop-shadow(0 1px 1px rgba(15, 23, 42, .04)); }
+.table-conversations tbody tr:hover td { background: #fcfcfe !important; border-color: #e3e8ef !important; }
+
+/* ---------------------------------------------------------------- FreeScout's own pages (settings, profile, customer,
+   users, mailboxes, tags…): same look as the rest of the module */
+/* side menus: the module's icons instead of glyphicons, rounded highlight like the views panel */
+.sidebar-menu .glyphicon-cog, .sidebar-menu .glyphicon-transfer, .sidebar-menu .glyphicon-bell, .sidebar-menu .glyphicon-adjust, .sidebar-menu .glyphicon-flash, .sidebar-menu .glyphicon-screenshot, .sidebar-menu .glyphicon-blackboard, .sidebar-menu .glyphicon-user, .sidebar-menu .glyphicon-lock, .sidebar-menu .glyphicon-ok, .sidebar-menu .glyphicon-pencil, .sidebar-menu .glyphicon-edit, .sidebar-menu .glyphicon-share, .sidebar-menu .glyphicon-share-alt, .sidebar-menu .glyphicon-comment, .sidebar-menu .glyphicon-envelope, .sidebar-menu .glyphicon-list, .sidebar-menu .glyphicon-tags, .sidebar-menu .glyphicon-tag, .sidebar-menu .glyphicon-time, .sidebar-menu .glyphicon-globe, .sidebar-menu .glyphicon-trash, .sidebar-menu .glyphicon-shopping-cart, .sidebar-menu .glyphicon-gift, .sidebar-menu .glyphicon-briefcase, .sidebar-menu .glyphicon-duplicate, .sidebar-menu .glyphicon-stats, .sidebar-menu .glyphicon-erase, .sidebar-menu .glyphicon-import { width: 16px; height: 16px; font-size: 0 !important; line-height: 0; background-color: currentColor; -webkit-mask: var(--mu-g) center / contain no-repeat; mask: var(--mu-g) center / contain no-repeat; top: 10px; }
+.sidebar-menu .glyphicon-cog { --mu-g: url(../../modules/modernui/icons/settings.svg); }
+.sidebar-menu .glyphicon-transfer { --mu-g: url(../../modules/modernui/icons/sync.svg); }
+.sidebar-menu .glyphicon-bell { --mu-g: url(../../modules/modernui/icons/notifications.svg); }
+.sidebar-menu .glyphicon-adjust { --mu-g: url(../../modules/modernui/icons/colour-fill.svg); }
+.sidebar-menu .glyphicon-flash { --mu-g: url(../../modules/modernui/icons/embed.svg); }
+.sidebar-menu .glyphicon-screenshot { --mu-g: url(../../modules/modernui/icons/present.svg); }
+.sidebar-menu .glyphicon-blackboard { --mu-g: url(../../modules/modernui/icons/browser.svg); }
+.sidebar-menu .glyphicon-user { --mu-g: url(../../modules/modernui/icons/contact.svg); }
+.sidebar-menu .glyphicon-lock { --mu-g: url(../../modules/modernui/icons/lock.svg); }
+.sidebar-menu .glyphicon-ok { --mu-g: url(../../modules/modernui/icons/verified.svg); }
+.sidebar-menu .glyphicon-pencil { --mu-g: url(../../modules/modernui/icons/edit.svg); }
+.sidebar-menu .glyphicon-edit { --mu-g: url(../../modules/modernui/icons/edit.svg); }
+.sidebar-menu .glyphicon-share { --mu-g: url(../../modules/modernui/icons/reply.svg); }
+.sidebar-menu .glyphicon-share-alt { --mu-g: url(../../modules/modernui/icons/forward.svg); }
+.sidebar-menu .glyphicon-comment { --mu-g: url(../../modules/modernui/icons/canned-responses.svg); }
+.sidebar-menu .glyphicon-envelope { --mu-g: url(../../modules/modernui/icons/email.svg); }
+.sidebar-menu .glyphicon-list { --mu-g: url(../../modules/modernui/icons/list-bullets.svg); }
+.sidebar-menu .glyphicon-tags { --mu-g: url(../../modules/modernui/icons/items.svg); }
+.sidebar-menu .glyphicon-tag { --mu-g: url(../../modules/modernui/icons/items.svg); }
+.sidebar-menu .glyphicon-time { --mu-g: url(../../modules/modernui/icons/recent.svg); }
+.sidebar-menu .glyphicon-globe { --mu-g: url(../../modules/modernui/icons/multilingual.svg); }
+.sidebar-menu .glyphicon-trash { --mu-g: url(../../modules/modernui/icons/delete.svg); }
+.sidebar-menu .glyphicon-shopping-cart { --mu-g: url(../../modules/modernui/icons/ecommerce.svg); }
+.sidebar-menu .glyphicon-gift { --mu-g: url(../../modules/modernui/icons/rewards.svg); }
+.sidebar-menu .glyphicon-briefcase { --mu-g: url(../../modules/modernui/icons/products.svg); }
+.sidebar-menu .glyphicon-duplicate { --mu-g: url(../../modules/modernui/icons/copy.svg); }
+.sidebar-menu .glyphicon-stats { --mu-g: url(../../modules/modernui/icons/signal.svg); }
+.sidebar-menu .glyphicon-erase { --mu-g: url(../../modules/modernui/icons/filter-clear.svg); }
+.sidebar-menu .glyphicon-import { --mu-g: url(../../modules/modernui/icons/download.svg); }
+.sidebar-menu .glyphicon { color: #94a3b8; }
+.sidebar-menu > li { margin: 0 8px 2px; border-radius: 5px; }
+.sidebar-menu > li:hover { background-color: #f6f7fb; }
+.sidebar-menu > li > a { color: #475569; border-radius: 5px; }
+.sidebar-menu .active a, .sidebar-menu .active .glyphicon { color: #4338ca !important; font-weight: 600; background-color: #eef2ff; }
+.sidebar-menu .active .glyphicon { background-color: currentColor; }
+/* switches, checkboxes, file inputs, tabs */
+.onoffswitch-checkbox:checked + .onoffswitch-label { background-color: #4f46e5; }
+.onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before { border-color: #4f46e5; }
+input[type="checkbox"], input[type="radio"] { accent-color: #4f46e5; }
+input[type="file"] { font-size: 13px; color: #64748b; }
+input[type="file"]::file-selector-button { margin-right: 10px; padding: 6px 12px; border: 1px solid #e3e8ef; border-radius: 5px; background: #fff; color: #1e293b; font: inherit; font-weight: 500; cursor: pointer; }
+input[type="file"]::file-selector-button:hover { background: #f6f7fb; }
+.nav-tabs { border-bottom: 1px solid #eef1f6; }
+.nav-tabs > li > a { border: 0 !important; border-bottom: 2px solid transparent !important; border-radius: 0; color: #64748b; margin-right: 16px; padding: 10px 2px; }
+.nav-tabs > li > a:hover { background: transparent; color: #1e293b; }
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus { border-bottom-color: #4f46e5 !important; color: #4338ca; font-weight: 600; background: transparent; }
+/* users / mailboxes cards */
+.card-list .card { border: 1px solid #eef1f6; border-radius: 6px; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
+.card-list .card:hover { border-color: #e3e8ef; background: #fcfcfe; }
+.card-avatar { background-color: #eef2ff !important; color: #4338ca !important; }
+.user-admin-badge { color: #a5b4fc; }
+/* customer profile: initial avatar instead of the grey placeholder (see the provider script) */
+.customer-photo-container .mu-av { width: 64px; height: 64px; font-size: 26px; }
+/* empty cell of the contact list */
+.mu-empty { color: #cbd5e1; }
+/* users cards: the initial is drawn by ::before */
+.card-avatar:before { background-color: #eef2ff !important; color: #4338ca !important; border-radius: 50% !important; }
+/* search page: the filter keywords as small chips (click inserts them in the search field) */
+.sidebar-menu-noicons > li.menu-link { display: inline-block; margin: 0 0 6px 6px; border-radius: 4px; }
+.sidebar-menu-noicons > li.menu-link > a { height: auto; padding: 3px 8px !important; border-radius: 4px; background: #f1f4f9; color: #475569; font-size: 13px; line-height: 18px; }
+.sidebar-menu-noicons > li.menu-link > a:hover { background: #eef2ff; color: #4338ca; }
+.sidebar-menu-noicons > li.menu-link:hover { background: transparent; }
+.sidebar-menu-noicons > li.no-link { padding: 4px 20px 8px 14px; }
+/* modules page: white cards instead of Bootstrap's bright green, discreet "Enabled" badge */
+.module-card { border: 1px solid #eef1f6 !important; border-radius: 6px; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
+.module-card.active { background: #fff !important; border-color: #eef1f6 !important; }
+.module-card img { border-radius: 6px; }
+.module-card .label { border-radius: 4px; font-weight: 500; padding: 3px 7px; }
+.module-card .label-success { background: #dcfce7; color: #15803d; }
+.module-card .label-lightgrey { background: #f1f4f9; color: #64748b; }

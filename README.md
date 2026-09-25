@@ -3,6 +3,8 @@
 **A Freshdesk-inspired interface for [FreeScout](https://freescout.net).** Modern UI reworks the whole agent interface
 of FreeScout: a left navigation bar, ticket views with SLA badges, a dashboard, a properties panel next to each ticket,
 a Freshdesk-style reply editor, ajax actions everywhere, a phone version, an installable app and Web Push notifications.
+It borrows Freshdesk's ergonomics, with a look of its own (slate and indigo, light borders, small radii), also applied
+to FreeScout's own pages: settings, profiles, customers, users, mailboxes and modules.
 
 It is a single module: no core file is modified, nothing depends on the Customization module, and switching it off
 brings the stock FreeScout interface back.

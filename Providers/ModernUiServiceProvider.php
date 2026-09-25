@@ -178,7 +178,23 @@ class ModernUiServiceProvider extends ServiceProvider
     protected function overrideTranslations()
     {
         $translator = $this->app['translator'];
+        // 1) word replacements over every loaded string (<locale>.words.php), 2) exact strings (<locale>.php)
+        foreach (glob(__DIR__.'/../Resources/lang/overrides/*.words.php') as $file) {
+            $locale = basename($file, '.words.php');
+            $words = require $file;
+            $lines = [];
+            foreach ((array)$translator->getLoader()->load($locale, '*', '*') as $key => $value) {
+                if (is_string($value) && ($new = strtr($value, $words)) !== $value) {
+                    $lines['*.'.$key] = $new;
+                }
+            }
+            $translator->load('*', '*', $locale);
+            $translator->addLines($lines, $locale, '*');
+        }
         foreach (glob(__DIR__.'/../Resources/lang/overrides/*.php') as $file) {
+            if (substr($file, -10) === '.words.php') {
+                continue;
+            }
             $locale = basename($file, '.php');
             $translator->load('*', '*', $locale);
             $translator->addLines(require $file, $locale, '*');
@@ -562,7 +578,7 @@ class ModernUiServiceProvider extends ServiceProvider
             $phones = [];
             $recent = [];
             $initial = '?';
-            $av = ['#e5f2fd', '#c1e2ff', '#485a68'];
+            $av = ['#eef2ff', '#c7d2fe', '#475569'];
             if ($customer) {
                 $emails = $customer->getEmailsAsArray();
                 $labels = [1 => __('Work phone'), 2 => __('Landline'), 3 => __('Phone'), 4 => __('Mobile'), 5 => __('Fax'), 6 => __('Pager')];
@@ -733,6 +749,26 @@ class ModernUiServiceProvider extends ServiceProvider
                 var l = { loading: 'Loading…', cancel: 'Cancel', assign: 'Assign', status: 'Status', 'delete': 'Delete', tags: 'Tags' };
                 for (var k in l) { st.setProperty('--mu-t-' + k, JSON.stringify(muT(l[k]))); }
             })(document.documentElement.style);
+            // Icon-only buttons of FreeScout's side menus (e.g. the arrow under the mailbox settings menu): show their
+            // tooltip as a label, an arrow alone says nothing
+            $('a.btn-sidebar').each(function () {
+                var a = $(this), t = $.trim(a.attr('title') || a.attr('data-original-title') || '');
+                if (t && !$.trim(a.text()) && !a.find('.mu-btn-label').length) {
+                    a.addClass('mu-btn-labelled').append($('<span class="mu-btn-label"></span>').text(t));
+                }
+            });
+            // Customer without photo: initial on a pastel color (same colors as the contact list) instead of the grey placeholder
+            $('img.customer-photo[src*="default-avatar"]').each(function () {
+                var name = $.trim($(this).closest('.customer-snippet').find('.customer-name').first().text()), hue = 0;
+                for (var i = 0; i < name.length; i++) { hue = (hue * 31 + name.charCodeAt(i)) % 360; }
+                $(this).replaceWith($('<span class="mu-av"></span>').text((name.charAt(0) || '?').toUpperCase())
+                    .css({ background: 'hsl(' + hue + ', 60%, 92%)', borderColor: 'hsl(' + hue + ', 55%, 84%)', color: 'hsl(' + hue + ', 45%, 32%)' }));
+            });
+            // New ticket form: FreeScout shows "#Pending" until the ticket gets its number, which reads like a status
+            $('.conv-new-number').each(function () { if (!/\d/.test($(this).text())) { $(this).closest('.conv-info').hide(); } });
+            // Modules page: the "Active" badge shares its translation key with the ticket status, which this module
+            // renames "Open" (French "Ouvert"); a module is "enabled"
+            $('.module-card.active h4 .label-success').text(<?php echo json_encode(__('modernui::labels.enabled')); ?>);
             // mobile version (Public/js/mobile.js): "Account" page
             window.muMe = <?php echo json_encode($u ? [
                 'name' => $u->getFullName(), 'email' => $u->email, 'host' => request()->getHost(),
@@ -913,6 +949,16 @@ class ModernUiServiceProvider extends ServiceProvider
                         var gear = $('<div class="dropdown dropup mu-rail-manage"></div>');
                         gear.append('<a href="#" class="mu-rail-link dropdown-toggle" data-toggle="dropdown" title="Administration"><i class="mu-i mu-i-settings"></i></a>');
                         gear.append(manage.find('> ul.dropdown-menu').first().addClass('mu-rail-menu'));
+                        // an icon in front of each entry (FreeScout's own, then the usual module ones by address)
+                        var railMenuIcons = [
+                            [/\/app-settings/, 'settings'], [/\/mailboxes$/, 'inbox'], [/\/tags/, 'items'], [/\/users$/, 'groups'],
+                            [/\/modules/, 'grid'], [/translations/, 'multilingual'], [/\/(app-)?logs/, 'recent'], [/\/system/, 'info']
+                        ];
+                        gear.find('.mu-rail-menu > li > a').each(function () {
+                            var a = $(this), path = (a.attr('href') || '').replace(/^https?:\/\/[^\/]+/, '').split('?')[0], icon = 'folder';
+                            $.each(railMenuIcons, function (i, m) { if (m[0].test(path)) { icon = m[1]; return false; } });
+                            a.prepend('<i class="mu-i mu-i-' + icon + '"></i>');
+                        });
                         r.append($('<div class="mu-rail-bottom"></div>').append(gear));
                         manage.remove();
                     }
@@ -935,8 +981,14 @@ class ModernUiServiceProvider extends ServiceProvider
                     } else if (<?php echo \Route::is('dashboard') ? 'true' : 'false'; ?>) {
                         head.append('<div class="mu-head-title">' + muT('My dashboard') + '</div>');
                     } else {
+                        // title of the page: its heading, else the title of its side menu (search…), else the new ticket
+                        // form, else the browser title minus the " - App name" suffix
                         var h = $('.heading, .section-heading, h1.page-title').first();
-                        if (h.length) { head.append($('<div class="mu-head-title"></div>').text($.trim(h.clone().children().remove().end().text()))); }
+                        var headText = h.length ? $.trim(h.clone().children().remove().end().text()) : '';
+                        if (!headText) { headText = $.trim($('.sidebar-2col .sidebar-title').first().clone().children().remove().end().text()); }
+                        if (!headText && $('.conv-new-number').length) { headText = muT('New ticket'); }
+                        if (!headText && document.title) { headText = $.trim(document.title.split(' - ')[0]); }
+                        if (headText) { head.append($('<div class="mu-head-title"></div>').text(headText)); }
                     }
                     nav.find('.navbar-header').after(head);
                     // Right side of the top bar: New + Search (labeled button that opens the native search)
@@ -1545,7 +1597,7 @@ class ModernUiServiceProvider extends ServiceProvider
                 $('#conv-layout-main > .thread .thread-body').each(function () {
                     var body = $(this);
                     if (body.find('.mu-quote').length) { return; }
-                    var start = body.find('.gmail_quote, .gmail_extra, blockquote, .moz-cite-prefix, #appendonsend, #divRplyFwdMsg, .yahoo_quoted, div[style*="border-top:solid #E1E1E1"]').first();
+                    var start = body.find('.gmail_quote, .gmail_extra, blockquote, .moz-cite-prefix, #appendonsend, #divRplyFwdMsg, .yahoo_quoted, div[style*="border-top:solid #e6eaf0"]').first();
                     if (!start.length) {
                         // plain-text quote header: "Le 20 sept. 2026 à 21:24, X a écrit :" (French) / "On … wrote:" (English)
                         body.find('div, p, span').each(function () {

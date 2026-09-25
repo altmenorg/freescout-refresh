@@ -16,14 +16,14 @@ use Carbon\Carbon;
 class Views
 {
 
-    /** Freshdesk priorities (fd_priority): code => [label, dot color matched from Freshdesk]. */
+    /** Priorities (fd_priority, same codes as Freshdesk): code => [label, dot color]. */
     public static function priorities()
     {
         return [
-            1 => [__('Low'), '#9bd26b'],
-            2 => [__('Medium'), '#4d9cf6'],
-            3 => [__('High'), '#ffa72b'],
-            4 => [__('Urgent'), '#e43538'],
+            1 => [__('Low'), '#94a3b8'],
+            2 => [__('Medium'), '#38bdf8'],
+            3 => [__('High'), '#f59e0b'],
+            4 => [__('Urgent'), '#e11d48'],
         ];
     }
 
