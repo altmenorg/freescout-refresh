@@ -1413,3 +1413,15 @@ input[type="file"]::file-selector-button:hover { background: #f6f7fb; }
 html { background: var(--fd-bg); }
 body.rf-boot { visibility: hidden; animation: rf-boot-failsafe 0s 1.5s forwards; }
 @keyframes rf-boot-failsafe { to { visibility: visible; } }
+
+/* ---------------------------------------------------------------- reply: "This reply will go to the customer. Switch to a note…"
+   (last thread = a colleague's note). The native rule (style.css:2647) pulls it 15 px out on both sides and 9 px down, for a form
+   padding the Refresh reply card doesn't have: it overflowed the card. Full width of the card here, under the recipients. */
+.form-reply .alert-switch-to-note { margin: 0; padding: 8px 16px; border: 0; border-bottom: 1px solid #fde68a; border-radius: 0; background: #fffbeb; color: #92400e; font-size: 13px; line-height: 19px; box-shadow: inset 3px 0 0 #f59e0b; }
+.form-reply .alert-switch-to-note .glyphicon { top: 2px; margin: 0 6px 0 0; font-size: 13px; color: #d97706; }
+.form-reply .alert-switch-to-note a, .form-reply .alert-switch-to-note a:hover, .form-reply .alert-switch-to-note a:focus { color: #92400e; font-weight: 600; }
+
+/* Co-navigation block of the right panel: aligned on the other sections (the Bootstrap heading keeps its 15 px padding) and chevron
+   on the right like theirs (the generic caret rule above, body .rf-rp .panel-title .caret, resets its margin-left: auto) */
+.rf-rp-cobrowse .panel-group .panel-heading { padding: 0; }
+body .rf-rp .rf-rp-cobrowse .panel-title .caret { margin-left: auto; }
