@@ -2,7 +2,7 @@
 
 **A new, Freshdesk-inspired interface for [FreeScout](https://freescout.net).** Refresh reworks the whole agent interface
 of FreeScout: a left navigation bar, ticket views with SLA badges, a dashboard, a properties panel next to each ticket,
-a Freshdesk-style reply editor, ajax actions everywhere, a phone version, an installable app and Web Push notifications.
+a Freshdesk-style reply editor, ajax actions everywhere and a phone version.
 It borrows Freshdesk's ergonomics, with a look of its own (slate and indigo, light borders, small radii), also applied
 to FreeScout's own pages: settings, profiles, customers, users, mailboxes and modules.
 
@@ -58,14 +58,12 @@ brings the stock FreeScout interface back.
 
 ![Dashboard](screenshots/dashboard.png)
 
-### Phone version, installable app and notifications
+### Phone version
 - **Phone version** (under 768 px), modelled on the Freshdesk Android app: title bar, views drawer, sort and filter
   sheets, ticket cards, infinite scroll, long press to select, bottom tab bar, full-screen editor and properties.
-- **Installable app (PWA)**: on a phone, "Install app" / "Add to Home Screen" opens FreeScout full screen, with its own
-  name and icon. No store, no closed-source app.
-- **Web Push notifications** on phones and desktops, even when FreeScout is closed. They use FreeScout's own
-  notification settings (the *Mobile* column of Profile › Notifications). Pure PHP implementation (VAPID + aes128gcm),
-  no external service and no Composer dependency.
+- **Installable app and push notifications**: they moved to a separate module,
+  [Web Push](https://github.com/altmenorg/freescout-webpush), which also works without Refresh. With both modules, the
+  installed app opens on the phone version and the notifications prompt sits above its tab bar.
 
 <p>
   <img src="screenshots/mobile-list.png" alt="Phone version: ticket list" width="300">
@@ -81,8 +79,7 @@ and optionally `Resources/lang/overrides/<locale>.php` to reword FreeScout's own
 
 ## Requirements
 
-- FreeScout 1.8 or newer. Web Push needs PHP 7.3+ with the `openssl` extension.
-- **HTTPS** for the installable app and push notifications (browsers require it).
+- FreeScout 1.8 or newer.
 - Tested with the Tags module; the Freshdesk-style *Type* and *Priority* fields are stored in the conversation data and
   filled by the [Freshdesk Import](https://github.com/altmenorg/freescout-freshdesk-import) module.
 
@@ -91,12 +88,18 @@ and optionally `Resources/lang/overrides/<locale>.php` to reword FreeScout's own
 1. Download the latest release and unzip it into the `Modules` folder of FreeScout: you get `Modules/Refresh`
    (the folder **must** have this name).
 2. In FreeScout, **Manage › Modules**: activate **Refresh**.
-3. Optional: **Manage › Settings › Refresh** to set your SLA, logo and app name.
+3. Optional: **Manage › Settings › Refresh** to set your SLA and logo.
+4. Optional: install [Web Push](https://github.com/altmenorg/freescout-webpush) for the installable app and push
+   notifications.
 
 To go back to the stock interface, deactivate the module. Its settings are kept.
 
 **Upgrading from Modern UI 1.x** (this module's former name): deactivate Modern UI, delete `Modules/ModernUi`, install
-Refresh as above. Its settings, shared views and push notification keys are taken over automatically.
+Refresh as above. Its settings and shared views are taken over automatically.
+
+**Upgrading from Refresh 1.2 or older with push notifications in use:** install
+[Web Push](https://github.com/altmenorg/freescout-webpush) along with Refresh 1.3. It takes over the app settings, the
+server keys and the subscribed devices: nobody has to subscribe again.
 
 ## Settings
 
@@ -107,17 +110,8 @@ Refresh as above. Its settings, shared views and push notification keys are take
 | **First response** | Hours to the first agent reply (default 24). Used by badges, views and the dashboard. Calendar hours, paused while a ticket is *Pending*. |
 | **Resolution** | Hours to resolve a ticket (default 72). The due date of a ticket can also be changed by hand. |
 | **Logo** | Image shown at the top of the left bar. Empty: the header logo (Customization module or FreeScout's own). |
-| **App name / Short name** | Name of the installable app, and the one shown under its icon. |
-| **App icon** | Square PNG, 512 px recommended. Empty: FreeScout's icons. |
-| **Contact e-mail** | Given to the push services as the sender of the notifications. Empty: the first administrator. |
-
-**Push notifications, per agent:** install the app (or allow notifications in the desktop browser when asked), then
-tick the *Mobile* column in **Profile › Notifications**.
 
 ![Settings](screenshots/settings.png)
-
-The push keys are created on first use in `storage/app/refresh/`. Keep this folder when moving servers: new keys
-would silently cut every existing subscription.
 
 ## For module developers
 

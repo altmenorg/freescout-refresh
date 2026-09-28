@@ -1201,18 +1201,9 @@ body.rf-view-loading .rf-list-scroll { opacity: .45; pointer-events: none; }
 .rf-subj-foot .rf-subj-ok:hover { background: var(--fd-primary-h); }
 .rf-subj-foot .rf-subj-ok:disabled { opacity: .6; cursor: default; }
 
-/* PWA / Web Push: "Notifications on this device" box (Profile → Notifications) and invitation banner in the
-   installed app. See "PWA Support" in the provider. */
-.rf-push-box { margin: 0 0 20px; padding: 16px; border: 1px solid var(--fd-border); border-radius: 6px; background: #fff; color: var(--fd-text); }
-.rf-push-box.is-on { border-color: #bbf7d0; background: #f3fbf8; }
-.rf-push-head { display: flex; align-items: center; gap: 6px; font-size: 15px; }
-.rf-push-state { margin: 8px 0 12px; }
-.rf-push-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-.rf-push-help { margin: 12px 0 0; font-size: 13px; color: var(--fd-text-2); }
-.rf-push-ask { position: fixed; left: 12px; right: 12px; bottom: calc(68px + env(safe-area-inset-bottom)); z-index: 1060; display: flex; align-items: center; gap: 8px; padding: 12px 12px 12px 16px; border-radius: 6px; background: #1e293b; color: #fff; font-size: 14px; box-shadow: 0 4px 12px rgba(15, 23, 42, .3); }
-.rf-push-ask span { flex: 1; }
-.rf-push-ask button { flex: none; padding: 6px 10px; border: 0; border-radius: 6px; background: transparent; color: #fff; font-weight: 600; }
-.rf-push-ask .rf-push-ask-yes { background: #fff; color: #1e293b; }
+/* Web Push module (github.com/altmenorg/freescout-webpush): its profile box in the Refresh look */
+.webpush-box { border-color: var(--fd-border); border-radius: 6px; color: var(--fd-text); }
+.webpush-help { color: var(--fd-text-2); }
 
 /* Floating messages ("Ticket updated", "Settings saved"…) as a Freshdesk toast, desktop and mobile. Measured
    on Freshdesk (.nucleus-toast-message): white 400 px card centered 16 px from the top, 4 px top

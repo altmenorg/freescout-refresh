@@ -812,4 +812,7 @@
   body.rf-m .rf-dash .rf-dash-list { padding: 0; background: transparent !important; border: 0 !important; box-shadow: none !important; }
   body.rf-m .rf-dash .rf-dash-list-heading { padding: 8px 0 0; }
   body.rf-m .rf-dash .rf-dash-list .table.table-conversations > tbody { padding: 8px 0 12px; }
+
+  /* Web Push module's "Get notifications?" prompt: above the bottom tab bar */
+  body.rf-m .webpush-ask { bottom: calc(68px + env(safe-area-inset-bottom)); }
 }

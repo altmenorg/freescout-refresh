@@ -60,7 +60,6 @@ class RefreshServiceProvider extends ServiceProvider
         $this->registerConversationHooks();
         $this->registerSendDropdown();
         $this->registerJavascript();
-        $this->registerPush();
         $this->registerSettings();
 
         // The shell (rail, top bar, list layout) is built by the provider script at the end of the page: until then the
@@ -85,10 +84,11 @@ class RefreshServiceProvider extends ServiceProvider
         });
     }
 
-    /** Manage > Settings > Refresh (Services\Settings: SLA, logo, installable app, push contact). */
+    /** Manage > Settings > Refresh (Services\Settings: SLA, logo). The installable app and push notifications
+     *  moved to the Web Push module (github.com/altmenorg/freescout-webpush). */
     protected function registerSettings()
     {
-        $keys = ['sla_first_response', 'sla_resolution', 'logo_url', 'app_name', 'app_short_name', 'app_icon_url', 'push_contact'];
+        $keys = ['sla_first_response', 'sla_resolution', 'logo_url'];
         \Eventy::addFilter('settings.sections', function ($sections) {
             $sections['refresh'] = ['title' => 'Refresh', 'icon' => 'blackboard', 'order' => 150];
             return $sections;
@@ -108,54 +108,9 @@ class RefreshServiceProvider extends ServiceProvider
             }
             return $settings;
         }, 20, 2);
-        \Eventy::addFilter('settings.section_params', function ($params, $section) {
-            if ($section != 'refresh') {
-                return $params;
-            }
-            return ['template_vars' => ['default_contact' => preg_replace('/^mailto:/', '', \Modules\Refresh\Services\Settings::pushContact())]];
-        }, 20, 2);
         \Eventy::addFilter('settings.view', function ($view, $section) {
             return $section == 'refresh' ? 'refresh::settings' : $view;
         }, 20, 2);
-    }
-
-    /** PWA + Web Push (Services/WebPush): replaces the FreeScout app and its paid
-     *  "Mobile Notifications" module. Hooks into the native "Mobile" channel: each agent sets their
-     *  notifications in Profile → Notifications (Mobile column, enabled here), FreeScout works out who to
-     *  notify, we send it. */
-    protected function registerPush()
-    {
-        \Eventy::addFilter('notifications.mobile_available', function () {
-            return true;
-        });
-        \Eventy::addAction('subscription.process_events', function ($notify) {
-            if (empty($notify[\App\Subscription::MEDIUM_MOBILE])) {
-                return;
-            }
-            foreach ($notify[\App\Subscription::MEDIUM_MOBILE] as $info) {
-                try {
-                    $conv = $info['conversation'];
-                    $thread = \App\Subscription::chooseThread($info['threads']);
-                    $who = '';
-                    $by = $thread ? $thread->getCreatedBy() : null;
-                    if ($by) {
-                        $who = ($by instanceof \App\Customer) ? $by->getFullName(true) : $by->getFullName();
-                    }
-                    $text = $thread ? \Helper::textPreview($thread->body, 140) : '';
-                    $payload = [
-                        'title' => '#'.$conv->number.' '.$conv->getSubject(),
-                        'body'  => trim($who.($who && $text ? ' : ' : '').$text) ?: __('New activity'),
-                        'url'   => $conv->url(),
-                        'tag'   => 'conv-'.$conv->id,
-                    ];
-                    foreach ($info['users'] as $user) {
-                        \Modules\Refresh\Services\WebPush::sendToUser($user->id, $payload);
-                    }
-                } catch (\Throwable $e) {
-                    \Log::error('[Refresh][WebPush] '.$e->getMessage());
-                }
-            }
-        });
     }
 
     /** Module stylesheet (Public/css/refresh.css). FreeScout concatenates/minifies the stylesheets into a
@@ -853,107 +808,6 @@ class RefreshServiceProvider extends ServiceProvider
                     decorate();
                     if (window.MutationObserver) {
                         new MutationObserver(decorate).observe(document.body, { childList: true });
-                    }
-                })();
-
-                // ------------------------------------------------------------ PWA + notifications
-                // Module manifest (the core's has no name: site not installable), white status bar, service worker
-                // (route refresh.pwa.sw, Resources/js/service-worker.js) which receives Web Push notifications even
-                // with the app closed. See PushController / WebPush.
-                (function () {
-                    var mf = document.querySelector('link[rel="manifest"]');
-                    if (mf) { mf.setAttribute('href', <?php echo json_encode(route('refresh.pwa.manifest')); ?>); }
-                    if (!document.querySelector('meta[name="theme-color"]')) { $('head').append('<meta name="theme-color" content="#ffffff">'); }
-                    if (!('serviceWorker' in navigator) || !window.PushManager || !window.Notification) { return; }
-                    var csrf = function () { return $('meta[name="csrf-token"]').attr('content'); };
-                    var keyBytes = function (b64) {
-                        var pad = '='.repeat((4 - b64.length % 4) % 4);
-                        var raw = window.atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
-                        var out = new Uint8Array(raw.length);
-                        for (var i = 0; i < raw.length; i++) { out[i] = raw.charCodeAt(i); }
-                        return out;
-                    };
-                    var regP = navigator.serviceWorker.register(<?php echo json_encode(route('refresh.pwa.sw')); ?>, { scope: '/' });
-                    var current = function () {
-                        return regP.then(function (reg) { return reg.pushManager.getSubscription(); });
-                    };
-                    var enable = function () {
-                        return Notification.requestPermission().then(function (perm) {
-                            if (perm !== 'granted') { throw new Error('refus'); }
-                            return $.getJSON(<?php echo json_encode(route('refresh.push.key')); ?>);
-                        }).then(function (r) {
-                            return regP.then(function (reg) {
-                                return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(r.key) });
-                            });
-                        }).then(function (sub) {
-                            return $.ajax({ url: <?php echo json_encode(route('refresh.push.subscribe')); ?>, type: 'POST', contentType: 'application/json',
-                                headers: { 'X-CSRF-TOKEN': csrf() }, data: JSON.stringify({ subscription: sub.toJSON() }) });
-                        });
-                    };
-                    var disable = function () {
-                        return current().then(function (sub) {
-                            if (!sub) { return; }
-                            var ep = sub.endpoint;
-                            return sub.unsubscribe().then(function () {
-                                return $.post(<?php echo json_encode(route('refresh.push.unsubscribe')); ?>, { _token: csrf(), endpoint: ep });
-                            });
-                        });
-                    };
-                    window.rfPush = { current: current, enable: enable, disable: disable };
-
-                    // Profile → Notifications (one's own): "Notifications on this device" box
-                    <?php if (\Route::is('users.notifications') && auth()->check() && (int)request()->route('id') === (int)auth()->user()->id) { ?>
-                    var form = $('form.user-subscriptions').first();
-                    if (form.length) {
-                        var box = $('<div class="rf-push-box"><div class="rf-push-head"><i class="rf-i rf-i-m-bell"></i> <strong>' + rfT('Notifications on this device') + '</strong></div>'
-                            + '<p class="rf-push-state"></p><div class="rf-push-btns">'
-                            + '<button type="button" class="btn btn-primary rf-push-on">' + rfT('Turn on') + '</button> '
-                            + '<button type="button" class="btn btn-default rf-push-off">' + rfT('Turn off') + '</button> '
-                            + '<button type="button" class="btn btn-default rf-push-test">' + rfT('Send a test') + '</button></div>'
-                            + '<p class="rf-push-help">' + rfT('Notified events are the ones checked in the') + ' <strong>Mobile</strong> ' + rfT('column below. On a phone, install the app first: Chrome\'s ⋮ menu →') + ' <em>' + rfT('Install app') + '</em>.</p></div>');
-                        form.before(box);
-                        var refresh = function () {
-                            current().then(function (sub) {
-                                var denied = Notification.permission === 'denied';
-                                box.find('.rf-push-state').text(denied
-                                    ? rfT('Notifications are blocked for this site: allow them in the browser settings (padlock in the address bar).')
-                                    : (sub ? rfT('Turned on on this device.') : rfT('Turned off on this device.')));
-                                box.toggleClass('is-on', !!sub);
-                                box.find('.rf-push-on').toggle(!sub && !denied);
-                                box.find('.rf-push-off, .rf-push-test').toggle(!!sub);
-                            });
-                        };
-                        refresh();
-                        box.on('click', '.rf-push-on', function () {
-                            enable().then(function () { if (window.showFloatingAlert) { showFloatingAlert('success', rfT('Notifications turned on')); } setTimeout(function () { window.location.reload(); }, 800); },
-                                function () { if (window.showFloatingAlert) { showFloatingAlert('error', rfT('Could not turn on notifications')); } refresh(); });
-                        });
-                        box.on('click', '.rf-push-off', function () { disable().then(refresh, refresh); });
-                        box.on('click', '.rf-push-test', function () {
-                            $.post(<?php echo json_encode(route('refresh.push.test')); ?>, { _token: csrf() }, function (r) {
-                                if (window.showFloatingAlert) { showFloatingAlert(r.status === 'success' ? 'success' : 'error', r.msg); }
-                            }, 'json');
-                        });
-                    }
-                    <?php } ?>
-
-                    // App installed (fullscreen) without notifications: offer once to turn them on
-                    var standalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
-                    var asked = false;
-                    try { asked = window.localStorage.getItem('rf_push_asked') === '1'; } catch (e) {}
-                    if (standalone && !asked && Notification.permission === 'default') {
-                        current().then(function (sub) {
-                            if (sub) { return; }
-                            var bar = $('<div class="rf-push-ask"><span>' + rfT('Get notifications on this phone?') + '</span>'
-                                + '<button type="button" class="rf-push-ask-no">' + rfT('Later') + '</button><button type="button" class="rf-push-ask-yes">' + rfT('Turn on') + '</button></div>');
-                            var done = function () { try { window.localStorage.setItem('rf_push_asked', '1'); } catch (e) {} bar.remove(); };
-                            bar.on('click', '.rf-push-ask-no', done);
-                            bar.on('click', '.rf-push-ask-yes', function () {
-                                enable().then(function () { if (window.showFloatingAlert) { showFloatingAlert('success', rfT('Notifications turned on')); } }, function () {});
-                                done();
-                            });
-                            $('body').append(bar);
-                        });
                     }
                 })();
 
