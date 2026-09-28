@@ -74,4 +74,23 @@
         }
         return out;
     });
+
+    // Opening the reply created a draft by itself (FreeScout bug, also without this module): prepareReplyForm() empties the
+    // editor with setReplyBody('<div><br></div>'), Summernote reports it as a change (onReplyChange → fs_reply_changed), and the
+    // "do not save empty" guard of the next autosave is bypassed as soon as the "To" select has a value (customer with several
+    // addresses, view.blade.php). A change that leaves the editor empty now only counts once the agent has changed something.
+    fsAddFilter('editor.options', function (options) {
+        var cb = options.callbacks && options.callbacks.onChange;
+        if (!cb) {
+            return options;
+        }
+        options.callbacks.onChange = function (contents) {
+            var empty = !/<(img|table|iframe|video)\b/i.test(contents || '') && !$.trim($('<div>').html(contents || '').text());
+            if (empty && !window.fs_reply_changed) {
+                return;
+            }
+            return cb.apply(this, arguments);
+        };
+        return options;
+    });
 })();
