@@ -2209,9 +2209,11 @@ class RefreshServiceProvider extends ServiceProvider
             })();
 
             // Shell built: show the page (see the body.class action). Registered last, so it runs after the other
-            // "ready" handlers; the frame lets the browser apply the new layout before the first paint.
+            // "ready" handlers. Removed directly, not in a requestAnimationFrame: Chrome runs no frame (nor the CSS
+            // fail-safe animation) in a background tab, the page would stay hidden there. The browser doesn't paint
+            // between the end of this script and the next style pass anyway.
             $(function () {
-                window.requestAnimationFrame(function () { document.body.classList.remove('rf-boot'); });
+                document.body.classList.remove('rf-boot');
             });
             <?php
         });
