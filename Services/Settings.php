@@ -29,14 +29,15 @@ class Settings
     }
 
     /**
-     * Logo of the left bar: setting, else the header logo of the Customization module, else FreeScout's blue icon
-     * (FreeScout's own header logo is white, made for its blue top bar: nearly invisible on the light left bar).
+     * Logo of the left bar: setting, else the header logo of the Customization module, else FreeScout's icon in
+     * Refresh's indigo (FreeScout's own header logo is white, made for its blue top bar: nearly invisible on the light
+     * left bar; its blue icon clashed with the indigo accent).
      */
     public static function logoUrl()
     {
         $default = asset('img/logo-brand.svg');
         $logo = self::get('logo_url') ?: \Eventy::filter('layout.header_logo', $default);
-        return $logo === $default ? asset('img/logo-icon-150.png') : $logo;
+        return $logo === $default ? asset('modules/refresh/img/logo.svg') : $logo;
     }
 
     /** Name of the installable app (PWA). */
