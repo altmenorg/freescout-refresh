@@ -11,6 +11,13 @@ brings the stock FreeScout interface back.
 
 ![Ticket list](screenshots/list.png)
 
+## Companion modules
+
+- **Installable app and push notifications on phones**: [Web Push](https://github.com/altmenorg/freescout-webpush).
+- **Helping customers on screen** (co-browsing from the ticket): [Cobrowse](https://github.com/altmenorg/freescout-cobrowse).
+- **Moving from Freshdesk** with your whole history: [Freshdesk Import](https://github.com/altmenorg/freescout-freshdesk-import).
+- **AI-drafted replies** in the editor: [Claude Assistant](https://github.com/altmenorg/freescout-claude-assistant).
+
 ## Features
 
 ### Navigation
@@ -132,6 +139,15 @@ Other modules can add an entry with their own icon to the left bar:
 
 Links a module adds to FreeScout's top menu also appear in the bar, with a generic icon, when they are not declared
 this way. The [Cobrowse module](https://github.com/altmenorg/freescout-cobrowse) is an example.
+
+## Other modules from the Refresh project
+
+Modules built alongside Refresh. Each one also works with FreeScout's stock interface.
+
+- **[Web Push](https://github.com/altmenorg/freescout-webpush)**: install FreeScout as an app on phones and desktops, with end-to-end encrypted Web Push notifications.
+- **[Cobrowse](https://github.com/altmenorg/freescout-cobrowse)**: co-browse with your customers (Cobrowse.io) from the ticket sidebar, to guide them on your website or app.
+- **[Freshdesk Import](https://github.com/altmenorg/freescout-freshdesk-import)**: import your Freshdesk tickets into FreeScout and keep them in sync until you switch over.
+- **[Claude Assistant](https://github.com/altmenorg/freescout-claude-assistant)**: draft and improve replies with Claude, from the reply editor.
 
 ## Credits
 
