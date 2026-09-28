@@ -1484,7 +1484,12 @@ class RefreshServiceProvider extends ServiceProvider
                     tb.append('<button type="button" class="rf-btn rf-tb-act" data-native=".conv-reply"><i class="rf-i rf-i-fd-reply rf-i-sm"></i>' + rfT('Reply') + '</button>');
                     tb.append('<button type="button" class="rf-btn rf-tb-act" data-native=".conv-add-note"><i class="rf-i rf-i-fd-note rf-i-sm"></i>Note</button>');
                     tb.append('<button type="button" class="rf-btn rf-tb-act" data-native=".conv-forward"><i class="rf-i rf-i-forward rf-i-sm"></i>' + rfT('Forward') + '</button>');
-                    var closed = $('#conv-status .conv-status li.active a').attr('data-status') === '<?php echo Conversation::STATUS_CLOSED; ?>';
+                    // Current status: native menu, else the properties panel (server-rendered, kept up to date by every ajax change).
+                    // Reading only the native menu once showed "Close" on a closed ticket, its entries being missing.
+                    var rfStatus = function () {
+                        return $('#conv-status .conv-status li.active a').attr('data-status') || $('.rf-rp .rf-rp-status-select').attr('data-initial') || '';
+                    };
+                    var closed = rfStatus() === '<?php echo Conversation::STATUS_CLOSED; ?>';
                     tb.append('<button type="button" class="rf-btn rf-tb-close' + (closed ? ' rf-reopen' : '') + '"><i class="rf-i rf-i-fd-close rf-i-sm"></i>' + (closed ? rfT('Reopen') : rfT('Close')) + '</button>');
                     // ⋮ = native "More actions" menu (Follow, Forward, Merge, Print…) + Delete
                     var more = toolbar.find('.conv-actions > .dropdown.conv-action').filter(function () { return $(this).find('.glyphicon-option-horizontal').length; }).first();
@@ -1523,7 +1528,7 @@ class RefreshServiceProvider extends ServiceProvider
                     // Close = close then open the next open ticket; Reopen = reopen in place, without reloading.
                     tb.on('click', '.rf-tb-close', function () {
                         // state re-read on every click: "Update" (ajax) may have changed the status since the page loaded
-                        closed = $('#conv-status .conv-status li.active a').attr('data-status') === '<?php echo Conversation::STATUS_CLOSED; ?>';
+                        closed = rfStatus() === '<?php echo Conversation::STATUS_CLOSED; ?>';
                         var code = closed ? '<?php echo Conversation::STATUS_ACTIVE; ?>' : '<?php echo Conversation::STATUS_CLOSED; ?>';
                         var data = { action: 'conversation_change_status', status: code, conversation_id: getGlobalAttr('conversation_id') };
                         if (closed) { data.x_embed = 1; } else { data.after_send = <?php echo \App\MailboxUser::AFTER_SEND_NEXT; ?>; }
@@ -1613,6 +1618,8 @@ class RefreshServiceProvider extends ServiceProvider
                     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                     return rfT(days[d.getDay()]) + ' ' + d.getDate() + ' ' + rfT(months[mi]) + ' ' + m[3] + ' ' + m[4];
                 };
+                // Re-runnable (already processed threads are skipped): also called on threads added after a reply sent without reloading.
+                var rfThreadDecor = function () {
                 var threads = $('#conv-layout-main > .thread').not('.thread-type-draft');
                 var firstCustomer = threads.filter('.thread-type-customer').last(); // column-reverse: the last one in the DOM is the oldest
                 threads.each(function () {
@@ -1679,6 +1686,8 @@ class RefreshServiceProvider extends ServiceProvider
                     box.before(btn);
                     btn.on('click', function () { box.toggle(); });
                 });
+                };
+                rfThreadDecor();
 
                 // ------------------------------------------------------------ editor modes (Reply / Note / Forward)
                 // Current mode read from the native block: '.conv-reply' | '.conv-add-note' | '.conv-forward' | '' (closed).
@@ -1858,6 +1867,179 @@ class RefreshServiceProvider extends ServiceProvider
                     // thread reloaded via AJAX after sending
                     new MutationObserver(rfThreadTools).observe(document.getElementById('conv-layout-main'), { childList: true });
                 }
+
+                // ------------------------------------------------------------ reply sent without reloading the page (Freshdesk)
+                // After a reply, note or forward, main.js reloads the page (window.location.href = redirect_url): the editor
+                // closes and the conversation jumps back to its top. When that redirect stays on this ticket, the page is
+                // fetched in the background instead and what changed is brought in: new messages, status, agent, SLA and the
+                // "Email sent · Undo" message. Any other redirect (sending and closing -> next open ticket, folder) stays
+                // native, and so does any failure (plain reload).
+                (function () {
+                    var nativeFsAjax = window.fsAjax;
+                    if (typeof nativeFsAjax !== 'function' || !window.DOMParser || !$('#conv-layout-main').length) { return; }
+                    var here = window.location.pathname.replace(/\/+$/, '');
+                    var sameTicket = function (url) {
+                        var a = document.createElement('a');
+                        a.href = url;
+                        return a.hostname === window.location.hostname && a.pathname.replace(/\/+$/, '') === here;
+                    };
+                    var key = function (el) { return el.getAttribute('data-thread_id') || el.id || ''; };
+                    // thread type/state (a sent draft keeps its id but becomes a message: it must be replaced)
+                    var sig = function (el) { return (el.className.match(/\bthread-(type|state)-\S+/g) || []).sort().join(' '); };
+
+                    // native per-thread actions: main.js binds them directly on the elements present at load,
+                    // so threads brought in afterwards get them through delegation
+                    var main = $('#conv-layout-main');
+                    main.on('click', '.rf-live .edit-draft-trigger', function (e) { e.preventDefault(); editDraft($(this)); });
+                    main.on('click', '.rf-live .discard-draft-trigger', function (e) { e.preventDefault(); discardDraft($(this).parents('.thread:first').attr('data-thread_id')); });
+                    main.on('click', '.rf-live .thread-edit-trigger', function (e) { e.preventDefault(); editThread($(this)); });
+                    main.on('click', '.rf-live .thread-delete-trigger', function (e) { e.preventDefault(); deleteThread($(this)); });
+                    main.on('click', '.rf-live .thread-original-show', function (e) { e.preventDefault(); threadShowOriginal($(this)); });
+                    main.on('click', '.rf-live .thread-original-hide', function (e) { e.preventDefault(); threadHideOriginal($(this)); });
+                    main.on('click', '.rf-live .btn-thread-retry', function (e) {
+                        e.preventDefault();
+                        var button = $(this).button('loading');
+                        fsAjax({ action: 'retry_send', thread_id: button.parents('.thread:first').attr('data-thread_id') }, laroute.route('conversations.ajax'), function (r) {
+                            if (isAjaxSuccess(r)) { reloadPage(); } else { showAjaxError(r); button.button('reset'); }
+                        }, true);
+                    });
+
+                    var syncThreads = function (fresh) {
+                        var incoming = {};
+                        $(fresh).children('.thread').each(function () { incoming[key(this)] = this; });
+                        var kept = {};
+                        main.children('.thread').each(function () {
+                            var f = incoming[key(this)];
+                            if (f && sig(f) === sig(this)) { kept[key(this)] = true; } else { $(this).remove(); }
+                        });
+                        // native order = newest first: what is new goes before the first message still in place
+                        var added = [];
+                        $(fresh).children('.thread').each(function () {
+                            if (!kept[key(this)]) { added.push($(document.importNode(this, true)).addClass('rf-live')[0]); }
+                        });
+                        if (!added.length) { return $(); }
+                        var anchor = main.children('.thread').first();
+                        if (anchor.length) { anchor.before(added); } else { main.prepend(added); }
+                        var $added = $(added);
+                        $added.find('.thread-content a').attr('target', '_blank');
+                        return $added;
+                    };
+
+                    var syncState = function (doc) {
+                        var status = $(doc).find('#conv-status .conv-status li.active a').attr('data-status');
+                        if (status) {
+                            $('#conv-status .conv-status li').removeClass('active').children('a[data-status="' + status + '"]').parent().addClass('active');
+                            var closed = status === '<?php echo Conversation::STATUS_CLOSED; ?>';
+                            $('.rf-tb-close').toggleClass('rf-reopen', closed).html('<i class="rf-i rf-i-fd-close rf-i-sm"></i>' + (closed ? rfT('Reopen') : rfT('Close')));
+                        }
+                        var user = $(doc).find('#conv-assignee .conv-user li.active a').attr('data-user_id');
+                        if (user) {
+                            $('#conv-assignee .conv-user li').removeClass('active').children('a[data-user_id="' + user + '"]').parent().addClass('active');
+                        }
+                        // properties panel: status, agent, SLA (type and priority do not change when sending)
+                        var frp = $(doc).find('.rf-rp').first(), rp = $('.rf-rp').first();
+                        if (frp.length && rp.length) {
+                            rp.find('.rf-rp-status-name').text(frp.find('.rf-rp-status-name').text());
+                            $.each(['.rf-rp-status-select', '.rf-rp-user'], function (i, sel) {
+                                var v = frp.find(sel).attr('data-initial');
+                                if (v !== undefined) { rp.find(sel).val(v).attr('data-initial', v).trigger('change'); }
+                            });
+                            var fs = frp.find('.rf-rp-sla').first(), sl = rp.find('.rf-rp-sla').first();
+                            if (fs.length && sl.length) {
+                                sl.toggleClass('rf-rp-sla-late', fs.hasClass('rf-rp-sla-late'));
+                                sl.children('.rf-i').first().attr('class', fs.children('.rf-i').first().attr('class'));
+                                var fbox = fs.children('div').first(), box = sl.children('div').first();
+                                box.children('div').first().text(fbox.children('div').first().text());
+                                var fdate = fbox.children('.rf-rp-sla-date'), date = box.children('.rf-rp-sla-date');
+                                if (!fdate.length) { date.remove(); } else if (date.length) { date.html(fdate.html()); } else { box.children('div').first().after(fdate.clone()); }
+                            }
+                        }
+                        // "This reply will go to the customer…" warning: depends on the latest message
+                        if (!$(doc).find('.alert-switch-to-note').length) { $('.alert-switch-to-note').remove(); }
+                    };
+
+                    // editor back to its state of a freshly loaded page, closed
+                    var resetEditor = function (doc, isNote) {
+                        var form = $('.conv-reply-block form').first();
+                        hideReplyEditor();
+                        $('#conv-subject').removeClass('action-visible');
+                        if (isNote) { forgetNote(getGlobalAttr('conversation_id')); }
+                        setReplyBody(fs_body_default);
+                        form.find(':input[name="thread_id"]').val('');
+                        // "Send and set as" may have changed the after-send choice: back to the page's default
+                        var fa = $(doc).find('#after_send').first();
+                        if (fa.length) { $('#after_send').val(fa.val()); }
+                        var att = $('.attachments-upload').first();
+                        att.find('input').remove();
+                        att.find('ul').empty();
+                        att.css('display', '');
+                        // default status / agent for the next reply (they depend on the new state of the ticket)
+                        $.each(['status', 'user_id'], function (i, name) {
+                            var f = $(doc).find('#editor_bottom_toolbar select[name="' + name + '"]').first();
+                            var el = $('select[name="' + name + '"]').filter(function () { return $(this).closest('form').is(form) || $(this).closest('.note-statusbar, #editor_bottom_toolbar').length; }).first();
+                            if (!f.length || !el.length) { return; }
+                            $.each(['data-reply-status', 'data-note-status'], function (j, a) { if (f.attr(a) !== undefined) { el.attr(a, f.attr(a)); } });
+                            el.val(f.find('option[selected]').attr('value') || f.val());
+                        });
+                        // Cc / Bcc pre-filled from the ticket, as on load
+                        $.each(['cc', 'bcc'], function (i, name) {
+                            var el = $('#' + name);
+                            if (!el.length || !window.cleanSelect2) { return; }
+                            cleanSelect2(el);
+                            $(doc).find('#' + name + ' option[selected]').each(function () { addSelect2Option(el, { id: this.value, text: $(this).text() }); });
+                        });
+                        fs_reply_changed = false;
+                        fs_processing_send_reply = false;
+                        $('.btn-reply-submit').button('reset');
+                    };
+
+                    var liveRefresh = function (isNote) {
+                        var d = $.Deferred();
+                        $.ajax({ url: window.location.href.split('#')[0], dataType: 'html', cache: false }).done(function (html) {
+                            var doc = new DOMParser().parseFromString(html, 'text/html');
+                            var fresh = doc.getElementById('conv-layout-main');
+                            if (!fresh || !$(fresh).children('.thread').length) { d.reject(); return; }
+                            try {
+                                var added = syncThreads(fresh);
+                                rfThreadDecor();
+                                syncState(doc);
+                                resetEditor(doc, isNote);
+                                if (window.initTooltips) { initTooltips(); }
+                                // "Email sent · Undo": the flash message put in session by the send is in the fetched page
+                                $(doc).find('.alert-floating').each(function () { $('body').append(document.importNode(this, true)); });
+                                if (window.fsFloatingAlertsInit) { fsFloatingAlertsInit(); }
+                                $(document).trigger('rf:ticket-updated');
+                                // the newest message (at the bottom of the conversation) in view
+                                if (added.length) { added[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+                                d.resolve();
+                            } catch (e) {
+                                d.reject();
+                            }
+                        }).fail(function () { d.reject(); });
+                        return d.promise();
+                    };
+
+                    window.fsAjax = function (data, url, callback) {
+                        var args = Array.prototype.slice.call(arguments);
+                        if (typeof data !== 'string' || !/(^|&)action=send_reply(&|$)/.test(data) || typeof callback !== 'function'
+                            || (window.isChatMode && isChatMode())) {
+                            return nativeFsAjax.apply(this, args);
+                        }
+                        var isNote = /(^|&)is_note=1(&|$)/.test(data);
+                        args[2] = function (response) {
+                            var self = this, cbArgs = arguments;
+                            if (!response || response.status !== 'success' || !response.redirect_url || !sameTicket(response.redirect_url)) {
+                                return callback.apply(self, cbArgs);
+                            }
+                            liveRefresh(isNote).always(function () {
+                                if (window.loaderHide) { loaderHide(); }
+                            }).fail(function () {
+                                callback.apply(self, cbArgs); // native behaviour: reload
+                            });
+                        };
+                        return nativeFsAjax.apply(this, args);
+                    };
+                })();
 
                 // ------------------------------------------------------------ Freshdesk-style editor
                 // From / To header (+ Cc, Bcc links), signature below the text, formatting bar below the body,

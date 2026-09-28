@@ -679,8 +679,12 @@
             bar.append($('<button type="button" class="rf-m-ib" aria-label="' + rfT('Ticket actions') + '">' + ic('m-more') + '</button>').on('click', actionsSheet));
 
             // Header: status, subject, SLA block with the priority | agent | status row (-> properties)
+            // Rebuilt after a reply sent without reloading (rf:ticket-updated): status, agent and SLA may have changed.
             var rp = $('.rf-rp').first();
             var subjBlock = $('#conv-subject .conv-subj-block').first();
+            var buildHead = function () {
+            subjBlock.children('.rf-m-status').remove();
+            $('.rf-m-slabox').remove();
             var statusName = txt(rp.find('.rf-rp-status-name'));
             if (statusName) { subjBlock.prepend($('<span class="rf-m-status"></span>').addClass('rf-m-status-' + (rp.find('.rf-rp-status-select').val() || '')).text(statusName)); }
             var sla = rp.find('.rf-rp-sla').first();
@@ -708,6 +712,8 @@
             prow.on('click', openProps);
             box.append(prow);
             $('#conv-subject').after(box);
+            };
+            buildHead();
             // channel icon: app-style filled envelope
             $('#conv-subject .rf-chan .rf-i').attr('class', 'rf-i rf-i-m-mail');
 
@@ -724,6 +730,7 @@
                     + rfMonth(mi) + ', '
                     + rfTime(h, m[5]);
             };
+            var decorThreads = function () {
             $('#conv-layout-main > .thread').not('.rf-m-th').each(function () {
                 var t = $(this).addClass('rf-m-th');
                 var person = t.find('.thread-person').first();
@@ -736,6 +743,9 @@
                 var av = t.find('.thread-photo .rf-av').first();
                 av.css({ background: avColor(txt(person)), borderColor: avColor(txt(person)) });
             });
+            };
+            decorThreads();
+            $(document).on('rf:ticket-updated', function () { buildHead(); decorThreads(); });
 
             // Full-screen properties: the module's own form (Priority, Agent, Status, Type, Tags), saved on every choice
             var cust = $('#conv-layout-customer');
