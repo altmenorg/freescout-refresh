@@ -589,7 +589,7 @@ body.rf-conv .thread-person, body.rf-conv .thread-person a { font-size: 14px !im
 .rf-th-when { font-size: 12px; line-height: 18px; font-style: italic; color: var(--fd-text-2); }
 body.rf-conv .thread-info .thread-date, body.rf-conv .thread-info .thread-date + br, body.rf-conv .thread-info small { display: none !important; }
 body.rf-conv .thread-info { display: none !important; } /* agent + status at the time of the message, shown on hover: removed since Freshdesk doesn't show them either */
-body.rf-conv .thread-recipients { margin: 2px 0 6px !important; font-size: 12px !important; line-height: 18px; }
+body.rf-conv .thread-recipients { flex-basis: 100%; margin: 2px 0 6px !important; font-size: 12px !important; line-height: 18px; }
 body.rf-conv .thread-recipients strong, body.rf-conv .thread-recipients .thread-recipients-label { font-weight: 500; color: var(--fd-text) !important; }
 body.rf-conv .thread-body { margin: 8px 0 0 !important; padding: 0 !important; font-size: 14px; line-height: 21px; color: var(--fd-text); }
 
