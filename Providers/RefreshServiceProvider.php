@@ -2220,6 +2220,15 @@ class RefreshServiceProvider extends ServiceProvider
                                 dropdownCssClass: 'rf-s2-drop',
                                 language: { noResults: function () { return rfT('No results'); } }
                             });
+                            // select2 4.0 with jQuery 3.6+ no longer focuses its search field on opening (known select2 bug):
+                            // focus it ourselves, with a placeholder so it reads as a search field
+                            s.on('select2:open', function () {
+                                setTimeout(function () {
+                                    var f = $('.select2-container--open .rf-s2-drop .select2-search__field').first();
+                                    f.attr('placeholder', rfT('Search'));
+                                    if (f.length) { f.get(0).focus(); }
+                                }, 0);
+                            });
                         });
                     }
                     // "Update" entirely via ajax, without reloading the page (like Freshdesk): a reload would interrupt an

@@ -1445,8 +1445,8 @@ body .rf-rp .rf-rp-cobrowse .panel-title .caret { margin-left: auto; }
 .select2-container--default .rf-s2-drop .select2-results__message { color: var(--fd-muted); }
 
 /* Saved replies menu (reply editor): search field from 8 replies (provider script), stays at the top while scrolling */
-.dropdown-saved-replies { max-height: 360px; overflow-y: auto; }
-.dropdown-saved-replies > .rf-dd-search { position: sticky; top: 0; z-index: 1; margin: -5px 0 4px; padding: 8px; border-bottom: 1px solid var(--fd-border); background: #fff; }
+.dropdown-saved-replies { max-height: 360px; overflow-y: auto; padding-top: 0; } /* no top padding: the replies scrolled through that 5 px band, above the sticky field */
+.dropdown-saved-replies > .rf-dd-search { position: sticky; top: 0; z-index: 1; margin: 0 0 4px; padding: 8px; border-bottom: 1px solid var(--fd-border); background: #fff; }
 .dropdown-saved-replies > .rf-dd-search input { width: 100%; height: 32px; padding: 4px 10px; border: 1px solid var(--fd-input-border); border-radius: 5px; outline: 0; font-size: 14px; color: var(--fd-text); }
 .dropdown-saved-replies > .rf-dd-search input:focus { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
 .dropdown-saved-replies > .rf-dd-none { padding: 6px 12px; color: var(--fd-muted); }

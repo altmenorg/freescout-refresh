@@ -92,7 +92,7 @@ and optionally `Resources/lang/overrides/<locale>.php` to reword FreeScout's own
 
 ## Installation
 
-1. Download the latest release and unzip it into the `Modules` folder of FreeScout: you get `Modules/Refresh`
+1. Download [`Refresh.zip`](https://github.com/altmenorg/freescout-refresh/releases/latest/download/Refresh.zip) from the latest release and unzip it into the `Modules` folder of FreeScout: you get `Modules/Refresh`
    (the folder **must** have this name).
 2. In FreeScout, **Manage › Modules**: activate **Refresh**.
 3. Optional: **Manage › Settings › Refresh** to set your SLA and logo.
@@ -107,6 +107,8 @@ Refresh as above. Its settings and shared views are taken over automatically.
 **Upgrading from Refresh 1.2 or older with push notifications in use:** install
 [Web Push](https://github.com/altmenorg/freescout-webpush) along with Refresh 1.3. It takes over the app settings, the
 server keys and the subscribed devices: nobody has to subscribe again.
+
+**Updates:** from version 1.3.8, FreeScout tells you in **Manage › Modules** when a new version is out, and the **Update** button installs it in one click. From an older version, update once by hand as above.
 
 ## Settings
 
