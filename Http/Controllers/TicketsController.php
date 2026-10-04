@@ -30,19 +30,9 @@ class TicketsController extends Controller
         }
 
         $filters = Views::readFilters($request, $view);
-        // Remembered sort (one-year cookie): the last "Sort by" choice applies to other views, like Freshdesk.
-        // The URL still takes priority, so a shared link keeps its sort.
+        list($sort, $order) = self::sortFor($request);
         if ($request->has('sort')) {
-            $sort = (string)$request->input('sort');
-            $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
             \Cookie::queue('rf_sort', $sort.':'.$order, 525600);
-        } else {
-            $saved = explode(':', (string)$request->cookie('rf_sort', ''));
-            $sort = $saved[0] !== '' ? $saved[0] : 'created';
-            $order = (isset($saved[1]) && $saved[1] === 'asc') ? 'asc' : 'desc';
-        }
-        if (!isset(Views::sorts()[$sort])) {
-            $sort = 'created';
         }
 
         $query = Views::query($mailbox->id, $view, $user);
@@ -99,6 +89,26 @@ class TicketsController extends Controller
         }
         $mailbox = auth()->user()->mailboxesCanView()->first();
         return $mailbox ? redirect()->route('refresh.tickets', ['mailbox_id' => $mailbox->id, 'view' => 'all']) : redirect('/');
+    }
+
+    /**
+     * Sort of a view: the URL first (a shared link keeps its sort), else the remembered one (rf_sort cookie, one year:
+     * the last "Sort by" choice applies to the other views, like Freshdesk), else date created. [sort, order]
+     */
+    public static function sortFor(Request $request)
+    {
+        if ($request->has('sort')) {
+            $sort = (string)$request->input('sort');
+            $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
+        } else {
+            $saved = explode(':', (string)$request->cookie('rf_sort', ''));
+            $sort = $saved[0] !== '' ? $saved[0] : 'created';
+            $order = (isset($saved[1]) && $saved[1] === 'asc') ? 'asc' : 'desc';
+        }
+        if (!isset(Views::sorts()[$sort])) {
+            $sort = 'created';
+        }
+        return [$sort, $order];
     }
 
     /** Last remembered view ['u' => local address, 't' => title], or null (cookie missing or invalid). */

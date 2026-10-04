@@ -53,6 +53,8 @@ class RefreshServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../Http/routes.php');
         // FreeScout's own mailbox / folder pages -> equivalent Refresh view
         $this->app['router']->pushMiddlewareToGroup('web', \Modules\Refresh\Http\Middleware\NativeFolderRedirect::class);
+        // "Next ticket" after closing one: the next ticket of the agent's view, not of FreeScout's folder
+        $this->app['router']->pushMiddlewareToGroup('web', \Modules\Refresh\Http\Middleware\ViewNextRedirect::class);
         $this->overrideTranslations();
         $this->registerStylesheet();
         $this->registerListHooks();

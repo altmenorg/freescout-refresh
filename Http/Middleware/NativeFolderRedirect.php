@@ -6,7 +6,8 @@ use Closure;
 use Modules\Refresh\Services\Views;
 
 /**
- * FreeScout's own mailbox pages (/mailbox/1, /mailbox/1/<folder>) open the equivalent Refresh view instead.
+ * FreeScout's own mailbox pages (/mailbox/1, /mailbox/1/<folder>) open the last Refresh view of that mailbox, else the
+ * equivalent view.
  * They are still reached from FreeScout itself: "next ticket" after closing the last one of a folder, "Send and close",
  * old bookmarks. Folders without an equivalent view (added by other modules) keep the native page.
  */
@@ -27,6 +28,12 @@ class NativeFolderRedirect
         }
         if (!$view || !$mailbox_id) {
             return $next($request);
+        }
+        // Back to the view the agent was working in (rf_last_view cookie, same mailbox) rather than the folder's equivalent:
+        // after "Send and close", FreeScout sends to the ticket's own folder (e.g. Unassigned), not to the view it was opened from.
+        $last = \Modules\Refresh\Http\Controllers\TicketsController::lastView($request);
+        if ($last && strpos($last['u'], '/mailbox/'.$mailbox_id.'/tickets/') === 0) {
+            return redirect($last['u']);
         }
 
         return redirect()->route('refresh.tickets', ['mailbox_id' => $mailbox_id, 'view' => $view]);
