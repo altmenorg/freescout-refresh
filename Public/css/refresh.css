@@ -1423,5 +1423,6 @@ body.rf-boot { visibility: hidden; animation: rf-boot-failsafe 0s 1.5s forwards;
 body .rf-rp .rf-rp-cobrowse .panel-title .caret { margin-left: auto; }
 
 /* Select + field pairs of the contact form (phone type + number, social network + profile): Bootstrap joins them into one
-   block, but every field here has its own rounded corners, so they looked like two fields touching. */
-.input-group.input-group-flex { gap: 8px; }
+   block, but every field here has its own rounded corners, so they looked like two fields touching. A margin on the second
+   field, not gap: the social row has an empty span.input-group-btn between the two, which gap counted (16 px instead of 8). */
+.input-group.input-group-flex > .form-control:not(:first-child) { margin-left: 8px; }
