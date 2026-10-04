@@ -304,5 +304,7 @@
     "replied": "a répondu",
     "reported by e-mail": "signalé par e-mail",
     "selected": "sélectionné(s)",
-    "ticket(s) selected (the conversations of the other tickets will be added to the primary ticket).": "ticket(s) sélectionné(s) (les interactions des tickets secondaires seront ajoutées au ticket principal)."
+    "ticket(s) selected (the conversations of the other tickets will be added to the primary ticket).": "ticket(s) sélectionné(s) (les interactions des tickets secondaires seront ajoutées au ticket principal).",
+    "No results": "Aucun résultat",
+    "Search saved replies": "Rechercher une réponse"
 }

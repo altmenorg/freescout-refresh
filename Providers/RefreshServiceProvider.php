@@ -1997,6 +1997,30 @@ class RefreshServiceProvider extends ServiceProvider
                         saved.find('.dropdown-menu').first().removeClass('dropdown-menu-right');
                         saved.addClass('dropup rf-ed-saved');
                         tools.append(saved);
+                        // From 8 replies: search field at the top of the menu, filters as you type (accents and case ignored),
+                        // Enter inserts the first match, ↓ goes to the list. The native click handlers of the links stay untouched.
+                        saved.on('shown.bs.dropdown', function () {
+                            var menu = saved.children('.dropdown-saved-replies').first();
+                            var items = menu.children('li').not('.rf-dd-search, .rf-dd-none');
+                            if (items.length < 8) { return; }
+                            var box = menu.children('.rf-dd-search');
+                            if (!box.length) {
+                                var fold = function (s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); };
+                                var none = $('<li class="rf-dd-none"></li>').text(rfT('No results')).hide().appendTo(menu);
+                                box = $('<li class="rf-dd-search"><input type="text" autocomplete="off"></li>').prependTo(menu);
+                                box.on('click', function (e) { e.stopPropagation(); }); // a click in the field must not close the menu
+                                box.find('input').attr('placeholder', rfT('Search saved replies')).on('input', function () {
+                                    var q = fold($(this).val());
+                                    items.each(function () { $(this).toggle(!q || fold($(this).text()).indexOf(q) !== -1); });
+                                    none.toggle(!items.filter(':visible').length);
+                                }).on('keydown', function (e) {
+                                    var first = items.filter(':visible').first().children('a');
+                                    if (e.key === 'Enter') { e.preventDefault(); first.trigger('click'); }
+                                    if (e.key === 'ArrowDown') { e.preventDefault(); first.trigger('focus'); }
+                                });
+                            }
+                            box.find('input').val('').trigger('input').trigger('focus');
+                        });
                     }
                     sb.prepend(tools);
                     var actions = ed.find('.note-actions').first();
@@ -2183,6 +2207,21 @@ class RefreshServiceProvider extends ServiceProvider
                         rp.find('.rf-rp-prio-sq').css('background', $(this).find('option:selected').attr('data-color'));
                     });
                     fields.on('change', dirty);
+                    // Long lists (8 choices or more: types, agents…) get a search field (select2, already loaded by FreeScout,
+                    // accents ignored). The <select> stays the reference: select2 updates it and triggers "change" (dirty, save).
+                    // Not on the phone, where the native picker is better.
+                    if ($.fn.select2 && !(window.matchMedia && window.matchMedia('(max-width: 767px)').matches)) {
+                        fields.each(function () {
+                            var s = $(this);
+                            if (s.children('option').length < 8 || s.hasClass('select2-hidden-accessible')) { return; }
+                            s.select2({
+                                width: '100%',
+                                containerCssClass: 'rf-s2',
+                                dropdownCssClass: 'rf-s2-drop',
+                                language: { noResults: function () { return rfT('No results'); } }
+                            });
+                        });
+                    }
                     // "Update" entirely via ajax, without reloading the page (like Freshdesk): a reload would interrupt an
                     // in-progress edit and save the draft. Agent and status go through the native actions (conversation_change_*),
                     // called directly instead of clicking the native menus (which reload); then type + priority (module),

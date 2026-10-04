@@ -1426,3 +1426,27 @@ body .rf-rp .rf-rp-cobrowse .panel-title .caret { margin-left: auto; }
    block, but every field here has its own rounded corners, so they looked like two fields touching. A margin on the second
    field, not gap: the social row has an empty span.input-group-btn between the two, which gap counted (16 px instead of 8). */
 .input-group.input-group-flex > .form-control:not(:first-child) { margin-left: 8px; }
+
+/* ---------------------------------------------------------------- searchable lists
+   Properties panel lists of 8 choices or more (types, agents…) become select2 with a search field (provider script):
+   same look as the panel's .rf-select (32 px, arrow). Specificity above select2's own .select2-container--default rules. */
+.rf-rp .select2-container .select2-selection--single.rf-s2 { height: 32px; border: 1px solid var(--fd-input-border); background: #fff url(../../modules/refresh/icons/fd-select-arrow.svg) no-repeat right 10px center / 9px auto; outline: 0; }
+.rf-rp .select2-container .rf-s2 .select2-selection__rendered { padding: 0 28px 0 10px; line-height: 30px; font-size: 14px; color: var(--fd-text); }
+.rf-rp .select2-container .rf-s2 .select2-selection__arrow { display: none; }
+.rf-rp .select2-container--open .rf-s2, .rf-rp .select2-container--focus .rf-s2 { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
+.select2-container--default .rf-s2-drop { border: 1px solid var(--fd-border); border-radius: 5px; box-shadow: 0 6px 24px rgba(15, 23, 42, .12); font-size: 14px; overflow: hidden; }
+.select2-container--default .rf-s2-drop .select2-search--dropdown { padding: 8px; }
+.select2-container--default .rf-s2-drop .select2-search--dropdown .select2-search__field { height: 32px; padding: 4px 10px; border: 1px solid var(--fd-input-border); border-radius: 5px; outline: 0; font-size: 14px; }
+.select2-container--default .rf-s2-drop .select2-search--dropdown .select2-search__field:focus { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
+.select2-container--default .rf-s2-drop .select2-results > .select2-results__options { max-height: 280px; }
+.select2-container--default .rf-s2-drop .select2-results__option { padding: 6px 12px; color: var(--fd-text); }
+.select2-container--default .rf-s2-drop .select2-results__option[aria-selected=true] { background: #f6f7fb; font-weight: 600; }
+.select2-container--default .rf-s2-drop .select2-results__option--highlighted[aria-selected] { background: var(--fd-active-bg); color: var(--fd-brand); }
+.select2-container--default .rf-s2-drop .select2-results__message { color: var(--fd-muted); }
+
+/* Saved replies menu (reply editor): search field from 8 replies (provider script), stays at the top while scrolling */
+.dropdown-saved-replies { max-height: 360px; overflow-y: auto; }
+.dropdown-saved-replies > .rf-dd-search { position: sticky; top: 0; z-index: 1; margin: -5px 0 4px; padding: 8px; border-bottom: 1px solid var(--fd-border); background: #fff; }
+.dropdown-saved-replies > .rf-dd-search input { width: 100%; height: 32px; padding: 4px 10px; border: 1px solid var(--fd-input-border); border-radius: 5px; outline: 0; font-size: 14px; color: var(--fd-text); }
+.dropdown-saved-replies > .rf-dd-search input:focus { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
+.dropdown-saved-replies > .rf-dd-none { padding: 6px 12px; color: var(--fd-muted); }
