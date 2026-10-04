@@ -37,7 +37,8 @@ brings the stock FreeScout interface back.
   a status line ("Customer responded 2 hours ago • Resolution due in 5 hours"), and priority / agent / status
   drop-downs you can change right from the list.
 - **Bulk actions** bar (assign, status, tags, merge, delete) and **CSV export** of the current view.
-- FreeScout's own folder pages (Unassigned, Mine, Starred…) open the equivalent view.
+- FreeScout's own folder pages (Unassigned, Mine, Starred…) open your last view. After closing a ticket, the next one
+  is the one that followed in your view, with its filters and sort.
 
 ![Filters panel](screenshots/filters.png)
 
@@ -56,6 +57,15 @@ brings the stock FreeScout interface back.
 - **Toasts** instead of the green banners, with close button, "View" and "Undo".
 
 ![Ticket](screenshots/ticket.png)
+
+### New ticket and new e-mail
+The **New** menu of the top bar offers the two Freshdesk pages, with the contact panel on the right:
+- **Ticket**: create a ticket on behalf of a contact (a call, a chat…). The description is the contact's message and
+  nothing is sent to them. Contact search or a new contact, Cc, type, status, priority, agent, tags; "Create and set
+  as closed" and "Create another".
+- **E-mail**: write to a contact; they get the e-mail and a ticket comes with it. To, Cc, Bcc, priority, status, type,
+  tags; "Send another".
+No empty draft is saved when these pages open.
 
 ### Dashboard and contacts
 - **Dashboard**: tiles (unresolved, overdue, due today, open, pending, unassigned), today's figures compared with

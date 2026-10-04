@@ -693,6 +693,9 @@
   body.rf-m-new #form-create .conv-new-tag { top: 10px !important; right: 0 !important; color: #475569 !important; }
   .rf-m-nlabel { margin: 0 !important; padding: 22px 20px 4px !important; }
   body.rf-m-phone .rf-m-nfrom { display: none !important; }
+  /* New ticket (on behalf of the contact): the description is the contact's message, no agent signature;
+     the Tags module's tag icon in the subject is replaced by nothing on the phone (tags from the ticket page) */
+  body.rf-m-new.rf-m-phone #editor_signature, body.rf-new-page #form-create .conv-new-tag, body.rf-m-new .rf-m-hide { display: none !important; } /* 2 classes: beats body.rf-m-new #editor_signature below */
   body.rf-m-new #form-create .toggle-field { padding: 8px 20px 0 !important; margin: 0 !important; float: none !important; width: auto !important; font-size: 14px; }
   .rf-m-nfromval { height: 40px; line-height: 40px; border-bottom: 1px solid #e3e8ef; font-size: 16px; color: #1e293b; }
   body.rf-m-new .conv-reply-body { margin: 0 !important; padding: 0 20px !important; }

@@ -113,7 +113,7 @@
         var railHref = function (icon) { return $('.rf-rail .rf-rail-link').has('.rf-i-' + icon).first().attr('href') || ''; };
         var railActive = function (icon) { return $('.rf-rail .rf-rail-link').has('.rf-i-' + icon).first().hasClass('active'); };
         var ticketsUrl = railHref('fd-all-tickets');
-        var newUrl = $('.rf-new-dd .dropdown-menu a').first().attr('href') || '';
+        var newUrl = ($('.rf-new-dd .dropdown-menu a').first().attr('href') || '').split('?')[0]; // base address, the mode (?rf_mode=) is added per link
         var userName = txt('.dropdown-toggle-account .nav-user');
 
         // ------------------------------------------------------------ top bar
@@ -467,7 +467,7 @@
                 var dialItem = function (label, icon, href) {
                     return $('<a class="rf-m-dial-item"></a>').attr('href', href).append($('<span class="rf-m-dial-lbl"></span>').text(label), $('<span class="rf-m-dial-btn"></span>').append(ic(icon)));
                 };
-                dial.append(dialItem(rfT('New e-mail'), 'm-envelope', newUrl), dialItem(rfT('New ticket'), 'm-ticket', newUrl + (newUrl.indexOf('?') === -1 ? '?' : '&') + 'rf_phone=1'));
+                dial.append(dialItem(rfT('New e-mail'), 'm-envelope', newUrl + '?rf_mode=email'), dialItem(rfT('New ticket'), 'm-ticket', newUrl + '?rf_mode=ticket'));
                 fab.on('click', function () { body.toggleClass('rf-m-dial-open'); });
                 dial.on('click', function (e) { if (e.target === this) { body.removeClass('rf-m-dial-open'); } });
                 body.append(dial, fab);
@@ -920,21 +920,25 @@
             }));
             bar.append(title);
             var f = $('#form-create');
-            var phone = function () { return $('#phone-conv-switch').hasClass('active'); };
+            // mode chosen in the New menu (new.js): New ticket = on behalf of the contact, nothing sent; E-mail = sent
+            var N = window.rfNew || { ticket: false };
             var send = f.find('.btn-group-send').first();
             var sync = function () {
-                body.toggleClass('rf-m-phone', phone()); // no "From" line for a phone ticket
-                title.text(phone() ? rfT('New ticket') : rfT('New e-mail'));
-                send.find('.btn-send-text').text(rfT('Send'));
-                send.find('.btn-create-conv').text(rfT('Create ticket'));
+                body.toggleClass('rf-m-phone', !!N.ticket); // no "From" line nor signature for a ticket
+                title.text(N.ticket ? rfT('New ticket') : rfT('New e-mail'));
+                send.find('.btn-send-text').text(N.ticket ? rfT('Create') : rfT('Send'));
             };
-            $(document).on('click', '.conv-switch-button', function () { setTimeout(sync, 0); });
             f.find('#field-to > .control-label, #subject').closest('.form-group').find('> .control-label').addClass('rf-m-req');
             // app-style "FROM" line (read-only: the mailbox has no sending alias)
             if (window.rfMe && window.rfMe.mailbox && !f.find('.conv-from-alias').length) {
                 f.find('#field-to').before($('<div class="form-group rf-m-nfrom"><label class="control-label rf-m-req">' + rfT('From') + '</label><div class="col-sm-9"><div class="rf-m-nfromval"></div></div></div>').find('.rf-m-nfromval').text(window.rfMe.mailbox).end());
             }
             f.find('#bcc').closest('.form-group').find('> .control-label').text('Bcc'); // app-style label
+            if (N.ticket) {
+                // the ticket is created on behalf of the contact: "Contact", and no Bcc (nothing is sent)
+                f.find('#field-to > .control-label').text(rfT('Contact'));
+                f.find('#bcc').closest('.form-group').addClass('rf-m-hide');
+            }
             // CC / BCC: lines shown by default (the native link also initializes their selectors)
             setTimeout(function () { if ($('#toggle-cc').length && !f.find('#cc').closest('.form-group').is(':visible')) { $('#toggle-cc').trigger('click'); } }, 0);
             var bodyGroup = f.find('.conv-reply-body').first();
@@ -953,6 +957,15 @@
                     after.after(w);
                     after = w;
                 });
+                // type and priority (saved with the ticket, new.js), after status / agent once those are placed
+                if (N.typeSel && !N.typeSel.closest('.rf-m-nf').length && f.find('.rf-m-nf select[name="status"]').length) {
+                    $.each([[rfT('Type'), N.typeSel], [rfT('Priority'), N.prioSel]], function (i, x) {
+                        // same look as the native status / agent selects (form-control), not the desktop rf-select
+                        var w = $('<div class="rf-m-nf"></div>').append($('<label></label>').text(x[0]), x[1].removeClass('rf-select').addClass('form-control'));
+                        after.after(w);
+                        after = w;
+                    });
+                }
                 var att = f.find('.note-btn-attachment').first();
                 if (att.length && !att.closest('.rf-m-nattach').length) { bodyGroup.find('.note-editor').first().after($('<div class="rf-m-nattach"></div>').append(att.html(ic('fd-attach')))); }
                 if (send.length && !send.closest('.rf-m-nsend').length) { f.append($('<div class="rf-m-nsend"></div>').append(send)); }
@@ -962,7 +975,7 @@
             var tries = 0;
             var waitBar = function () {
                 skinNew();
-                if (!f.find('.rf-m-nf').length && tries++ < 20) { setTimeout(waitBar, 250); }
+                if (!f.find('.rf-m-nf select[name="status"]').length && tries++ < 20) { setTimeout(waitBar, 250); }
             };
             waitBar();
         }

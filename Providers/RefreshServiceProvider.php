@@ -130,6 +130,8 @@ class RefreshServiceProvider extends ServiceProvider
         // Editor toolbar: must be loaded with the page's scripts, before initReplyForm()
         \Eventy::addFilter('javascripts', function ($scripts) {
             $scripts[] = \Module::getPublicPath('refresh').'/js/editor.js';
+            // New ticket / Send an e-mail pages: before mobile.js, which reads window.rfNew
+            $scripts[] = \Module::getPublicPath('refresh').'/js/new.js';
             // Mobile version (< 768 px only): runs on DOMContentLoaded, after the provider's shell
             $scripts[] = \Module::getPublicPath('refresh').'/js/mobile.js';
             return $scripts;
@@ -526,6 +528,18 @@ class RefreshServiceProvider extends ServiceProvider
 
     protected function registerConversationHooks()
     {
+        // "New ticket" created on behalf of a contact (NewTicketController): the contact wrote nothing, no auto-reply
+        \Eventy::addFilter('autoreply.should_send', function ($send) {
+            return \Modules\Refresh\Http\Controllers\NewTicketController::$creating ? false : $send;
+        }, 20, 1);
+        // "Send an e-mail" page (FreeScout's own sending): type, priority and tags fields of the form (rf_new),
+        // saved on the conversation as soon as it is created
+        \Eventy::addAction('conversation.created_by_user_can_undo', function ($conversation) {
+            $request = request();
+            if ($conversation && $request && $request->input('rf_new')) {
+                \Modules\Refresh\Http\Controllers\NewTicketController::saveExtras($conversation, $request);
+            }
+        }, 20, 1);
         // Notifications menu: the sentence ("X replied to…") is plain translated text, so the author's name is given
         // to the avatar script (rfNotifAvatars) in an empty marker
         \Eventy::addFilter('web_notification.header', function ($header, $data) {
@@ -573,34 +587,8 @@ class RefreshServiceProvider extends ServiceProvider
                 $sla_date = self::localDate($sla['resolution_due']);
             }
 
-            // Contact: e-mails, phones, recent timeline
-            $emails = [];
-            $phones = [];
-            $recent = [];
-            $initial = '?';
-            $av = ['#eef2ff', '#c7d2fe', '#475569'];
-            if ($customer) {
-                $emails = $customer->getEmailsAsArray();
-                $labels = [1 => __('Work phone'), 2 => __('Landline'), 3 => __('Phone'), 4 => __('Mobile'), 5 => __('Fax'), 6 => __('Pager')];
-                foreach ($customer->getPhones() as $ph) {
-                    if (!empty($ph['value'])) {
-                        $phones[] = ['label' => $labels[(int)($ph['type'] ?? 3)] ?? __('Phone'), 'value' => $ph['value']];
-                    }
-                }
-                $name = $customer->getFullName(true);
-                $initial = mb_strtoupper(mb_substr(trim($name) ?: '?', 0, 1));
-                $hue = 0;
-                foreach (preg_split('//u', $name, -1, PREG_SPLIT_NO_EMPTY) as $ch) {
-                    $hue = ($hue * 31 + mb_ord($ch)) % 360;
-                }
-                $av = ['hsl('.$hue.', 60%, 92%)', 'hsl('.$hue.', 55%, 84%)', 'hsl('.$hue.', 45%, 32%)'];
-                $recent = Conversation::where('customer_id', $customer->id)
-                    ->where('state', Conversation::STATE_PUBLISHED)
-                    ->orderBy('created_at', 'desc')->limit(5)->get();
-                foreach ($recent as $rc) {
-                    $rc->rf_date = self::localDate(Carbon::parse($rc->created_at));
-                }
-            }
+            // Contact: e-mails, phones, recent timeline (shared with the New ticket / Send an e-mail pages)
+            $contact = self::contactPanelVars($customer);
 
             $statuses = [];
             foreach ([Conversation::STATUS_ACTIVE, Conversation::STATUS_PENDING, Conversation::STATUS_CLOSED] as $code) {
@@ -627,16 +615,46 @@ class RefreshServiceProvider extends ServiceProvider
                 'priorities'   => $priorities,
                 'priority'     => $priority,
                 'users'        => $mailbox ? $mailbox->usersAssignable() : collect([]),
-                'customer'     => $customer,
-                'emails'       => $emails,
-                'phones'       => $phones,
-                'recent'       => $recent,
-                'initial'      => $initial,
-                'av_bg'        => $av[0],
-                'av_border'    => $av[1],
-                'av_fg'        => $av[2],
-            ])->render();
+            ] + $contact)->render();
         }, 10);
+    }
+
+    /**
+     * Variables of the contact panel (refresh::contact_panel): customer, e-mails, phones, avatar colors, 5 latest
+     * conversations. $customer may be null (New ticket page before a contact is chosen).
+     */
+    public static function contactPanelVars($customer)
+    {
+        $emails = [];
+        $phones = [];
+        $recent = [];
+        $initial = '?';
+        $av = ['#eef2ff', '#c7d2fe', '#475569'];
+        if ($customer) {
+            $emails = $customer->getEmailsAsArray();
+            $labels = [1 => __('Work phone'), 2 => __('Landline'), 3 => __('Phone'), 4 => __('Mobile'), 5 => __('Fax'), 6 => __('Pager')];
+            foreach ($customer->getPhones() as $ph) {
+                if (!empty($ph['value'])) {
+                    $phones[] = ['label' => $labels[(int)($ph['type'] ?? 3)] ?? __('Phone'), 'value' => $ph['value']];
+                }
+            }
+            $name = $customer->getFullName(true);
+            $initial = mb_strtoupper(mb_substr(trim($name) ?: '?', 0, 1));
+            $hue = 0;
+            foreach (preg_split('//u', $name, -1, PREG_SPLIT_NO_EMPTY) as $ch) {
+                $hue = ($hue * 31 + mb_ord($ch)) % 360;
+            }
+            $av = ['hsl('.$hue.', 60%, 92%)', 'hsl('.$hue.', 55%, 84%)', 'hsl('.$hue.', 45%, 32%)'];
+            $recent = Conversation::where('customer_id', $customer->id)
+                ->where('state', Conversation::STATE_PUBLISHED)
+                ->orderBy('created_at', 'desc')->limit(5)->get();
+            foreach ($recent as $rc) {
+                $rc->rf_date = self::localDate(Carbon::parse($rc->created_at));
+            }
+        }
+
+        return ['customer' => $customer, 'emails' => $emails, 'phones' => $phones, 'recent' => $recent, 'initial' => $initial,
+            'av_bg' => $av[0], 'av_border' => $av[1], 'av_fg' => $av[2]];
     }
 
     /** Freshdesk-style date in the user's language: "Fri 25 Sep 2026, 12:59" (fr: "ven. 25 sept. 2026, 12:59"). */
@@ -737,6 +755,40 @@ class RefreshServiceProvider extends ServiceProvider
             $is_view_route = \Route::is('refresh.tickets') ? 'true' : 'false';
             $is_conv = \Route::is('conversations.view') ? 'true' : 'false';
             $reply_info = isset($reply_info) ? $reply_info : null;
+            // New ticket / Send an e-mail pages (FreeScout's create form, rebuilt by Public/js/new.js)
+            $new_page = null;
+            $new_mailbox = null;
+            if (\Route::is('conversations.create')) {
+                $new_mailbox = \App\Mailbox::find((int)request()->route('mailbox_id'));
+            } elseif (\Route::is('conversations.view') && !empty($cv) && $cv->state == Conversation::STATE_DRAFT) {
+                $new_mailbox = $cv->mailbox;
+            }
+            if ($new_mailbox) {
+                $V = '\Modules\Refresh\Services\Views';
+                $new_prios = [];
+                foreach ($V::priorities() as $code => $p) {
+                    $new_prios[] = ['id' => $code, 'label' => $p[0], 'color' => $p[1]];
+                }
+                $new_users = [];
+                foreach ($new_mailbox->usersAssignable() as $au) {
+                    $new_users[] = ['id' => $au->id, 'name' => $au->getFullName()];
+                }
+                $new_lv = \Modules\Refresh\Http\Controllers\TicketsController::lastView(request());
+                $new_page = [
+                    'mode'       => request()->input('rf_mode') === 'ticket' ? 'ticket' : 'email',
+                    'mailbox'    => ['id' => $new_mailbox->id, 'name' => $new_mailbox->name, 'email' => $new_mailbox->email],
+                    'types'      => $V::types(),
+                    'priorities' => $new_prios,
+                    'statuses'   => [[Conversation::STATUS_ACTIVE, __('refresh::labels.open')], [Conversation::STATUS_PENDING, __('Pending')], [Conversation::STATUS_CLOSED, __('Closed')]],
+                    'users'      => $new_users,
+                    'me'         => auth()->id(),
+                    'postUrl'    => route('refresh.new_ticket'),
+                    'panelUrl'   => route('refresh.contact_panel'),
+                    'backUrl'    => $new_lv ? url($new_lv['u']) : route('refresh.tickets.last'),
+                    'newUrl'     => route('conversations.create', ['mailbox_id' => $new_mailbox->id]),
+                    'tags'       => class_exists('\Modules\Tags\Entities\Tag'),
+                ];
+            }
             ?>
             // Refresh translations: dictionary of the user's language, put in <head> by the module (meta refresh-l10n).
             var rfT = window.rfT = window.rfT || function (s) {
@@ -912,11 +964,12 @@ class RefreshServiceProvider extends ServiceProvider
                     if (right.length) {
                         var btns = $('<li class="rf-head-btns"></li>');
                         if (newUrl) {
-                            // "New ⌄" like Freshdesk: e-mail ticket, phone ticket
+                            // "New ⌄" like Freshdesk: Ticket (created on behalf of the contact, nothing is sent) and
+                            // E-mail (sent to the contact, the ticket comes with it); Public/js/new.js builds both pages
                             btns.append('<div class="dropdown rf-new-dd"><a class="rf-hbtn dropdown-toggle" href="#" data-toggle="dropdown"><i class="rf-i rf-i-fd-new"></i> ' + rfT('New') + ' <i class="rf-i rf-i-fd-dropdown-arrow"></i></a>'
                                 + '<ul class="dropdown-menu dropdown-menu-right">'
-                                + '<li><a href="' + newUrl + '"><i class="rf-i rf-i-fd-email rf-i-sm"></i> ' + rfT('Ticket (e-mail)') + '</a></li>'
-                                + '<li><a href="' + newUrl + '?rf_phone=1"><i class="rf-i rf-i-fd-phone rf-i-sm"></i> ' + rfT('Phone ticket') + '</a></li>'
+                                + '<li><a href="' + newUrl + '?rf_mode=ticket"><i class="rf-i rf-i-fd-all-tickets rf-i-sm"></i> ' + rfT('Ticket') + '</a></li>'
+                                + '<li><a href="' + newUrl + '?rf_mode=email"><i class="rf-i rf-i-fd-email rf-i-sm"></i> ' + rfT('E-mail') + '</a></li>'
                                 + '</ul></div>');
                         }
                         btns.append('<a class="rf-hbtn rf-hsearch" href="#"><i class="rf-i rf-i-search"></i> ' + rfT('Search') + '</a>');
@@ -1297,12 +1350,11 @@ class RefreshServiceProvider extends ServiceProvider
                     }).observe(document.body, { childList: true, subtree: true });
                 }
 
-                // New phone ticket ("New" menu): switches the native form to phone mode
-                if (/[?&]rf_phone=1/.test(window.location.search)) {
-                    setTimeout(function () { $('#phone-conv-switch').trigger('click'); }, 50);
-                }
+                // New ticket / Send an e-mail pages: data for Public/js/new.js, which rebuilds FreeScout's create form
+                window.rfNewData = <?php echo json_encode($new_page); ?>;
 
-                if (!<?php echo $is_conv; ?>) {
+                // (a draft opened from the Drafts folder is a conversation page showing the create form: not a ticket)
+                if (!<?php echo $is_conv; ?> || $('#form-create').length) {
                     return;
                 }
                 $('body').addClass('rf-conv');

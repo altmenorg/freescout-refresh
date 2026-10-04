@@ -1450,3 +1450,69 @@ body .rf-rp .rf-rp-cobrowse .panel-title .caret { margin-left: auto; }
 .dropdown-saved-replies > .rf-dd-search input { width: 100%; height: 32px; padding: 4px 10px; border: 1px solid var(--fd-input-border); border-radius: 5px; outline: 0; font-size: 14px; color: var(--fd-text); }
 .dropdown-saved-replies > .rf-dd-search input:focus { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
 .dropdown-saved-replies > .rf-dd-none { padding: 6px 12px; color: var(--fd-muted); }
+
+/* ---------------------------------------------------------------- New ticket / Send an e-mail (Public/js/new.js), desktop
+   Freshdesk layout: one centered column of fields (label above, 32 px), the reply editor's Freshdesk style for the
+   description, a footer bar, and the ticket page's contact panel on the right (refresh::contact_panel). */
+body.rf-new-page:not(.rf-m) #conv-layout-header, body.rf-new-page:not(.rf-m) #conv-layout-customer, .rf-nw-native,
+body.rf-new-page #form-create .conv-new-tag, body.rf-new-page #form-create .conv-new-tag-dd { display: none !important; }
+body.rf-new-page:not(.rf-m) #conv-layout { display: flex; height: calc(100vh - 65px); margin: 0; } /* 65px = top bar */
+/* display: block: the ticket page's column-reverse (scrollTop 0 = bottom) would open the form scrolled down */
+body.rf-new-page:not(.rf-m) #conv-layout-main { display: block !important; flex: 1; min-width: 0; float: none !important; width: auto !important; height: 100%; margin: 0 !important; padding: 0 !important; overflow-y: auto; background: #fff; }
+body.rf-new-page:not(.rf-m) #conv-layout-main > .conv-block { margin: 0; padding: 0; border: 0; box-shadow: none; background: #fff; }
+body.rf-new-page:not(.rf-m) #conv-layout-main > .conv-block > .row { margin: 0; }
+body.rf-new-page:not(.rf-m) #conv-layout-main > .conv-block > .row > .col-xs-12 { padding: 0; }
+body.rf-new-page:not(.rf-m) #form-create { margin: 0 !important; }
+.rf-nw { max-width: 828px; margin: 0 auto; padding: 48px 24px 0; }
+.rf-nw-intro { margin: 0 0 24px; font-size: 13px; line-height: 20px; color: var(--fd-text-2); }
+.rf-nf { margin: 0 0 20px; }
+.rf-nf-label { display: block; margin: 0 0 4px; font-size: 12px; font-weight: 400; line-height: 18px; color: var(--fd-text-2); }
+.rf-nf-req { color: #e11d48; }
+.rf-nw .rf-input, .rf-nw .rf-select { height: 32px; padding: 4px 12px; font-size: 14px; }
+.rf-nw .rf-select { padding-right: 32px; }
+.rf-nw .rf-rp-prio-wrap .rf-select { padding-left: 26px; }
+.rf-nw-from { height: 32px; padding: 0 12px; border: 1px solid var(--fd-input-border); border-radius: 5px; background: #f8fafc; font-size: 14px; line-height: 30px; color: var(--fd-text); }
+.rf-nw-muted { color: var(--fd-muted); }
+/* "Add a new contact | Add Cc" links, right-aligned under the contact field, like Freshdesk */
+.rf-nw-links { display: flex; justify-content: flex-end; gap: 8px; margin: -16px 0 12px; font-size: 13px; line-height: 20px; }
+.rf-nw-links a { color: var(--fd-brand); }
+.rf-nw-links a:hover { color: var(--fd-primary-h); }
+.rf-nw-sep { color: var(--fd-muted); }
+/* contact / To / Cc / Bcc: FreeScout's recipient fields (select2), drawn like the other fields */
+.rf-nw .select2-container { width: 100% !important; }
+.rf-nw .select2-container--default .select2-selection--multiple { min-height: 32px; padding: 0 8px; border: 1px solid var(--fd-input-border); background: #fff; }
+.rf-nw .select2-container--default.select2-container--focus .select2-selection--multiple { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
+.rf-nw .select2-container--default .select2-selection--multiple .select2-selection__choice { margin: 4px 6px 0 0; padding: 0 8px; border: 1px solid var(--fd-border); border-radius: 4px; background: var(--fd-bg); color: var(--fd-text); font-size: 13px; line-height: 20px; }
+.rf-nw .select2-search--inline .select2-search__field { height: 28px; margin: 2px 0 0; font-size: 14px; }
+.rf-nw .rf-tag-box .select2-selection__rendered { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 0 !important; }
+/* description: the reply editor's Freshdesk style (rf-ed), in a bordered box; text, signature, formatting bar, tools */
+.rf-nw-body { border: 1px solid var(--fd-input-border); border-radius: 5px; overflow: hidden; background: #fff; }
+.rf-nw-body .conv-reply-body { margin: 0; }
+.rf-nw-body .conv-reply-body > .col-sm-12 { float: none; padding: 0; }
+.rf-nw-body .help-block { margin: 0; }
+.rf-nw-body .help-block:empty { display: none; }
+.rf-nw-ed .note-editable { min-height: 160px; }
+.rf-nw-ed .note-toolbar .note-actions { display: none !important; } /* "Delete draft": no draft on these pages */
+.rf-nw-ed .note-statusbar { background: #f8fafc !important; }
+.rf-nw-body .thread-attachments { margin: 0; padding: 8px 16px; border-top: 1px solid var(--fd-border); }
+/* footer bar, kept visible at the bottom of the column */
+.rf-nw-foot { position: sticky; bottom: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; margin: 8px 0 0; padding: 16px 0; border-top: 1px solid var(--fd-border); background: #fff; }
+.rf-nw-another { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; font-weight: 500; color: var(--fd-text); cursor: pointer; }
+.rf-nw-another input { margin: 0; }
+.rf-nw-actions { display: flex; align-items: center; gap: 8px; }
+.rf-nw-cancel { display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border: 1px solid var(--fd-input-border); background: #fff; color: var(--fd-text) !important; font-size: 14px; font-weight: 500; text-decoration: none !important; }
+.rf-nw-cancel:hover { background: #f6f7fb; }
+.rf-nw-submit-group { display: flex; }
+.rf-nw-submit { height: 32px; padding: 0 18px; }
+.rf-nw-split .rf-nw-submit { border-radius: 5px 0 0 5px !important; }
+.rf-nw-caret { width: 32px; height: 32px; padding: 0; border-left: 1px solid rgba(255, 255, 255, .35) !important; border-radius: 0 5px 5px 0 !important; }
+.rf-nw-caret .rf-i { width: 12px; height: 12px; }
+.rf-nw-dd .dropdown-menu { min-width: 220px; }
+/* right: contact panel of the ticket page, empty state first */
+.rf-nw-side { flex: none; width: 259px; height: 100%; overflow-y: auto; border-left: 1px solid var(--fd-border); background: #fff; }
+.rf-nw-side .rf-rp-contact { height: auto; }
+.rf-rp-empty { display: flex; flex-direction: column; align-items: center; padding: 16px 8px 4px; text-align: center; }
+.rf-rp-empty-av { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; margin: 0 0 12px; border-radius: 50%; background: #f1f5f9; color: var(--fd-muted); }
+.rf-rp-empty-av .rf-i { width: 24px; height: 24px; }
+.rf-rp-empty-title { margin: 0 0 4px; font-size: 14px; font-weight: 600; line-height: 21px; color: var(--fd-text); }
+.rf-rp-empty-text { font-size: 12px; line-height: 18px; color: var(--fd-muted); }
