@@ -966,9 +966,25 @@
                         after = w;
                     });
                 }
-                var att = f.find('.note-btn-attachment').first();
-                if (att.length && !att.closest('.rf-m-nattach').length) { bodyGroup.find('.note-editor').first().after($('<div class="rf-m-nattach"></div>').append(att.html(ic('fd-attach')))); }
-                if (send.length && !send.closest('.rf-m-nsend').length) { f.append($('<div class="rf-m-nsend"></div>').append(send)); }
+                // Footer like the reply editor: saved replies, attachment, Aa (new.js skins the editor) and a compact
+                // Send / Create button fixed at the bottom (mobile.css). The arrow: "Create and set as closed" for a ticket,
+                // nothing for an e-mail (FreeScout's after-send choices do not apply: the new ticket is opened).
+                var caret = send.find('.btn-send-menu').first();
+                if (caret.length && !caret.hasClass('rf-m-ncaret')) {
+                    caret.addClass('rf-m-ncaret');
+                    if (N.ticket) {
+                        caret.removeAttr('data-toggle').off('click').on('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            sheet([{ label: rfT('Create and set as closed'), onClick: function () {
+                                f.find('select[name="status"]').first().val('3');
+                                send.find('.btn-send-text').first().trigger('click');
+                            } }], { head: rfT('Create and set as') });
+                        });
+                    } else {
+                        caret.hide();
+                    }
+                }
                 sync();
             };
             // retried until the native footer exists ("load" may have already fired by the time this script runs)

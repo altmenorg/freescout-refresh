@@ -68,7 +68,71 @@
             tick();
         };
 
-        footerReady(function () {}); // defaults (status, agent) on the phone too, where the layout is mobile.js's
+        // Editor: the reply editor's Freshdesk style (rf-ed), with its tools in the footer: Aa (formatting bar),
+        // attachment, saved replies. Desktop and phone (mobile.css styles that footer like the reply's bottom bar).
+        // Returns the footer the first time, null after.
+        var skinEditor = function () {
+            var ed = f.find('.conv-reply-body .note-editor').first();
+            if (!ed.length || ed.hasClass('rf-ed')) {
+                return null;
+            }
+            var sb = ed.find('.note-statusbar').first();
+            ed.addClass('rf-ed rf-nw-ed');
+            var sig = ed.find('#editor_signature');
+            if (ticket) {
+                sig.hide(); // the contact's message: no agent signature
+            } else {
+                ed.find('.note-editing-area').after(sig);
+            }
+            var tools = $('<div class="rf-ed-tools"></div>');
+            tools.append($('<button type="button" class="rf-ed-ic"></button>').attr('title', rfT('Formatting options')).html('<i class="rf-i rf-i-fd-formatting"></i>').on('click', function () {
+                ed.toggleClass(phone ? 'rf-m-fmt' : 'rf-ed-notb'); // phone: formatting bar hidden until Aa, like the reply
+            }));
+            var att = ed.find('.note-btn-attachment').first();
+            if (att.length) {
+                tools.append(att.addClass('rf-ed-ic').html('<i class="rf-i rf-i-fd-attach"></i>'));
+            }
+            var saved = ed.find('.dropdown-saved-replies').first().parent();
+            if (saved.length) {
+                saved.find('.dropdown-toggle').first().addClass('rf-ed-ic').html('<i class="rf-i rf-i-fd-canned"></i>').attr('title', rfT('Saved Replies'));
+                saved.find('.dropdown-menu').first().removeClass('dropdown-menu-right');
+                saved.addClass('dropup rf-ed-saved');
+                tools.append(saved);
+                // search field from 8 replies, same as the reply editor (provider): accents ignored, Enter = first match
+                saved.on('shown.bs.dropdown', function () {
+                    var menu = saved.children('.dropdown-saved-replies').first();
+                    var items = menu.children('li').not('.rf-dd-search, .rf-dd-none');
+                    if (items.length < 8) {
+                        return;
+                    }
+                    var box = menu.children('.rf-dd-search');
+                    if (!box.length) {
+                        var fold = function (t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); };
+                        var none = $('<li class="rf-dd-none"></li>').text(rfT('No results')).hide().appendTo(menu);
+                        box = $('<li class="rf-dd-search"><input type="text" autocomplete="off"></li>').prependTo(menu);
+                        box.on('click', function (e) { e.stopPropagation(); });
+                        box.find('input').attr('placeholder', rfT('Search saved replies')).on('input', function () {
+                            var q = fold($(this).val());
+                            items.each(function () { $(this).toggle(!q || fold($(this).text()).indexOf(q) !== -1); });
+                            none.toggle(!items.filter(':visible').length);
+                        }).on('keydown', function (e) {
+                            var first = items.filter(':visible').first().children('a');
+                            if (e.key === 'Enter') { e.preventDefault(); first.trigger('click'); }
+                            if (e.key === 'ArrowDown') { e.preventDefault(); first.trigger('focus'); }
+                        });
+                    }
+                    box.find('input').val('').trigger('input').trigger('focus');
+                });
+            }
+            sb.prepend(tools);
+            return sb;
+        };
+        // defaults (status, agent) everywhere; on the phone the editor is skinned here (the layout is mobile.js's)
+        footerReady(function () {
+            if (phone) {
+                skinEditor();
+            }
+        });
 
         // type / priority selects (saved server-side), shared with mobile.js
         var select = function (name, options, value) {
@@ -301,42 +365,17 @@
             });
         }
 
-        // editor: Freshdesk style (same as the reply editor), status / agent moved into the form's fields
+        // status / agent moved into the form's fields, editor skinned; FreeScout's footer items (labels, selects left,
+        // send group, draft state) stay hidden: the page footer sends
         footerReady(function () {
-            var ed = body.find('.note-editor').first();
-            var sb = ed.find('.note-statusbar').first();
-            if (ed.hasClass('rf-ed')) {
-                return;
-            }
             statusField.find('.rf-nf-input').append(footer.status.addClass('rf-select').removeClass('form-control'));
             if (ticket) {
                 agentField.find('.rf-nf-input').append(footer.user.addClass('rf-select').removeClass('form-control'));
             }
-            ed.addClass('rf-ed rf-nw-ed');
-            var sig = ed.find('#editor_signature');
-            if (ticket) {
-                sig.hide(); // the contact's message: no agent signature
-            } else {
-                ed.find('.note-editing-area').after(sig);
+            var sb = skinEditor();
+            if (sb) {
+                sb.children().not('.rf-ed-tools').addClass('rf-nw-native');
             }
-            var tools = $('<div class="rf-ed-tools"></div>');
-            tools.append($('<button type="button" class="rf-ed-ic"></button>').attr('title', rfT('Formatting options')).html('<i class="rf-i rf-i-fd-formatting"></i>').on('click', function () {
-                ed.toggleClass('rf-ed-notb');
-            }));
-            var att = ed.find('.note-btn-attachment').first();
-            if (att.length) {
-                tools.append(att.addClass('rf-ed-ic').html('<i class="rf-i rf-i-fd-attach"></i>'));
-            }
-            var saved = ed.find('.dropdown-saved-replies').first().parent();
-            if (saved.length) {
-                saved.find('.dropdown-toggle').first().addClass('rf-ed-ic').html('<i class="rf-i rf-i-fd-canned"></i>').attr('title', rfT('Saved Replies'));
-                saved.find('.dropdown-menu').first().removeClass('dropdown-menu-right');
-                saved.addClass('dropup rf-ed-saved');
-                tools.append(saved);
-            }
-            // the page footer sends: FreeScout's footer items (labels, selects left, send group, draft state) stay hidden
-            sb.children().addClass('rf-nw-native');
-            sb.prepend(tools);
         });
 
         // contact panel on the right: the ticket page's (Contact details + Recent timeline), empty state first

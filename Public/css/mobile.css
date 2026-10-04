@@ -564,14 +564,14 @@
   body.rf-m-compose .rf-ed-head .select2-selection__choice__remove { order: 2; margin: 0 -4px 0 8px !important; font-size: 16px !important; color: #1e293b !important; }
   body.rf-m-compose .rf-ed-head .select2-selection { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
   body.rf-m-compose .conv-reply-block .note-editable { min-height: 0 !important; padding: 12px 16px !important; }
-  /* tools in the app's order; no trash (draft dropped is a desktop-only action) */
-  body.rf-m-compose .rf-ed-tools { display: flex; align-items: center; gap: 3.6px; }
-  body.rf-m-compose .rf-ed-tools > .rf-ed-saved { order: 1; }
-  body.rf-m-compose .rf-ed-tools > .note-btn-attachment { order: 2; }
-  body.rf-m-compose .rf-ed-tools > .rf-ed-ic:first-child { order: 3; }
-  body.rf-m-compose .note-statusbar .rf-ed-ic { width: 44px !important; height: 44px !important; border: 0 !important; background: transparent !important; color: #475569 !important; }
+  /* tools in the app's order; no trash (draft dropped is a desktop-only action). Also the New ticket / New e-mail pages */
+  body.rf-m-compose .rf-ed-tools, body.rf-m-new .rf-ed-tools { display: flex; align-items: center; gap: 3.6px; }
+  body.rf-m-compose .rf-ed-tools > .rf-ed-saved, body.rf-m-new .rf-ed-tools > .rf-ed-saved { order: 1; }
+  body.rf-m-compose .rf-ed-tools > .note-btn-attachment, body.rf-m-new .rf-ed-tools > .note-btn-attachment { order: 2; }
+  body.rf-m-compose .rf-ed-tools > .rf-ed-ic:first-child, body.rf-m-new .rf-ed-tools > .rf-ed-ic:first-child { order: 3; }
+  body.rf-m-compose .note-statusbar .rf-ed-ic, body.rf-m-new .note-statusbar .rf-ed-ic { width: 44px !important; height: 44px !important; border: 0 !important; background: transparent !important; color: #475569 !important; }
   body.rf-m-compose .note-statusbar .rf-ed-trash { display: none !important; }
-  body.rf-m-compose .btn-group-send > .btn { height: 40px !important; font-size: 17px !important; font-weight: 500 !important; background: #1e293b !important; border-color: #1e293b !important; }
+  body.rf-m-compose .btn-group-send > .btn, body.rf-m-new .btn-group-send > .btn { height: 40px !important; font-size: 17px !important; font-weight: 500 !important; background: #1e293b !important; border-color: #1e293b !important; }
   /* note: yellow background on the input area, as in the app */
   body.rf-m-compose .conv-action-wrapper.rf-mode-note .note-editable { background: #fff8ed !important; }
 
@@ -701,19 +701,25 @@
   body.rf-m-new .conv-reply-body { margin: 0 !important; padding: 0 20px !important; }
   body.rf-m-new .conv-reply-body .note-editor { margin: 0 !important; border: 0 !important; border-bottom: 1px solid #e3e8ef !important; }
   body.rf-m-new .conv-reply-body .note-editable { min-height: 40px !important; padding: 8px 0 !important; font-size: 16px !important; line-height: 21px !important; color: #1e293b; }
-  body.rf-m-new .conv-reply-body .note-statusbar { display: block !important; position: static !important; min-height: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; }
   body.rf-m-new #editor_signature { display: block !important; margin: 0 !important; padding: 0 0 12px !important; font-size: 16px; line-height: 21px; color: #1e293b; }
-  .rf-m-nattach { display: flex; justify-content: flex-end; padding: 8px 0 0; }
-  .rf-m-nattach .note-btn { border: 0 !important; background: transparent !important; color: #475569 !important; }
-  .rf-m-nattach .rf-i { width: 20px; height: 20px; }
   .rf-m-nf { padding: 18px 20px 0; }
-  .rf-m-nsend { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030; }
-  body.rf-m-new { background: #fff !important; } /* button stuck to the bottom, without the other bars' 48.8 px margin (as in the app) */
-  .rf-m-nsend .btn-group-send { display: flex !important; width: 100%; margin: 0 !important; }
-  .rf-m-nsend .btn-send-menu { display: none !important; }
-  /* only one button visible depending on the mode (Send / Create): the others stay hidden by the native code */
-  .rf-m-nsend .btn-reply-submit:not(.hidden) { flex: 1; }
-  .rf-m-nsend .btn-reply-submit { flex: 1; height: 56px !important; border: 0 !important; border-radius: 0 !important; background: #1e293b !important; font-size: 16px !important; font-weight: 500 !important; color: #fff !important; }
+  body.rf-m-new { background: #fff !important; } /* bar stuck to the bottom, without the other bars' 48.8 px margin (as in the app) */
+  /* bottom bar like the reply editor's (same values as body.rf-m-compose above): [saved replies][paperclip][Aa] … [Create ▾ | Send]
+     new.js puts the tools in the editor footer; FreeScout's own footer items (labels, draft state) stay hidden */
+  body.rf-m-new .conv-reply-body .note-statusbar { position: fixed !important; left: 0; right: 0; bottom: 0; z-index: 1030; display: flex !important; align-items: center; gap: 4px; min-height: 64px !important; padding: 8px 12px calc(8px + env(safe-area-inset-bottom)) !important; background: #fff !important; border: 0 !important; border-top: 1px solid var(--fd-border) !important; }
+  body.rf-m-new .conv-reply-body .note-statusbar > :not(.rf-ed-tools):not(.btn-group-send) { display: none !important; }
+  body.rf-m-new .note-statusbar .rf-ed-tools { margin-right: auto; }
+  body.rf-m-new .note-statusbar .rf-ed-ic { width: 44px !important; height: 44px !important; }
+  body.rf-m-new .note-statusbar .rf-ed-ic .rf-i { width: 22px; height: 22px; }
+  body.rf-m-new .btn-group-send { display: flex !important; float: none !important; margin: 0 !important; }
+  body.rf-m-new .btn-group-send > .btn { height: 46px; padding: 0 16px !important; font-size: 17px !important; border-radius: 5px !important; background: #1a3c5b !important; border-color: #1a3c5b !important; color: #fff !important; }
+  body.rf-m-new.rf-m-phone .btn-group-send > .btn-send-text { border-radius: 5px 0 0 5px !important; } /* ticket: Create | ▾ (e-mail: Send alone) */
+  body.rf-m-new .btn-group-send > .rf-m-ncaret { padding: 0 10px !important; border-radius: 0 5px 5px 0 !important; border-left: 1px solid rgba(255, 255, 255, .3) !important; }
+  body.rf-m-new .btn-group-send > .btn-create-conv { display: none !important; } /* FreeScout's phone-ticket button: Create = .btn-send-text here */
+  /* formatting bar collapsed by default, Aa expands it above the bottom bar (class set by new.js) */
+  body.rf-m-new .conv-reply-body .note-toolbar { display: none !important; }
+  body.rf-m-new .conv-reply-body .note-editor.rf-m-fmt .note-toolbar { display: flex !important; position: fixed; left: 0; right: 0; bottom: calc(64px + env(safe-area-inset-bottom)); z-index: 1031; flex-wrap: nowrap !important; overflow-x: auto; padding: 6px 8px !important; background: #fff !important; border-top: 1px solid var(--fd-border) !important; }
+  body.rf-m-new #form-create { padding-bottom: 88px !important; } /* bottom bar reserve */
 
   /* card pill menus: replaced by the bottom sheet (mobile.js); the provider's menu stays in the DOM while a choice is made */
   body.rf-m .rf-dd-menu { display: none !important; }
