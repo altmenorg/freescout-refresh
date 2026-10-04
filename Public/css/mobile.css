@@ -712,9 +712,11 @@
   body.rf-m-new .note-statusbar .rf-ed-ic { width: 44px !important; height: 44px !important; }
   body.rf-m-new .note-statusbar .rf-ed-ic .rf-i { width: 22px; height: 22px; }
   body.rf-m-new .btn-group-send { display: flex !important; float: none !important; margin: 0 !important; }
-  body.rf-m-new .btn-group-send > .btn { height: 46px; padding: 0 16px !important; font-size: 17px !important; border-radius: 5px !important; background: #1a3c5b !important; border-color: #1a3c5b !important; color: #fff !important; }
+  /* colors and height: the reply editor's rule (body.rf-m-compose / body.rf-m-new .btn-group-send > .btn) */
+  body.rf-m-new .btn-group-send > .btn { padding: 0 16px !important; border-radius: 5px !important; color: #fff !important; }
+  body.rf-m-new .btn-group-send > .btn-send-text .rf-i { margin-right: 6px; }
   body.rf-m-new.rf-m-phone .btn-group-send > .btn-send-text { border-radius: 5px 0 0 5px !important; } /* ticket: Create | ▾ (e-mail: Send alone) */
-  body.rf-m-new .btn-group-send > .rf-m-ncaret { padding: 0 10px !important; border-radius: 0 5px 5px 0 !important; border-left: 1px solid rgba(255, 255, 255, .3) !important; }
+  body.rf-m-new .btn-group-send > .rf-m-ncaret { padding: 0 10px !important; border-radius: 0 5px 5px 0 !important; }
   body.rf-m-new .btn-group-send > .btn-create-conv { display: none !important; } /* FreeScout's phone-ticket button: Create = .btn-send-text here */
   /* formatting bar collapsed by default, Aa expands it above the bottom bar (class set by new.js) */
   body.rf-m-new .conv-reply-body .note-toolbar { display: none !important; }

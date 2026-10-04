@@ -926,7 +926,9 @@
             var sync = function () {
                 body.toggleClass('rf-m-phone', !!N.ticket); // no "From" line nor signature for a ticket
                 title.text(N.ticket ? rfT('New ticket') : rfT('New e-mail'));
-                send.find('.btn-send-text').text(N.ticket ? rfT('Create') : rfT('Send'));
+                // same button as the reply editor's: icon + label, Refresh arrow
+                send.find('.btn-send-text').html(ic(N.ticket ? 'fd-new' : 'fd-send') + $('<span></span>').text(N.ticket ? rfT('Create') : rfT('Send')).prop('outerHTML'));
+                send.find('.btn-send-menu').html(ic('fd-dropdown-arrow'));
             };
             f.find('#field-to > .control-label, #subject').closest('.form-group').find('> .control-label').addClass('rf-m-req');
             // app-style "FROM" line (read-only: the mailbox has no sending alias)
