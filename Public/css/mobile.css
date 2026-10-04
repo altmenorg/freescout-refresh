@@ -658,7 +658,8 @@
   /* customer's tickets: the card's customer row repeats the profile (and shows the agent on this native page) */
   body.rf-m-cust .table.table-conversations tr.conv-row > td.conv-customer { display: none !important; }
   body.rf-m-cust .conv-table-pagination, body.rf-m-cust .table-conversations tfoot td { padding: 8px 16px !important; font-size: 13px; color: var(--fd-muted); text-align: center; }
-  body.rf-m-cust:not(.rf-m-ctab-tickets) .content-2col > :not(.rf-m-hero):not(.rf-m-ctabs):not(.rf-m-cprofile) { display: none !important; }
+  /* not on the edit page (rf-m-cust-edit): mobile.js builds no hero/tabs/profile there, everything would be hidden (blank page) */
+  body.rf-m-cust:not(.rf-m-ctab-tickets):not(.rf-m-cust-edit) .content-2col > :not(.rf-m-hero):not(.rf-m-ctabs):not(.rf-m-cprofile) { display: none !important; }
   body.rf-m-cust.rf-m-ctab-tickets .rf-m-cprofile { display: none; }
   body.rf-m-cust .content-2col { background: #fff !important; }
   body.rf-m-cust.rf-m-ctab-tickets .content-2col { background: var(--fd-bg) !important; }

@@ -979,7 +979,7 @@
                 if (window.history.length > 1) { window.history.back(); } else { window.location.href = railHref('contact'); }
             }));
             bar.append(title.text(isEdit ? rfT('Edit contact') : name));
-            if (isEdit) { body.addClass('rf-m-notabs'); return; }
+            if (isEdit) { body.addClass('rf-m-notabs rf-m-cust-edit'); return; }
             if (editUrl) { bar.append($('<a class="rf-m-ib" aria-label="' + rfT('Edit') + '">' + ic('m-pencil') + '</a>').attr('href', editUrl)); }
             top.addClass('rf-m-top-grey');
 
