@@ -1535,6 +1535,12 @@ class RefreshServiceProvider extends ServiceProvider
                     if (t.hasClass('rf-th-done')) { return; }
                     t.addClass('rf-th-done');
                     var person = t.find('.thread-person').first();
+                    // the customer's name opens their contact page (tickets), like Freshdesk, not the edit form that
+                    // FreeScout links to (Customer::url()); on the phone that form has no Tickets tab
+                    person.find('a[href]').each(function () {
+                        var m = /^(.*\/customers\/\d+)\/edit\/?$/.exec(this.getAttribute('href') || '');
+                        if (m) { this.setAttribute('href', m[1] + '/'); }
+                    });
                     var nameEl = person.find('a').first().length ? person.find('a').first() : person;
                     var name = $.trim(nameEl.text());
                     if (name === '<?php echo addslashes(__('you')); ?>') { name = me; nameEl.text(me); }
