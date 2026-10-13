@@ -3,3 +3,4 @@
 *.svg text eol=lf
 screenshots export-ignore
 .gitattributes export-ignore
+.github export-ignore

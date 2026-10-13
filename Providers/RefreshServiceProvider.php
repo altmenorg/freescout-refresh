@@ -129,6 +129,8 @@ class RefreshServiceProvider extends ServiceProvider
         });
         // Editor toolbar: must be loaded with the page's scripts, before initReplyForm()
         \Eventy::addFilter('javascripts', function ($scripts) {
+            // Diagnostics: first, so that it records the errors of the module's other scripts
+            $scripts[] = \Module::getPublicPath('refresh').'/js/diagnostics.js';
             $scripts[] = \Module::getPublicPath('refresh').'/js/editor.js';
             // New ticket / Send an e-mail pages: before mobile.js, which reads window.rfNew
             $scripts[] = \Module::getPublicPath('refresh').'/js/new.js';

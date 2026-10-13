@@ -327,5 +327,12 @@
     "Please choose a contact": "Veuillez choisir un contact",
     "Please enter a subject": "Veuillez saisir un objet",
     "Invalid e-mail address": "Adresse e-mail invalide",
-    "Create and set as": "Créer et définir comme"
+    "Create and set as": "Créer et définir comme",
+    "Diagnostics": "Diagnostic",
+    "For a bug report on GitHub: versions, settings and test results of what Refresh depends on, with the last errors seen by this browser and in FreeScout's log. No ticket, customer, e-mail address, domain name or tag name. Check it before attaching it to an issue: issues are public.": "Pour signaler un bug sur GitHub : versions, réglages et résultats des tests de ce dont Refresh dépend, avec les dernières erreurs vues par ce navigateur et dans le journal de FreeScout. Aucun ticket, client, adresse e-mail, nom de domaine ni nom d'étiquette. Relisez-le avant de le joindre à une issue : les issues sont publiques.",
+    "Create the diagnostics file": "Créer le fichier de diagnostic",
+    "Download": "Télécharger",
+    "Copied": "Copié",
+    "Cleared": "Effacées",
+    "Clear the errors recorded by this browser": "Effacer les erreurs enregistrées par ce navigateur"
 }

@@ -41,3 +41,23 @@
         </div>
     </div>
 </form>
+
+<div id="rf-diag" class="form-horizontal margin-bottom" data-url="{{ route('refresh.diagnostics') }}">
+    <h3 class="subheader">{{ __('Diagnostics') }}</h3>
+    <div class="form-group">
+        <div class="col-sm-8 col-sm-offset-2">
+            <p class="form-help">{{ __('For a bug report on GitHub: versions, settings and test results of what Refresh depends on, with the last errors seen by this browser and in FreeScout\'s log. No ticket, customer, e-mail address, domain name or tag name. Check it before attaching it to an issue: issues are public.') }}</p>
+        </div>
+    </div>
+    <div class="form-group margin-top">
+        <div class="col-sm-8 col-sm-offset-2">
+            <button type="button" class="btn btn-default rf-diag-make">{{ __('Create the diagnostics file') }}</button>
+            <div class="rf-diag-out" style="display:none">
+                <pre class="rf-diag-pre" style="max-height:420px;overflow:auto;margin:12px 0;font-size:12px;white-space:pre-wrap;word-break:break-word"></pre>
+                <button type="button" class="btn btn-primary rf-diag-download">{{ __('Download') }}</button>
+                <button type="button" class="btn btn-default rf-diag-copy">{{ __('Copy') }}</button>
+                <button type="button" class="btn btn-link rf-diag-clear">{{ __('Clear the errors recorded by this browser') }}</button>
+            </div>
+        </div>
+    </div>
+</div>

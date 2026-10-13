@@ -132,6 +132,18 @@ server keys and the subscribed devices: nobody has to subscribe again.
 
 ![Settings](screenshots/settings.png)
 
+## Reporting a bug
+
+Open an [issue](https://github.com/altmenorg/freescout-refresh/issues/new/choose) and attach a **diagnostics file**: as an
+admin, **Manage › Settings › Refresh › Diagnostics › Create the diagnostics file**, then **Download**. Do it from the
+browser where the bug shows up, ideally right after it: the file includes the last JavaScript errors and failed requests
+that browser recorded.
+
+The file holds versions (FreeScout, PHP, database, modules), Refresh's settings, the routes it depends on, read-only
+tests (tag search, from the server and from the browser) and the last errors of FreeScout's log. It holds no ticket,
+customer, e-mail address, domain name or tag name, and the log lines are redacted. It is shown before you download it:
+check it, issues are public.
+
 ## For module developers
 
 Other modules can add an entry with their own icon to the left bar:

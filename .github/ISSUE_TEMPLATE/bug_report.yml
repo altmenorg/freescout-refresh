@@ -1,0 +1,36 @@
+name: Report a bug
+description: Something in Refresh doesn't work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Refresh runs on installations we can't see: the diagnostics file is what lets us reproduce your problem.
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: What happened?
+      description: What you were trying to do, what happened, and what you expected.
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: How to reproduce
+      description: The fewest steps that show the problem. Desktop or phone?
+  - type: checkboxes
+    id: diagnostics
+    attributes:
+      label: Diagnostics file
+      description: |
+        As an admin: **Manage › Settings › Refresh › Diagnostics › Create the diagnostics file**, then **Download**, and drag the file into the field below.
+        Make it from the browser where the bug shows up, ideally right after it happened: it includes the errors that browser recorded.
+        It holds versions, settings and test results, no ticket, customer, e-mail address or domain name. Check it before attaching it: issues are public.
+        Available from Refresh 1.4.5.
+      options:
+        - label: I have attached a diagnostics file
+          required: true
+  - type: textarea
+    attributes:
+      label: Diagnostics file and screenshots
+      description: Drag the downloaded .json file and any screenshots here.
