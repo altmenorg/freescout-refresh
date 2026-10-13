@@ -128,6 +128,7 @@ server keys and the subscribed devices: nobody has to subscribe again.
 |---|---|
 | **First response** | Hours to the first agent reply (default 24). Used by badges, views and the dashboard. Calendar hours, paused while a ticket is *Pending*. |
 | **Resolution** | Hours to resolve a ticket (default 72). The due date of a ticket can also be changed by hand. |
+| **Ticket types** | The choices of the *Type* field (ticket properties, new ticket, filters), one per line, in the order of the menus. Types already set on tickets (for instance by the Freshdesk import) stay available after these. |
 | **Logo** | Image shown at the top of the left bar. Empty: the header logo (Customization module or FreeScout's own). |
 
 ![Settings](screenshots/settings.png)

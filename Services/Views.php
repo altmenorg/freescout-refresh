@@ -27,8 +27,23 @@ class Views
         ];
     }
 
-    /** Known Freshdesk types (imported) + ones added since, sorted. */
+    /** Ticket types: the ones set in Manage > Settings > Refresh, in their order, then the ones already on tickets
+     *  (Freshdesk import, or set before the list was changed), sorted: a type in use never disappears from the menus. */
     public static function types()
+    {
+        $configured = Settings::types() ?: [];
+        $known = array_map('mb_strtolower', $configured);
+        foreach (self::usedTypes() as $t) {
+            if (!in_array(mb_strtolower($t), $known, true)) {
+                $configured[] = $t;
+                $known[] = mb_strtolower($t);
+            }
+        }
+        return $configured;
+    }
+
+    /** Types found on tickets (conversations.meta.fd_type), sorted. */
+    public static function usedTypes()
     {
         return \Cache::remember('refresh_types', 10, function () {
             $rows = \DB::select("SELECT DISTINCT JSON_UNQUOTE(JSON_EXTRACT(meta, '$.fd_type')) AS t FROM conversations WHERE meta LIKE '%fd_type%'");

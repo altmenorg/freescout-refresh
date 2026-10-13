@@ -90,7 +90,7 @@ class RefreshServiceProvider extends ServiceProvider
      *  moved to the Web Push module (github.com/altmenorg/freescout-webpush). */
     protected function registerSettings()
     {
-        $keys = ['sla_first_response', 'sla_resolution', 'logo_url'];
+        $keys = ['sla_first_response', 'sla_resolution', 'logo_url', 'types'];
         \Eventy::addFilter('settings.sections', function ($sections) {
             $sections['refresh'] = ['title' => 'Refresh', 'icon' => 'blackboard', 'order' => 150];
             return $sections;
@@ -108,7 +108,16 @@ class RefreshServiceProvider extends ServiceProvider
             if ($settings['refresh.sla_resolution'] === '') {
                 $settings['refresh.sla_resolution'] = \Modules\Refresh\Services\Settings::DEFAULT_RESOLUTION_HOURS;
             }
+            // Ticket types never saved: the ones already on tickets, so that the first save keeps them
+            $types = \Modules\Refresh\Services\Settings::types();
+            $settings['refresh.types'] = implode("\n", $types === null ? \Modules\Refresh\Services\Views::usedTypes() : $types);
             return $settings;
+        }, 20, 2);
+        \Eventy::addFilter('settings.before_save', function ($request, $section) {
+            if ($section == 'refresh') {
+                \Cache::forget('refresh_types');
+            }
+            return $request;
         }, 20, 2);
         \Eventy::addFilter('settings.view', function ($view, $section) {
             return $section == 'refresh' ? 'refresh::settings' : $view;
