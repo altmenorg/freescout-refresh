@@ -165,6 +165,17 @@ Other modules can add an entry with their own icon to the left bar:
 Links a module adds to FreeScout's top menu also appear in the bar, with a generic icon, when they are not declared
 this way. The [Cobrowse module](https://github.com/altmenorg/freescout-cobrowse) is an example.
 
+### For updaters
+
+- **Checksums**: from 1.4.8, each release has a `SHA256SUMS` asset with the SHA-256 of `Refresh.zip` and `module.json`
+  (`https://github.com/altmenorg/freescout-refresh/releases/latest/download/SHA256SUMS`).
+- **Health check**, to run after replacing the module (and roll back if it fails). Read-only, no network:
+  - `php artisan refresh:health` (add `--json` for the report): exit code `0` when healthy, `1` otherwise;
+  - `GET /refresh/health` (admins only): the same report in JSON, HTTP `200` or `503`.
+
+  It checks that the module's files, classes, views and routes are there, that FreeScout serves its CSS and JavaScript
+  (`public/modules/refresh`), that the FreeScout routes it needs exist and that its database queries run.
+
 ## Other modules from the Refresh project
 
 Modules built alongside Refresh. Each one also works with FreeScout's stock interface.

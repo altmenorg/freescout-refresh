@@ -18,4 +18,6 @@ Route::group(['middleware' => 'web', 'prefix' => \Helper::getSubdirectory(), 'na
     Route::post('/refresh/conversation/{id}/properties', ['uses' => 'PropertiesController@save', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.properties');
     // Diagnostics file for bug reports (admins only)
     Route::get('/refresh/diagnostics', ['uses' => 'DiagnosticsController@show', 'middleware' => ['auth', 'roles'], 'roles' => ['admin']])->name('refresh.diagnostics');
+    // Health check for updaters and admins (also: php artisan refresh:health)
+    Route::get('/refresh/health', ['uses' => 'DiagnosticsController@health', 'middleware' => ['auth', 'roles'], 'roles' => ['admin']])->name('refresh.health');
 });

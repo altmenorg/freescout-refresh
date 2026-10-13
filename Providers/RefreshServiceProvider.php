@@ -2434,6 +2434,8 @@ class RefreshServiceProvider extends ServiceProvider
 
     public function register()
     {
+        // php artisan refresh:health (Services\Health)
+        $this->commands([\Modules\Refresh\Console\Health::class]);
     }
 
     public function provides()

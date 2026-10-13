@@ -19,7 +19,7 @@ class Diagnostics
     public static function report()
     {
         $report = ['format' => 1, 'generated_at' => gmdate('Y-m-d\TH:i:s\Z')];
-        foreach (['refresh', 'freescout', 'php', 'database', 'modules', 'routes', 'tags', 'log'] as $section) {
+        foreach (['refresh', 'health', 'freescout', 'php', 'database', 'modules', 'routes', 'tags', 'log'] as $section) {
             try {
                 $report[$section] = self::$section();
             } catch (\Throwable $e) {
@@ -38,6 +38,13 @@ class Diagnostics
             'sla_resolution_hours' => Settings::resolutionHours(),
             'custom_logo' => \Option::get('refresh.logo_url', '') !== '',
         ];
+    }
+
+    /** The health check (Services\Health): what an updater would look at. */
+    protected static function health()
+    {
+        $health = Health::check();
+        return ['ok' => $health['ok'], 'checks' => $health['checks']];
     }
 
     protected static function freescout()
