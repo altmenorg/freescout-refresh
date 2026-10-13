@@ -2162,6 +2162,13 @@ class RefreshServiceProvider extends ServiceProvider
                         try { window.localStorage.setItem('rf_sec_' + $(this).attr('data-sec'), sec.hasClass('collapsed') ? '0' : '1'); } catch (er) {}
                     });
 
+                    // "Change Customer" (contact panel, outside rp): the native link of the hidden customer sidebar
+                    // (its modal and changeCustomerInit)
+                    $(document).on('click', '.rf-rp-change-customer', function (e) {
+                        e.preventDefault();
+                        $('.conv-customer-block a[data-modal-on-show="changeCustomerInit"]').first().trigger('click');
+                    });
+
                     // SLA block pencil icon: edit the resolution due date
                     rp.on('click', '.rf-rp-sla-edit', function () { rp.find('.rf-rp-due-form').toggle(); });
                     rp.on('click', '.rf-rp-due-save, .rf-rp-due-reset', function () {

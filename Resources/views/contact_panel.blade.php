@@ -21,6 +21,10 @@
                 <div class="rf-rp-kv"><label>{{ $phone['label'] }}</label><div class="rf-copyable"><span>{{ $phone['value'] }}</span><button type="button" class="rf-copy" data-copy="{{ $phone['value'] }}" title="{{ __('Copy') }}"><i class="rf-i rf-i-fd-copy rf-i-sm"></i></button></div></div>
             @endforeach
             <a class="rf-rp-more" href="{{ route('customers.update', ['id' => $customer->id]) }}"><i class="rf-i rf-i-open-new-tab rf-i-sm"></i> {{ __('View more information') }}</a>
+            @if (!empty($conversation) && !$conversation->isChat())
+                {{-- FreeScout's own "Change Customer" window (search, confirmation, new customer): opened by its native link, hidden with the native sidebar --}}
+                <a class="rf-rp-more rf-rp-change-customer" href="#"><i class="rf-i rf-i-contact rf-i-sm"></i> {{ __('Change Customer') }}</a>
+            @endif
         @elseif (!empty($empty_state))
             <div class="rf-rp-empty">
                 <span class="rf-rp-empty-av"><i class="rf-i rf-i-contact"></i></span>

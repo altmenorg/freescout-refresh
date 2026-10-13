@@ -646,6 +646,7 @@ body.rf-conv #conv-layout-header, body.rf-conv #conv-layout-main { padding-right
 .rf-copy { border: 0; background: none; padding: 0; color: var(--fd-text-2); cursor: pointer; line-height: 0; }
 .rf-copy.copied { color: #22c55e; }
 .rf-rp-more { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--fd-brand) !important; }
+.rf-rp-more.rf-rp-change-customer { display: flex; width: fit-content; margin-top: 8px; }
 .rf-rp-timeline { position: relative; }
 .rf-rp-tl-item { position: relative; display: flex; gap: 10px; padding-bottom: 14px; color: var(--fd-text) !important; text-decoration: none !important; }
 .rf-rp-tl-item:not(:last-child)::before { content: ""; position: absolute; left: 13px; top: 28px; bottom: 0; width: 1px; background: #e6eaf0; }
