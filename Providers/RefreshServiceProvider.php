@@ -2249,6 +2249,36 @@ class RefreshServiceProvider extends ServiceProvider
                     // Cobrowse (in-house module) → bottom of the contact column
                     var cob = $('#conv-layout-customer').find('.cobrowse-block, .rf-cobrowse, [class*="cobrowse"]').filter(function () { return !$(this).closest('.rf-rp').length; }).first();
                     if (cob.length) { rp.find('.rf-rp-cobrowse').append(cob); }
+                    // Sidebar blocks of other modules (Sidebar Webhook, CRM data…) → their own section of the contact column.
+                    // FreeScout modules add their block to the native sidebar as a .conv-sidebar-block (hooks
+                    // conversation.before_prev_convs / after_prev_convs / after_customer_sidebar), which Refresh hides: move every
+                    // such block, except the native ones (customer profile, previous conversations) and Cobrowse, handled above.
+                    // Some modules fill or insert their block later (ajax): an observer moves those too. Suggested by @00MY00 (issue #1).
+                    var rfExtra = rp.find('.rf-rp-extra');
+                    var rfMoveSidebarBlocks = function () {
+                        $('#conv-layout-customer').find('.conv-sidebar-block').filter(function () {
+                            var b = $(this);
+                            return !b.closest('.rf-rp').length
+                                && !b.hasClass('conv-customer-block')
+                                && !b.find('.collapse-conv-prev').length
+                                && !b.is('[class*="cobrowse"]') && !b.find('.cobrowse-block, .rf-cobrowse').length
+                                && !b.parent().closest('.conv-sidebar-block').length;
+                        }).appendTo(rfExtra);
+                    };
+                    if (rfExtra.length) {
+                        rfMoveSidebarBlocks();
+                        var rfSidebar = document.getElementById('conv-layout-customer');
+                        if (rfSidebar && window.MutationObserver) {
+                            new MutationObserver(function (mutations) {
+                                for (var i = 0; i < mutations.length; i++) {
+                                    if (mutations[i].addedNodes.length && !$(mutations[i].target).closest('.rf-rp').length) {
+                                        rfMoveSidebarBlocks();
+                                        return;
+                                    }
+                                }
+                            }).observe(rfSidebar, { childList: true, subtree: true });
+                        }
+                    }
                     // one-click copy
                     rp.on('click', '.rf-copy', function () {
                         var v = $(this).attr('data-copy');

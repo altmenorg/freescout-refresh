@@ -76,5 +76,6 @@
     <div class="rf-rp-contact">
         @include('refresh::contact_panel')
         <div class="rf-rp-cobrowse"></div>
+        <div class="rf-rp-extra"></div>
     </div>
 </div>

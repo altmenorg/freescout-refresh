@@ -957,6 +957,16 @@ body.rf-conv .thread-recipients strong, body.rf-conv .thread-recipients b, body.
 .rf-rp-cobrowse .panel-title .caret { margin-left: auto; }
 .rf-rp-cobrowse .panel-body { padding: 12px 0 0 !important; }
 
+/* Sidebar blocks of other modules (Sidebar Webhook…), moved into the contact column: one section each, separated like
+   the other sections; their own Bootstrap panels lose their frame, their content is left as the module renders it */
+.rf-rp-extra:empty { display: none; }
+.rf-rp-extra > .conv-sidebar-block { margin: 0 !important; padding: 12px 16px 20px !important; border-top: 1px solid #e6eaf0; }
+.rf-rp-extra .panel-group, .rf-rp-extra .panel, .rf-rp-extra .panel-heading { background: none !important; border: 0 !important; box-shadow: none !important; margin: 0 !important; }
+.rf-rp-extra .panel-heading { padding: 0; }
+.rf-rp-extra .panel-title a { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--fd-text-2) !important; text-decoration: none !important; }
+body .rf-rp .rf-rp-extra .panel-title .caret { margin-left: auto; }
+.rf-rp-extra .panel-body { padding: 12px 0 0 !important; }
+
 /* ---------------------------------------------------------------- reply editor, Freshdesk-style (see skinEditor in the provider)
    Measured on Freshdesk: active tab #eef2ff / border #c7d2fe / text #4f46e5, inactive #f8fafc / #475569; labels 14 px #475569;
    Cc / Bcc / Clear links 12 px 500 #4338ca; borders #eef1f6; bottom bar padding 12 px; Send button #4f46e5 32 px radius 8. */
