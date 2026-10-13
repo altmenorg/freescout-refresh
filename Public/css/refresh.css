@@ -647,6 +647,17 @@ body.rf-conv #conv-layout-header, body.rf-conv #conv-layout-main { padding-right
 .rf-copy.copied { color: #22c55e; }
 .rf-rp-more { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--fd-brand) !important; }
 .rf-rp-more.rf-rp-change-customer { display: flex; width: fit-content; margin-top: 8px; }
+/* FreeScout's "Change Customer" window: search and "Create a new customer" fields like Refresh's (light border, violet when active) */
+.change-customer-input + .select2-container--default .select2-selection--multiple { min-height: 38px; border: 1px solid var(--fd-input-border); padding: 2px 6px; cursor: text; }
+.change-customer-input + .select2-container--default.select2-container--focus .select2-selection--multiple,
+.change-customer-input + .select2-container--default.select2-container--open .select2-selection--multiple { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); }
+.change-customer-input + .select2-container .select2-search__field { font-size: 14px; margin-top: 6px !important; }
+.change-customer-input + .select2-container .select2-search__field::placeholder { color: var(--fd-muted); }
+.modal:has(.change-customer-input) .select2-dropdown { border: 1px solid var(--fd-border); border-radius: 6px; box-shadow: 0 4px 12px rgba(15, 23, 42, .12); overflow: hidden; font-size: 14px; }
+.modal:has(.change-customer-input) .select2-results__option { padding: 8px 12px; color: var(--fd-text); }
+.modal:has(.change-customer-input) .select2-results__option--highlighted[aria-selected] { background: var(--fd-active-bg); color: var(--fd-text); }
+#change-customer-create .form-control { height: 38px; border: 1px solid var(--fd-input-border); box-shadow: none; padding: 6px 12px; font-size: 14px; color: var(--fd-text); }
+#change-customer-create .form-control:focus { border-color: var(--fd-primary); box-shadow: 0 0 0 1px var(--fd-primary); outline: 0; }
 .rf-rp-timeline { position: relative; }
 .rf-rp-tl-item { position: relative; display: flex; gap: 10px; padding-bottom: 14px; color: var(--fd-text) !important; text-decoration: none !important; }
 .rf-rp-tl-item:not(:last-child)::before { content: ""; position: absolute; left: 13px; top: 28px; bottom: 0; width: 1px; background: #e6eaf0; }
