@@ -1225,6 +1225,9 @@ body.rf-view-loading .rf-list-scroll { opacity: .45; pointer-events: none; }
 /* Web Push module (github.com/altmenorg/freescout-webpush): its profile box in the Refresh look */
 .webpush-box { border-color: var(--fd-border); border-radius: 6px; color: var(--fd-text); }
 .webpush-help { color: var(--fd-text-2); }
+.webpush-devices { border-top-color: var(--fd-border); }
+.webpush-dev-date { color: var(--fd-text-2); }
+.webpush-dev-remove.btn-link, .webpush-dev-remove.btn-link:hover, .webpush-dev-remove.btn-link:focus { color: var(--fd-brand); text-decoration: none; }
 
 /* Floating messages ("Ticket updated", "Settings saved"…) as a Freshdesk toast, desktop and mobile. Measured
    on Freshdesk (.nucleus-toast-message): white 400 px card centered 16 px from the top, 4 px top
