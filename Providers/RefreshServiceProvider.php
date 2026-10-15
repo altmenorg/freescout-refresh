@@ -2214,9 +2214,11 @@ class RefreshServiceProvider extends ServiceProvider
                             dropdownCssClass: 'rf-tag-dd',
                             ajax: {
                                 url: laroute.route('tags.ajax'),
+                                // POST: from Tags 1.0.48 the route only accepts POST (405 on GET, issue #2)
+                                type: 'POST',
                                 dataType: 'json',
                                 delay: 200,
-                                data: function (params) { return { q: params.term, action: 'autocomplete', page: params.page || 1 }; }
+                                data: function (params) { return { _token: $('meta[name="csrf-token"]').attr('content'), q: params.term, action: 'autocomplete', page: params.page || 1 }; }
                             },
                             createTag: function (params) {
                                 var t = $.trim(params.term);

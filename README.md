@@ -89,7 +89,7 @@ No empty draft is saved when these pages open.
 </p>
 
 ### Languages
-English and French. Other languages can be added with a `Resources/lang/<locale>.json` file (English key =>
+English, French and German (German by [@szucher](https://github.com/szucher)). Other languages can be added with a `Resources/lang/<locale>.json` file (English key =>
 translation), plus `Resources/lang/<locale>/labels.php` for the few words FreeScout translates with another meaning,
 and optionally `Resources/lang/overrides/<locale>.php` to reword FreeScout's own strings (the French file turns
 "conversation" into "ticket", like Freshdesk).

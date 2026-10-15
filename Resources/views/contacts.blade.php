@@ -26,7 +26,7 @@
         </div>
         <table class="rf-ctable">
             <thead>
-                <tr><th class="rf-ct-cb"></th><th>{{ __('Contact') }}</th><th>Titre</th><th>Entreprise</th><th>Adresse e-mail</th><th>{{ __('Mobile phone') }}</th><th>{{ __('Work phone') }}</th><th class="rf-ct-menu"></th></tr>
+                <tr><th class="rf-ct-cb"></th><th>{{ __('Contact') }}</th><th>{{ __('Job title') }}</th><th>{{ __('Company') }}</th><th>{{ __('E-mail address') }}</th><th>{{ __('Mobile phone') }}</th><th>{{ __('Work phone') }}</th><th class="rf-ct-menu"></th></tr>
             </thead>
             <tbody>
                 @forelse ($contacts as $c)

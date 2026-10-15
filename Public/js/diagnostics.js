@@ -95,7 +95,8 @@
             return;
         }
         var t = Date.now();
-        $.ajax({ url: url, dataType: 'json', global: false, timeout: 15000, data: { q: 'a', action: 'autocomplete', page: 1 } })
+        $.ajax({ url: url, type: 'POST', dataType: 'json', global: false, timeout: 15000,
+            data: { _token: $('meta[name="csrf-token"]').attr('content'), q: 'a', action: 'autocomplete', page: 1 } })
             .done(function (r) {
                 done({
                     route: true, status: 200, ms: Date.now() - t,
