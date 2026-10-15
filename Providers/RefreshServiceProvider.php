@@ -926,7 +926,7 @@ class RefreshServiceProvider extends ServiceProvider
                     }).first();
                     if (manage.length) {
                         var gear = $('<div class="dropdown dropup rf-rail-manage"></div>');
-                        gear.append('<a href="#" class="rf-rail-link dropdown-toggle" data-toggle="dropdown" title="Administration"><i class="rf-i rf-i-settings"></i></a>');
+                        gear.append('<a href="#" class="rf-rail-link dropdown-toggle" data-toggle="dropdown" title="' + htmlEscape(rfT('Administration')) + '"><i class="rf-i rf-i-settings"></i></a>');
                         gear.append(manage.find('> ul.dropdown-menu').first().addClass('rf-rail-menu'));
                         // an icon in front of each entry (FreeScout's own, then the usual module ones by address)
                         var railMenuIcons = [
@@ -1401,7 +1401,7 @@ class RefreshServiceProvider extends ServiceProvider
                     var tb = $('<div class="rf-tb"></div>');
                     tb.append('<button type="button" class="rf-sqbtn rf-tb-star' + (starNative.hasClass('glyphicon-star') ? ' on' : '') + '" title="' + rfT('Star') + '"><i class="rf-i rf-i-fd-watching"></i></button>');
                     tb.append('<button type="button" class="rf-btn rf-tb-act" data-native=".conv-reply"><i class="rf-i rf-i-fd-reply rf-i-sm"></i>' + rfT('Reply') + '</button>');
-                    tb.append('<button type="button" class="rf-btn rf-tb-act" data-native=".conv-add-note"><i class="rf-i rf-i-fd-note rf-i-sm"></i>Note</button>');
+                    tb.append('<button type="button" class="rf-btn rf-tb-act" data-native=".conv-add-note"><i class="rf-i rf-i-fd-note rf-i-sm"></i>' + htmlEscape(rfT('Note')) + '</button>');
                     tb.append('<button type="button" class="rf-btn rf-tb-act" data-native=".conv-forward"><i class="rf-i rf-i-forward rf-i-sm"></i>' + rfT('Forward') + '</button>');
                     // Current status: native menu, else the properties panel (server-rendered, kept up to date by every ajax change).
                     // Reading only the native menu once showed "Close" on a closed ticket, its entries being missing.
@@ -1591,10 +1591,10 @@ class RefreshServiceProvider extends ServiceProvider
                     if (body.find('.rf-quote').length) { return; }
                     var start = body.find('.gmail_quote, .gmail_extra, blockquote, .moz-cite-prefix, #appendonsend, #divRplyFwdMsg, .yahoo_quoted, div[style*="border-top:solid #e6eaf0"]').first();
                     if (!start.length) {
-                        // plain-text quote header: "Le 20 sept. 2026 à 21:24, X a écrit :" (French) / "On … wrote:" (English)
+                        // plain-text quote header: "Le 20 sept. 2026 à 21:24, X a écrit :" (French) / "On … wrote:" (English) / "Am … schrieb …:" (German)
                         body.find('div, p, span').each(function () {
                             var t = $.trim($(this).clone().children().remove().end().text());
-                            if (/^(Le |On ).{6,140}(a écrit|wrote)\s*:?$/i.test(t) || /^-{2,}\s*(Message d'origine|Original Message)/i.test(t)) { start = $(this); return false; }
+                            if (/^(Le |On |Am ).{6,140}(a écrit|wrote|schrieb)\s*:?$/i.test(t) || /^-{2,}\s*(Message d'origine|Original Message|Ursprüngliche Nachricht)/i.test(t)) { start = $(this); return false; }
                         });
                     }
                     if (!start.length) { return; }
@@ -1690,7 +1690,7 @@ class RefreshServiceProvider extends ServiceProvider
                         '<div class="rf-reply-card">' +
                         '<div class="rf-reply-tabs">' +
                         '<button type="button" class="rf-reply-tab active" data-native=".conv-reply"><i class="rf-i rf-i-email rf-i-sm"></i>' + rfT('Reply') + '</button>' +
-                        '<button type="button" class="rf-reply-tab" data-native=".conv-add-note"><i class="rf-i rf-i-fd-note rf-i-sm"></i>Note</button>' +
+                        '<button type="button" class="rf-reply-tab" data-native=".conv-add-note"><i class="rf-i rf-i-fd-note rf-i-sm"></i>' + htmlEscape(rfT('Note')) + '</button>' +
                         '<button type="button" class="rf-reply-tab" data-native=".conv-forward"><i class="rf-i rf-i-forward rf-i-sm"></i>' + rfT('Forward') + '</button>' +
                         '</div>' +
                         '<div class="rf-reply-placeholder" data-native=".conv-reply">' + rfT('Type your reply here…') + '</div>' +

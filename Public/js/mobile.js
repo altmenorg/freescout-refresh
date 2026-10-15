@@ -156,7 +156,7 @@
         var nMenu = $('.web-notifications > .dropdown-menu').first();
         var nCount = txt(nMenu.find('.web-notifications-count'));
         var notifHead = $('<div class="rf-m-bar"><div class="rf-m-title"></div></div>');
-        notifHead.find('.rf-m-title').text('Notifications' + (nCount ? ' (' + nCount + ')' : ''));
+        notifHead.find('.rf-m-title').text(rfT('Notifications') + (nCount ? ' (' + nCount + ')' : ''));
         notifPanel.append(notifHead);
         if (nMenu.length) {
             var markRead = nMenu.find('.web-notifications-mark-read').first();
@@ -935,7 +935,7 @@
             if (window.rfMe && window.rfMe.mailbox && !f.find('.conv-from-alias').length) {
                 f.find('#field-to').before($('<div class="form-group rf-m-nfrom"><label class="control-label rf-m-req">' + rfT('From') + '</label><div class="col-sm-9"><div class="rf-m-nfromval"></div></div></div>').find('.rf-m-nfromval').text(window.rfMe.mailbox).end());
             }
-            f.find('#bcc').closest('.form-group').find('> .control-label').text('Bcc'); // app-style label
+            f.find('#bcc').closest('.form-group').find('> .control-label').text(rfT('Bcc')); // app-style label
             if (N.ticket) {
                 // the ticket is created on behalf of the contact: "Contact", and no Bcc (nothing is sent)
                 f.find('#field-to > .control-label').text(rfT('Contact'));

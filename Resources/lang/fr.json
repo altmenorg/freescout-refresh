@@ -339,5 +339,8 @@
     "Question": "Question",
     "Incident": "Incident",
     "Problem": "Problème",
-    "One per line, in the order of the menus (ticket properties, new ticket, filters). Types already set on tickets stay available after these.": "Un par ligne, dans l'ordre des menus (propriétés du ticket, nouveau ticket, filtres). Les types déjà posés sur des tickets restent proposés à la suite."
+    "One per line, in the order of the menus (ticket properties, new ticket, filters). Types already set on tickets stay available after these.": "Un par ligne, dans l'ordre des menus (propriétés du ticket, nouveau ticket, filtres). Les types déjà posés sur des tickets restent proposés à la suite.",
+    "Note": "Note",
+    "Notifications": "Notifications",
+    "Administration": "Administration"
 }
