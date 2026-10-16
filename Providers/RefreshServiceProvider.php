@@ -601,9 +601,16 @@ class RefreshServiceProvider extends ServiceProvider
             // Contact: e-mails, phones, recent timeline (shared with the New ticket / Send an e-mail pages)
             $contact = self::contactPanelVars($customer);
 
+            // Same choices as FreeScout's status menu (issue #10): Active, Pending, Closed and Spam; a spam ticket shows
+            // Spam (its real status, it used to show the first choice) and "Not Spam", which restores its previous status
             $statuses = [];
-            foreach ([Conversation::STATUS_ACTIVE, Conversation::STATUS_PENDING, Conversation::STATUS_CLOSED] as $code) {
-                $statuses[$code] = Conversation::statusCodeToName($code);
+            if ($conversation->isSpam()) {
+                $statuses[Conversation::STATUS_SPAM] = Conversation::statusCodeToName(Conversation::STATUS_SPAM);
+                $statuses['not_spam'] = __('Not Spam');
+            } else {
+                foreach ([Conversation::STATUS_ACTIVE, Conversation::STATUS_PENDING, Conversation::STATUS_CLOSED, Conversation::STATUS_SPAM] as $code) {
+                    $statuses[$code] = Conversation::statusCodeToName($code);
+                }
             }
 
             $author = '';
@@ -630,6 +637,16 @@ class RefreshServiceProvider extends ServiceProvider
         }, 10);
     }
 
+    /** Avatar initials: first letters of the first and last word of a name ("Steffen Zucher" → "SZ"), like rfInitials(). */
+    public static function initials($name)
+    {
+        $w = preg_split('/\s+/u', trim((string)$name), -1, PREG_SPLIT_NO_EMPTY);
+        if (!$w) {
+            return '?';
+        }
+        return mb_strtoupper(mb_substr($w[0], 0, 1).(count($w) > 1 ? mb_substr($w[count($w) - 1], 0, 1) : ''));
+    }
+
     /**
      * Variables of the contact panel (refresh::contact_panel): customer, e-mails, phones, avatar colors, 5 latest
      * conversations. $customer may be null (New ticket page before a contact is chosen).
@@ -650,7 +667,7 @@ class RefreshServiceProvider extends ServiceProvider
                 }
             }
             $name = $customer->getFullName(true);
-            $initial = mb_strtoupper(mb_substr(trim($name) ?: '?', 0, 1));
+            $initial = self::initials($name);
             $hue = 0;
             foreach (preg_split('//u', $name, -1, PREG_SPLIT_NO_EMPTY) as $ch) {
                 $hue = ($hue * 31 + mb_ord($ch)) % 360;
@@ -808,6 +825,12 @@ class RefreshServiceProvider extends ServiceProvider
                 }
                 return window.rfL[s] || s;
             };
+            // Avatar initials: first letters of the first and last word of a name ("Steffen Zucher" → "SZ"), as
+            // Initials() on the server side (issue #11)
+            var rfInitials = window.rfInitials = function (name) {
+                var w = $.trim(name || '').split(/\s+/).filter(function (x) { return x; });
+                return w.length ? (w[0].charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : '')).toUpperCase() : '?';
+            };
             // translated labels of the stylesheets (content: var(--rf-t-…)), set through the CSSOM (allowed by the CSP)
             (function (st) {
                 var l = { loading: 'Loading…', cancel: 'Cancel', assign: 'Assign', status: 'Status', 'delete': 'Delete', tags: 'Tags' };
@@ -825,7 +848,7 @@ class RefreshServiceProvider extends ServiceProvider
             $('img.customer-photo[src*="default-avatar"]').each(function () {
                 var name = $.trim($(this).closest('.customer-snippet').find('.customer-name').first().text()), hue = 0;
                 for (var i = 0; i < name.length; i++) { hue = (hue * 31 + name.charCodeAt(i)) % 360; }
-                $(this).replaceWith($('<span class="rf-av"></span>').text((name.charAt(0) || '?').toUpperCase())
+                $(this).replaceWith($('<span class="rf-av"></span>').text(rfInitials(name))
                     .css({ background: 'hsl(' + hue + ', 60%, 92%)', borderColor: 'hsl(' + hue + ', 55%, 84%)', color: 'hsl(' + hue + ', 45%, 32%)' }));
             });
             // Notifications menu (loaded by ajax, "load more" included): same initial avatars, the grey placeholder and
@@ -838,7 +861,7 @@ class RefreshServiceProvider extends ServiceProvider
                     var head = box.closest('.web-notification').find('.web-notification-msg-header');
                     var name = $.trim(head.find('.rf-notif-name').attr('data-name') || head.text()), hue = 0;
                     for (var i = 0; i < name.length; i++) { hue = (hue * 31 + name.charCodeAt(i)) % 360; }
-                    box.empty().append($('<span class="rf-av rf-av-32"></span>').text((name.charAt(0) || '?').toUpperCase())
+                    box.empty().append($('<span class="rf-av rf-av-32"></span>').text(rfInitials(name))
                         .css({ background: 'hsl(' + hue + ', 60%, 92%)', borderColor: 'hsl(' + hue + ', 55%, 84%)', color: 'hsl(' + hue + ', 45%, 32%)' }));
                 });
             };
@@ -885,6 +908,37 @@ class RefreshServiceProvider extends ServiceProvider
                     var crumbs = <?php echo json_encode($crumbs); ?>;
                     // top bar search: always "All tickets" (the rail, on the other hand, points to /tickets = last view)
                     var ticketsUrl = <?php echo json_encode($mb ? route('refresh.tickets', ['mailbox_id' => $mb, 'view' => 'all']) : '#'); ?>;
+                    // Drop-down menus that modules add to FreeScout's top menu (Knowledge Base, Reports…, issue #5): an entry in
+                    // the left bar that opens the same menu on its side. The mailbox switcher (only mailbox links, replaced
+                    // by Refresh's views) and Manage (the gear at the bottom) are left out. A function, so it can be tested.
+                    window.rfRailDropdowns = function (nav, list, manageLabel) {
+                        var icons = [[/knowledge|\/kb(\/|$)/i, 'similar-articles'], [/report/i, 'm-chart']];
+                        nav.find('.navbar-nav').first().children('li.dropdown').each(function () {
+                            var li = $(this);
+                            var toggle = li.children('a').first();
+                            var menu = li.children('ul.dropdown-menu').first();
+                            var label = $.trim(toggle.clone().children().remove().end().text()) || $.trim(toggle.text());
+                            if (!menu.length || (manageLabel && label.indexOf(manageLabel) !== -1)) { return; }
+                            var links = menu.find('a[href]').filter(function () { var h = this.getAttribute('href'); return h && h !== '#'; });
+                            // the mailbox switcher only links to mailboxes themselves (/mailbox/1), the Knowledge Base to /mailbox/1/…
+                            if (!links.length || !links.filter(function () { return !/\/mailbox\/\d+\/?([?#].*)?$/.test(this.href); }).length) { return; }
+                            var icon = 'grid';
+                            links.each(function () {
+                                var h = this.href;
+                                $.each(icons, function (i, m) { if (m[0].test(h)) { icon = m[1]; return false; } });
+                                if (icon !== 'grid') { return false; }
+                            });
+                            var here = window.location.href.split(/[?#]/)[0];
+                            var active = li.hasClass('active') || menu.find('li.active').length > 0
+                                || links.filter(function () { return this.href.split(/[?#]/)[0] === here; }).length > 0;
+                            var dd = $('<div class="dropdown rf-rail-dd"></div>');
+                            dd.append($('<a href="#" class="rf-rail-link dropdown-toggle" data-toggle="dropdown"></a>')
+                                .attr('title', label).toggleClass('active', active).append('<i class="rf-i rf-i-' + icon + '"></i>'));
+                            dd.append(menu.addClass('rf-rail-menu rf-rail-side'));
+                            list.append(dd);
+                            li.remove();
+                        });
+                    };
                     var nav = $('.navbar-static-top');
                     if (!nav.length || $('.rf-rail').length) { return; }
                     var r = $('<nav class="rf-rail"></nav>');
@@ -919,6 +973,7 @@ class RefreshServiceProvider extends ServiceProvider
                         if (!href || /\/mailbox\//.test(href) || href === window.location.origin + '/') { return; }
                         addRailLink({ url: href, label: $.trim($(this).text()), icon: 'grid', active: $(this).parent().hasClass('active') });
                     });
+                    window.rfRailDropdowns(nav, list, '<?php echo addslashes(__('Manage')); ?>');
                     r.append(list);
                     // "Manage" (settings, users, mailboxes…) → gear icon at the bottom of the rail
                     var manage = nav.find('.navbar-nav > li.dropdown').filter(function () {
@@ -1340,7 +1395,7 @@ class RefreshServiceProvider extends ServiceProvider
                         if (a.hasClass('rf-av-done')) { return; }
                         var name = $.trim(a.contents().filter(function () { return this.nodeType === 3; }).text());
                         if (!name) { name = $.trim(a.find('.conv-email').text()); }
-                        var initial = (name.charAt(0) || '?').toUpperCase();
+                        var initial = rfInitials(name);
                         var hash = 0;
                         for (var i = 0; i < name.length; i++) { hash = (hash * 31 + name.charCodeAt(i)) % 360; }
                         // Avatar + message counter in a positioned container (the counter sits at the bottom right).
@@ -1545,6 +1600,17 @@ class RefreshServiceProvider extends ServiceProvider
                     var t = $(this);
                     if (t.hasClass('rf-th-done')) { return; }
                     t.addClass('rf-th-done');
+                    // Line items (status changed, workflow run…): their date, hidden with the native .thread-info, is put
+                    // back after the sentence, as on messages (issue #14)
+                    if (t.hasClass('thread-type-lineitem')) {
+                        var liDate = t.find('.thread-date').first();
+                        var liWhen = $.trim(liDate.text());
+                        var liFull = localDate(liDate.attr('data-original-title') || liDate.attr('title') || '');
+                        if (liWhen) {
+                            t.find('.thread-title').first().append($('<span class="rf-th-when rf-li-when"></span>').text(' • ' + liWhen + (liFull ? ' (' + liFull + ')' : '')));
+                        }
+                        return;
+                    }
                     var person = t.find('.thread-person').first();
                     // the customer's name opens their contact page (tickets), like Freshdesk, not the edit form that
                     // FreeScout links to (Customer::url()); on the phone that form has no Tickets tab
@@ -1571,15 +1637,21 @@ class RefreshServiceProvider extends ServiceProvider
                         line.append($('<span class="rf-th-when"></span>').text(when + (full ? ' (' + full + ')' : '')));
                     }
                     person.after(line);
-                    // avatar
-                    var initial = (name.charAt(0) || '?').toUpperCase();
+                    // avatar: the person's photo when there is one (issue #11), else the initials of first and last name
+                    // (FreeScout's own for agents, data-initial), in a colour derived from the name
+                    var photo = t.find('.thread-photo').first();
+                    var initial = String(photo.find('[data-initial]').attr('data-initial') || rfInitials(name)).toUpperCase();
                     var hash = 0;
                     for (var i = 0; i < name.length; i++) { hash = (hash * 31 + name.charCodeAt(i)) % 360; }
-                    var photo = t.find('.thread-photo').first();
                     if (photo.length) {
-                        photo.empty().append($('<span class="rf-av rf-av-32"></span>').text(initial).css({
-                            background: 'hsl(' + hash + ', 60%, 92%)', borderColor: 'hsl(' + hash + ', 55%, 84%)', color: 'hsl(' + hash + ', 45%, 32%)'
-                        }));
+                        var src = photo.find('img.person-photo').first().attr('src') || '';
+                        if (src && !/default-avatar/.test(src)) {
+                            photo.empty().append($('<img class="rf-av rf-av-32 rf-av-img" alt="">').attr('src', src));
+                        } else {
+                            photo.empty().append($('<span class="rf-av rf-av-32"></span>').text(initial).css({
+                                background: 'hsl(' + hash + ', 60%, 92%)', borderColor: 'hsl(' + hash + ', 55%, 84%)', color: 'hsl(' + hash + ', 45%, 32%)'
+                            }));
+                        }
                     }
                 });
 
@@ -1700,7 +1772,7 @@ class RefreshServiceProvider extends ServiceProvider
                     // logged-in agent's avatar to the left of the reply card, like Freshdesk
                     var mh = 0;
                     for (var k = 0; k < me.length; k++) { mh = (mh * 31 + me.charCodeAt(k)) % 360; }
-                    reply.prepend($('<span class="rf-av rf-av-32 rf-reply-av"></span>').text((me.charAt(0) || '?').toUpperCase()).css({
+                    reply.prepend($('<span class="rf-av rf-av-32 rf-reply-av"></span>').text(rfInitials(me)).css({
                         background: 'hsl(' + mh + ', 60%, 92%)', borderColor: 'hsl(' + mh + ', 55%, 84%)', color: 'hsl(' + mh + ', 45%, 32%)'
                     }));
                     main.append(reply);

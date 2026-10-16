@@ -48,9 +48,9 @@
                 <div><div class="rf-card-title">{{ __('Unresolved tickets') }}</div><div class="rf-widget-sub">{{ __('Browse the helpdesk') }}</div></div>
                 <a href="{{ route('refresh.tickets', ['mailbox_id' => $mailbox->id, 'view' => 'unresolved']) }}">{{ __('View details') }}</a>
             </div>
-            <div class="rf-widget-row rf-widget-th"><span>{{ __('Agent') }}</span><span>{{ __('refresh::labels.open') }}</span></div>
+            <div class="rf-widget-row rf-widget-th"><span>{{ __('Agent') }}</span><span class="rf-widget-cols"><span>{{ __('refresh::labels.open') }}</span><span>{{ __('Pending') }}</span></span></div>
             @forelse ($stats['by_agent'] as $a)
-                <a class="rf-widget-row" href="{{ route('refresh.tickets', ['mailbox_id' => $mailbox->id, 'view' => 'unresolved']) }}?{{ http_build_query(['agent' => [$a['user_id'] ?: -1]]) }}"><span>{{ $a['name'] }}</span><span class="rf-widget-n">{{ $a['n'] }}</span></a>
+                <a class="rf-widget-row" href="{{ route('refresh.tickets', ['mailbox_id' => $mailbox->id, 'view' => 'unresolved']) }}?{{ http_build_query(['agent' => [$a['user_id'] ?: -1]]) }}"><span>{{ $a['name'] }}</span><span class="rf-widget-cols"><span class="rf-widget-n">{{ $a['open'] ?? $a['n'] }}</span><span class="rf-widget-n">{{ $a['pending'] ?? 0 }}</span></span></a>
             @empty
                 <div class="rf-widget-row"><span class="text-help">{{ __('No unresolved tickets') }}</span></div>
             @endforelse

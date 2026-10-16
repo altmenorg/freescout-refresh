@@ -91,17 +91,23 @@ class Dashboard
                 'sla'      => [$slaPct($today), $slaPct($yesterday)],
             ];
 
-            // Unresolved by agent
+            // Unresolved by agent: open (active) and pending in two columns (issue #13), sorted by their total
             $by_agent = [];
             $rows = $base()->whereIn('status', [Conversation::STATUS_ACTIVE, Conversation::STATUS_PENDING])
-                ->select('user_id', \DB::raw('COUNT(*) AS n'))->groupBy('user_id')->get();
+                ->select('user_id', 'status', \DB::raw('COUNT(*) AS n'))->groupBy('user_id', 'status')->get();
             foreach ($rows as $r) {
-                $name = __('Unassigned');
-                if ($r->user_id && ($u = \App\User::find($r->user_id))) {
-                    $name = $u->getFullName();
+                $key = (int)$r->user_id;
+                if (!isset($by_agent[$key])) {
+                    $name = __('Unassigned');
+                    if ($r->user_id && ($u = \App\User::find($r->user_id))) {
+                        $name = $u->getFullName();
+                    }
+                    $by_agent[$key] = ['name' => $name, 'n' => 0, 'open' => 0, 'pending' => 0, 'user_id' => $key];
                 }
-                $by_agent[] = ['name' => $name, 'n' => (int)$r->n, 'user_id' => (int)$r->user_id];
+                $by_agent[$key][(int)$r->status === Conversation::STATUS_PENDING ? 'pending' : 'open'] += (int)$r->n;
+                $by_agent[$key]['n'] += (int)$r->n;
             }
+            $by_agent = array_values($by_agent);
             usort($by_agent, function ($a, $b) { return $b['n'] - $a['n']; });
 
             $undelivered = Views::query($mailbox_id, 'undelivered')->count();

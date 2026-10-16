@@ -507,6 +507,9 @@ body.rf-shell { background: #f6f7fb !important; padding-left: 65px; }
 .rf-rail-menu > li > a { display: flex !important; align-items: center; gap: 10px; }
 .rf-rail-menu > li > a > .rf-i { flex: none; width: 16px; height: 16px; color: var(--fd-text-2); }
 .rf-rail-menu > li.active > a > .rf-i, .rf-rail-menu > li > a:hover > .rf-i { color: inherit; }
+.rf-li-when { display: inline !important; margin: 0 !important; }                                                     /* date of a line item, after its sentence (issue #14) */
+.rf-rail-dd { position: relative; }                                                                              /* module menus from the top bar (issue #5) */
+.rf-rail-menu.rf-rail-side { top: 0 !important; bottom: auto !important; }
 /* Logo in the rail: the top bar one (black background + text) is removed from the top bar */
 body.rf-shell .navbar-header .navbar-brand { display: none !important; }
 
@@ -575,6 +578,8 @@ body.rf-conv #conv-layout-main { background: #fff !important; padding-top: 4px; 
 body.rf-conv #conv-layout-main > .thread { position: relative; background: transparent !important; border: 0 !important; border-radius: 0 !important; margin: 0 16px 16px 24px !important; padding: 0 0 0 48px !important; box-shadow: none !important; }
 body.rf-conv #conv-layout-main > .thread .thread-photo { position: absolute !important; left: 0; top: 12px; padding: 0 !important; width: 32px; }
 .rf-av-32 { width: 32px !important; height: 32px !important; font-size: 14px !important; font-weight: 500; }
+.rf-av-img { object-fit: cover; padding: 0; background: #f1f4f9; border-color: var(--fd-border); }            /* photo of an agent or customer (issue #11) */
+.rf-av-32:not(.rf-av-img) { letter-spacing: -.02em; }                                                            /* two initials */
 body.rf-conv #conv-layout-main > .thread .thread-message { margin: 0 !important; padding: 12px !important; border-radius: 5px; background: #fff; }
 body.rf-conv #conv-layout-main > .thread.thread-type-customer .thread-message { padding: 12px 12px 12px 0 !important; }
 body.rf-conv #conv-layout-main > .thread.thread-type-message .thread-message { background: #f8fafc; }
@@ -951,6 +956,8 @@ body.rf-conv .thread-recipients strong, body.rf-conv .thread-recipients b, body.
 .rf-dash .rf-tile-pending .rf-tile-count { color: var(--fd-text) !important; }
 .rf-dash .rf-tile-zero .rf-tile-count { color: #64748b !important; }
 .rf-widget-n { color: var(--fd-text-2) !important; font-weight: 400 !important; font-size: 14px; }
+.rf-widget-cols { display: flex; gap: 0; }                                                                     /* open | pending (issue #13) */
+.rf-widget-cols > span { width: 96px; text-align: right; }
 
 /* Collapsible sections of the contact panel (chevron on the right, like Freshdesk) */
 .rf-rp-sec-head { cursor: pointer; }

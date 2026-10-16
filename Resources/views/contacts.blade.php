@@ -32,7 +32,7 @@
                 @forelse ($contacts as $c)
                     @php
                         $name = $c->getFullName(true);
-                        $initial = mb_strtoupper(mb_substr(trim($name) ?: '?', 0, 1));
+                        $initial = \Modules\Refresh\Providers\RefreshServiceProvider::initials($name);
                         $hue = 0;
                         foreach (preg_split('//u', $name, -1, PREG_SPLIT_NO_EMPTY) as $ch) { $hue = ($hue * 31 + mb_ord($ch)) % 360; }
                         list($mobile, $work) = \Modules\Refresh\Http\Controllers\ContactsController::phones($c);

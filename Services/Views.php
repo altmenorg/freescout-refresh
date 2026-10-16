@@ -142,9 +142,22 @@ class Views
                 });
                 break;
             case 'undelivered':
+                // Tickets whose last outgoing e-mail failed: once a later reply is sent (or the failed one retried),
+                // the ticket leaves the view and the dashboard count (issue #12)
                 $q->whereIn('conversations.id', function ($s) {
-                    $s->select('conversation_id')->from('threads')
-                        ->whereIn('send_status', [\App\SendLog::STATUS_SEND_ERROR, \App\SendLog::STATUS_DELIVERY_ERROR]);
+                    $err = [\App\SendLog::STATUS_SEND_ERROR, \App\SendLog::STATUS_DELIVERY_ERROR];
+                    $s->select('t.conversation_id')->from('threads as t')
+                        ->whereIn('t.send_status', $err)
+                        ->whereNotExists(function ($n) use ($err) {
+                            $n->select(\DB::raw(1))->from('threads as t2')
+                                ->whereColumn('t2.conversation_id', 't.conversation_id')
+                                ->whereColumn('t2.id', '>', 't.id')
+                                ->where('t2.type', \App\Thread::TYPE_MESSAGE)
+                                ->where('t2.state', \App\Thread::STATE_PUBLISHED)
+                                ->where(function ($w) use ($err) {
+                                    $w->whereNull('t2.send_status')->orWhereNotIn('t2.send_status', $err);
+                                });
+                        });
                 });
                 break;
             case 'unresolved':
