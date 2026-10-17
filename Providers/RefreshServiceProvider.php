@@ -909,10 +909,11 @@ class RefreshServiceProvider extends ServiceProvider
                     // top bar search: always "All tickets" (the rail, on the other hand, points to /tickets = last view)
                     var ticketsUrl = <?php echo json_encode($mb ? route('refresh.tickets', ['mailbox_id' => $mb, 'view' => 'all']) : '#'); ?>;
                     // Drop-down menus that modules add to FreeScout's top menu (Knowledge Base, Reports…, issue #5): an entry in
-                    // the left bar that opens the same menu on its side. The mailbox switcher (only mailbox links, replaced
-                    // by Refresh's views) and Manage (the gear at the bottom) are left out. A function, so it can be tested.
+                    // the left bar that opens the same menu on its side; Manage keeps its gear at the bottom. The mailbox
+                    // switcher gets an inbox icon, games (achievements) a star, other menus a grid. A function, so it can be tested.
                     window.rfRailDropdowns = function (nav, list, manageLabel) {
-                        var icons = [[/knowledge|\/kb(\/|$)/i, 'similar-articles'], [/report/i, 'm-chart']];
+                        var icons = [[/knowledge|\/kb(\/|$)/i, 'similar-articles'], [/report/i, 'm-chart'], [/achievement|trophy|trophies|leaderboard|overflow/i, 'fd-star-filled']];
+                        var isMailbox = function (a) { return /\/mailbox\/\d+(\/tickets(\/[\w-]+)?)?\/?([?#].*)?$/.test(a.href); };
                         nav.find('.navbar-nav').first().children('li.dropdown').each(function () {
                             var li = $(this);
                             var toggle = li.children('a').first();
@@ -920,10 +921,11 @@ class RefreshServiceProvider extends ServiceProvider
                             var label = $.trim(toggle.clone().children().remove().end().text()) || $.trim(toggle.text());
                             if (!menu.length || (manageLabel && label.indexOf(manageLabel) !== -1)) { return; }
                             var links = menu.find('a[href]').filter(function () { var h = this.getAttribute('href'); return h && h !== '#'; });
-                            // the mailbox switcher only links to mailboxes themselves (/mailbox/1), the Knowledge Base to /mailbox/1/…
-                            if (!links.length || !links.filter(function () { return !/\/mailbox\/\d+\/?([?#].*)?$/.test(this.href); }).length) { return; }
-                            var icon = 'grid';
+                            if (!links.length) { return; }
+                            // the mailbox switcher links to mailboxes themselves (/mailbox/1, /mailbox/1/tickets/all with Refresh)
+                            var icon = links.filter(function () { return !isMailbox(this); }).length ? 'grid' : 'inbox';
                             links.each(function () {
+                                if (icon === 'inbox') { return false; }
                                 var h = this.href;
                                 $.each(icons, function (i, m) { if (m[0].test(h)) { icon = m[1]; return false; } });
                                 if (icon !== 'grid') { return false; }
@@ -1636,6 +1638,11 @@ class RefreshServiceProvider extends ServiceProvider
                         line.append('<span class="rf-th-dot">•</span>');
                         line.append($('<span class="rf-th-when"></span>').text(when + (full ? ' (' + full + ')' : '')));
                     }
+                    // icons that modules add before the date (Sticky Notes' pin, issue #9): in the line, the native block is hidden
+                    var infoIcons = t.find('.thread-info a.thread-info-icon');
+                    if (infoIcons.length) {
+                        line.append(infoIcons.addClass('rf-th-icon'));
+                    }
                     person.after(line);
                     // avatar: the person's photo when there is one (issue #11), else the initials of first and last name
                     // (FreeScout's own for agents, data-initial), in a colour derived from the name
@@ -1683,7 +1690,21 @@ class RefreshServiceProvider extends ServiceProvider
                     box.before(btn);
                     btn.on('click', function () { box.toggle(); });
                 });
+
+                // Pinned note (Sticky Notes module, issue #9): the module puts it first in the page, which column-reverse
+                // shows last; moved after the last message, it is shown above them, as in FreeScout's own view
+                $('#conv-layout-main > .thread').filter(function () {
+                    return $(this).find('a.thread-info-icon[href*="sn_action=unpin"]').length > 0;
+                }).each(function () {
+                    var last = $('#conv-layout-main > .thread').not(this).last();
+                    if (last.length && !$(this).prev().is(last)) {
+                        $(this).insertAfter(last);
+                    }
+                    $(this).addClass('rf-pinned');
+                });
                 };
+                // also for other modules and tests: decorates threads added to the page (already decorated ones are skipped)
+                window.rfThreadDecor = rfThreadDecor;
                 rfThreadDecor();
 
                 // ------------------------------------------------------------ editor modes (Reply / Note / Forward)

@@ -589,6 +589,8 @@ body.rf-conv .thread-header { padding: 0 !important; min-height: 0 !important; d
 body.rf-conv .thread-title { flex: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; }
 body.rf-conv .thread-person, body.rf-conv .thread-person a { font-size: 14px !important; font-weight: 700 !important; line-height: 21px !important; color: var(--fd-brand) !important; margin: 0 !important; }
 .rf-th-line { display: inline-flex; align-items: baseline; flex-wrap: wrap; }
+.rf-th-icon { margin-left: 8px; color: var(--fd-muted) !important; font-size: 12px; text-decoration: none !important; }        /* module icons (Sticky Notes' pin, issue #9) */
+.rf-th-icon:hover, .rf-th-icon.link-active { color: var(--fd-brand) !important; }
 .rf-th-action { font-size: 14px; color: var(--fd-text-2); padding-left: 3px; }
 .rf-th-dot { font-size: 12px; color: var(--fd-text-2); margin: 0 5px; }
 .rf-th-when { font-size: 12px; line-height: 18px; font-style: italic; color: var(--fd-text-2); }
