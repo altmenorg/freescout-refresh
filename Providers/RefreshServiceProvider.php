@@ -759,7 +759,8 @@ class RefreshServiceProvider extends ServiceProvider
                     $dd_opts['agent'][] = ['v' => $au->id, 'l' => $au->getFullName()];
                 }
             }
-            foreach ([Conversation::STATUS_ACTIVE, Conversation::STATUS_PENDING, Conversation::STATUS_CLOSED] as $code) {
+            // Spam too, as in FreeScout's own status menu (issue #10: the list cards only offered the first three)
+            foreach ([Conversation::STATUS_ACTIVE, Conversation::STATUS_PENDING, Conversation::STATUS_CLOSED, Conversation::STATUS_SPAM] as $code) {
                 $dd_opts['status'][] = ['v' => $code, 'l' => Conversation::statusCodeToName($code)];
             }
             // Top bar breadcrumb: [[label, url], [current label]]
@@ -1312,7 +1313,7 @@ class RefreshServiceProvider extends ServiceProvider
                             var done = function () {
                                 el.attr('data-value', v).find('.rf-dd-label').text(label);
                                 if (color) { el.find('.rf-sq').css('background', color); }
-                                if (field === 'status') { el.closest('tr').toggleClass('conv-closed', String(v) === '3'); }
+                                if (field === 'status') { el.closest('tr').toggleClass('conv-closed', String(v) === '<?php echo Conversation::STATUS_CLOSED; ?>' || String(v) === '<?php echo Conversation::STATUS_SPAM; ?>'); }
                                 if (window.showFloatingAlert) { showFloatingAlert('success', rfT('Ticket updated')); }
                             };
                             var fail = function () { if (window.showFloatingAlert) { showFloatingAlert('error', rfT('Could not update')); } };
