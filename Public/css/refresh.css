@@ -1558,3 +1558,38 @@ body.rf-new-page:not(.rf-m) #form-create { margin: 0 !important; }
 .rf-rp-empty-av .rf-i { width: 24px; height: 24px; }
 .rf-rp-empty-title { margin: 0 0 4px; font-size: 14px; font-weight: 600; line-height: 21px; color: var(--fd-text); }
 .rf-rp-empty-text { font-size: 12px; line-height: 18px; color: var(--fd-muted); }
+
+/* ---------- Hover cards of the ticket list (Public/js/hovercards.js): first message of a ticket on its subject,
+   contact details on the contact's name, like Freshdesk */
+.table-conversations .rf-meta-who[data-customer] { cursor: default; }
+.table-conversations .rf-meta-who[data-customer]:hover { text-decoration: underline dotted; text-underline-offset: 3px; }
+.rf-hovercard { position: fixed; z-index: 1070; background: #fff; border: 1px solid var(--fd-input-border); border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .16); color: var(--fd-text); font-size: 13px; line-height: 19px; }
+.rf-hovercard.rf-hc-conversation { width: 460px; }
+.rf-hovercard.rf-hc-customer { width: 320px; }
+.rf-hc-body { padding: 12px 14px; }
+.rf-hc-muted { color: var(--fd-text-2); }
+.rf-hc-head { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+.rf-hc-head strong { font-weight: 600; }
+.rf-hc-date { margin-left: auto; color: var(--fd-muted); font-size: 12px; white-space: nowrap; }
+.rf-hc-tag { padding: 0 6px; border-radius: 4px; background: #fef3c7; color: #92400e; font-size: 11px; line-height: 17px; }
+.rf-hc-text { max-height: 260px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; color: var(--fd-text-2); }
+.rf-hc-text + .rf-hc-muted { margin-top: 8px; font-size: 12px; }
+.rf-hc-who { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.rf-hc-who .rf-av { width: 36px; height: 36px; flex: 0 0 36px; font-size: 13px; }
+.rf-hc-id { min-width: 0; }
+.rf-hc-id strong { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rf-hc-id .rf-hc-muted { font-size: 12px; }
+.rf-hc-rows { border-top: 1px solid var(--fd-border); padding-top: 8px; }
+.rf-hc-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+.rf-hc-row > .rf-i { color: var(--fd-muted); flex: 0 0 auto; }
+.rf-hc-row > a, .rf-hc-row > span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fd-text); }
+.rf-hc-copy { flex: 0 0 auto; border: 0; background: none; padding: 2px; color: var(--fd-text-2); cursor: pointer; line-height: 0; border-radius: 4px; }
+.rf-hc-copy:hover { background: var(--fd-active-bg); color: var(--fd-brand); }
+.rf-hc-copy.copied { color: #22c55e; }
+.rf-hc-more { display: block; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--fd-border); color: var(--fd-brand); font-weight: 500; }
+/* on / off of the Layout menu: a check mark, so that it does not read as a third layout */
+.rf-hover-toggle a { display: flex !important; align-items: center; gap: 12px; }
+.rf-hover-toggle .rf-hover-check { margin-left: auto; visibility: hidden; }
+.rf-hover-toggle.active .rf-hover-check { visibility: visible; }
+@media (max-width: 767px) { .rf-hovercard { display: none !important; } }

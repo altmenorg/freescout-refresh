@@ -90,7 +90,7 @@ class RefreshServiceProvider extends ServiceProvider
      *  moved to the Web Push module (github.com/altmenorg/freescout-webpush). */
     protected function registerSettings()
     {
-        $keys = ['sla_first_response', 'sla_resolution', 'logo_url', 'types'];
+        $keys = ['sla_first_response', 'sla_resolution', 'logo_url', 'types', 'hover_cards'];
         \Eventy::addFilter('settings.sections', function ($sections) {
             $sections['refresh'] = ['title' => 'Refresh', 'icon' => 'blackboard', 'order' => 150];
             return $sections;
@@ -108,6 +108,7 @@ class RefreshServiceProvider extends ServiceProvider
             if ($settings['refresh.sla_resolution'] === '') {
                 $settings['refresh.sla_resolution'] = \Modules\Refresh\Services\Settings::DEFAULT_RESOLUTION_HOURS;
             }
+            $settings['refresh.hover_cards'] = \Modules\Refresh\Services\Settings::hoverCards();
             // Ticket types never saved: the ones already on tickets, so that the first save keeps them
             $types = \Modules\Refresh\Services\Settings::types();
             $settings['refresh.types'] = implode("\n", $types === null ? \Modules\Refresh\Services\Views::usedTypes() : $types);
@@ -145,6 +146,8 @@ class RefreshServiceProvider extends ServiceProvider
             $scripts[] = \Module::getPublicPath('refresh').'/js/new.js';
             // Mobile version (< 768 px only): runs on DOMContentLoaded, after the provider's shell
             $scripts[] = \Module::getPublicPath('refresh').'/js/mobile.js';
+            // Hover cards of the ticket list (computer only)
+            $scripts[] = \Module::getPublicPath('refresh').'/js/hovercards.js';
             return $scripts;
         });
     }
@@ -332,7 +335,7 @@ class RefreshServiceProvider extends ServiceProvider
             $closed = $conversation->closed_at ? Carbon::parse($conversation->closed_at) : $last;
             $who = '';
             if ($conversation->customer_id && $conversation->customer) {
-                $who = '<span class="rf-meta rf-meta-who"><i class="rf-i rf-i-fd-email rf-i-sm"></i> '.e($conversation->customer->getFullName(true)).'</span><span class="rf-meta-sep">•</span>';
+                $who = '<span class="rf-meta rf-meta-who" data-customer="'.(int)$conversation->customer_id.'"><i class="rf-i rf-i-fd-email rf-i-sm"></i> '.e($conversation->customer->getFullName(true)).'</span><span class="rf-meta-sep">•</span>';
             }
             $in_time = $closed->lte($sla['resolution_due']);
             return $who.'<span class="rf-meta rf-meta-closed" data-closed="'.$closed->timestamp.'">' . __('Closed for') . ' '.e($closed->diffForHumans()).'</span><span class="rf-meta-sep">•</span>'
@@ -368,7 +371,7 @@ class RefreshServiceProvider extends ServiceProvider
 
         $who = '';
         if ($conversation->customer_id && $conversation->customer) {
-            $who = '<span class="rf-meta rf-meta-who"><i class="rf-i rf-i-fd-email rf-i-sm"></i> '.e($conversation->customer->getFullName(true)).'</span><span class="rf-meta-sep">•</span>';
+            $who = '<span class="rf-meta rf-meta-who" data-customer="'.(int)$conversation->customer_id.'"><i class="rf-i rf-i-fd-email rf-i-sm"></i> '.e($conversation->customer->getFullName(true)).'</span><span class="rf-meta-sep">•</span>';
         }
 
         return $who.'<span class="rf-meta">'.e($left).'</span><span class="rf-meta-sep">•</span><span class="rf-meta rf-meta-sla'.(($sla['first_overdue'] || $sla['resolution_overdue']) && !$sla['pending'] ? ' rf-meta-overdue' : '').'"'.($due ? ' data-due="'.$due->timestamp.'"' : '').'>'.$right.'</span>';
@@ -826,6 +829,9 @@ class RefreshServiceProvider extends ServiceProvider
                 }
                 return window.rfL[s] || s;
             };
+            // Hover cards of the ticket list (Public/js/hovercards.js, HovercardController)
+            // (null when turned off in the settings; each agent can turn them off in the list's Layout menu: rf_hover cookie)
+            window.rfHover = <?php echo \Modules\Refresh\Services\Settings::hoverCards() ? json_encode(['conversation' => url('/refresh/hover/conversation'), 'customer' => url('/refresh/hover/customer')]) : 'null'; ?>;
             // Avatar initials: first letters of the first and last word of a name ("Steffen Zucher" → "SZ"), as
             // Initials() on the server side (issue #11)
             var rfInitials = window.rfInitials = function (name) {

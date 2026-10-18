@@ -342,5 +342,11 @@
     "One per line, in the order of the menus (ticket properties, new ticket, filters). Types already set on tickets stay available after these.": "Un par ligne, dans l'ordre des menus (propriétés du ticket, nouveau ticket, filtres). Les types déjà posés sur des tickets restent proposés à la suite.",
     "Note": "Note",
     "Notifications": "Notifications",
-    "Administration": "Administration"
+    "Administration": "Administration",
+    "No message": "Aucun message",
+    "Draft": "Brouillon",
+    "attachment": "pièce jointe",
+    "attachments": "pièces jointes",
+    "Hover previews": "Aperçus au survol",
+    "In ticket lists, resting the pointer on a subject shows the first message of the ticket, and on a contact's name the contact's details. Each agent can still turn them off for themselves in the Layout menu of the list.": "Dans les listes de tickets, laisser le pointeur sur un objet affiche le premier message du ticket, et sur le nom d'un contact ses coordonnées. Chaque agent peut les désactiver pour lui-même dans le menu Mise en page de la liste."
 }

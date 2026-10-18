@@ -342,5 +342,11 @@
     "Problem": "Problem",
     "One per line, in the order of the menus (ticket properties, new ticket, filters). Types already set on tickets stay available after these.": "Eines pro Zeile, in der Reihenfolge der Menüs (Ticketeigenschaften, neues Ticket, Filter). Bereits auf Tickets gesetzte Typen bleiben danach verfügbar.",
     "Notifications": "Benachrichtigungen",
-    "Administration": "Administration"
+    "Administration": "Administration",
+    "No message": "Keine Nachricht",
+    "Draft": "Entwurf",
+    "attachment": "Anhang",
+    "attachments": "Anhänge",
+    "Hover previews": "Vorschau beim Überfahren",
+    "In ticket lists, resting the pointer on a subject shows the first message of the ticket, and on a contact's name the contact's details. Each agent can still turn them off for themselves in the Layout menu of the list.": "In Ticketlisten zeigt der Mauszeiger auf einem Betreff die erste Nachricht des Tickets und auf dem Namen eines Kontakts dessen Kontaktdaten. Jeder Agent kann sie für sich selbst im Menü Layout der Liste ausschalten."
 }

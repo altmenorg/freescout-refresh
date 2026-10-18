@@ -16,6 +16,9 @@ Route::group(['middleware' => 'web', 'prefix' => \Helper::getSubdirectory(), 'na
     Route::post('/refresh/new-ticket', ['uses' => 'NewTicketController@store', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.new_ticket');
     Route::get('/refresh/contact-panel', ['uses' => 'NewTicketController@contactPanel', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.contact_panel');
     Route::post('/refresh/conversation/{id}/properties', ['uses' => 'PropertiesController@save', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.properties');
+    // Hover cards of the ticket list: first message of a ticket, contact details (Public/js/hovercards.js)
+    Route::get('/refresh/hover/conversation/{id}', ['uses' => 'HovercardController@conversation', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.hover.conversation');
+    Route::get('/refresh/hover/customer/{id}', ['uses' => 'HovercardController@customer', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.hover.customer');
     // Diagnostics file for bug reports (admins only)
     Route::get('/refresh/diagnostics', ['uses' => 'DiagnosticsController@show', 'middleware' => ['auth', 'roles'], 'roles' => ['admin']])->name('refresh.diagnostics');
     // Health check for updaters and admins (also: php artisan refresh:health)

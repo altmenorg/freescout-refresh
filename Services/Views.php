@@ -81,6 +81,7 @@ class Views
             'pending'          => [__('Pending'), 'fd-hourglass', 'work', true],
             'starred'             => [__('Starred'), 'fd-star-filled', 'work', true],
             // Bottom of menu
+            'drafts'          => [__('Drafts'), 'fd-edit', 'bottom', true],
             'trash'           => [__('Trash'), 'fd-trash', 'bottom', false],
             'spam'         => [__('Spam'), 'fd-spam', 'bottom', true],
         ];
@@ -95,6 +96,7 @@ class Views
             \App\Folder::TYPE_STARRED    => 'starred',
             \App\Folder::TYPE_ASSIGNED   => 'unresolved',
             \App\Folder::TYPE_CLOSED     => 'all',
+            \App\Folder::TYPE_DRAFTS     => 'drafts',
             \App\Folder::TYPE_SPAM       => 'spam',
             \App\Folder::TYPE_DELETED    => 'trash',
         ];
@@ -119,6 +121,17 @@ class Views
 
         if ($view === 'trash') {
             return $q->where('conversations.state', Conversation::STATE_DELETED);
+        }
+        if ($view === 'drafts') {
+            // FreeScout's Drafts folder (Folder::TYPE_DRAFTS), linked through conversation_folder like the native
+            // folder: new tickets not sent yet (state draft) and tickets holding a reply draft (discussion #15)
+            return $q->where('conversations.state', '!=', Conversation::STATE_DELETED)
+                ->whereIn('conversations.id', function ($s) use ($mailbox_id) {
+                    $s->select('cf.conversation_id')->from('conversation_folder as cf')
+                        ->join('folders as f', 'f.id', '=', 'cf.folder_id')
+                        ->where('f.mailbox_id', $mailbox_id)
+                        ->where('f.type', \App\Folder::TYPE_DRAFTS);
+                });
         }
         $q->where('conversations.state', Conversation::STATE_PUBLISHED);
         if ($view === 'spam') {

@@ -59,6 +59,11 @@
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li class="@if (($_COOKIE['rf_layout'] ?? '') !== 'table') active @endif"><a href="#" class="rf-set-layout" data-layout="card">{{ __('Card view') }}</a></li>
                             <li class="@if (($_COOKIE['rf_layout'] ?? '') === 'table') active @endif"><a href="#" class="rf-set-layout" data-layout="table">{{ __('Table view') }}</a></li>
+                            @if (\Modules\Refresh\Services\Settings::hoverCards())
+                                {{-- per agent (this browser): Public/js/hovercards.js reads the rf_hover cookie --}}
+                                <li class="divider"></li>
+                                <li class="rf-hover-toggle @if (($_COOKIE['rf_hover'] ?? '') !== 'off') active @endif"><a href="#">{{ __('Hover previews') }} <i class="rf-i rf-i-fd-check rf-i-sm rf-hover-check"></i></a></li>
+                            @endif
                         </ul>
                     </div>
                     <a class="rf-btn" href="{{ route('refresh.tickets.export', ['mailbox_id' => $mailbox->id, 'view' => $view]) }}?{{ http_build_query(request()->except('page')) }}"><i class="rf-i rf-i-download"></i> {{ __('Export') }}</a>

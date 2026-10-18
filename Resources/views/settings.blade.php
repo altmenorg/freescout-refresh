@@ -35,6 +35,22 @@
         </div>
     </div>
 
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{{ __('Hover previews') }}</label>
+        <div class="col-sm-6">
+            <div class="controls">
+                <div class="onoffswitch-wrap">
+                    <div class="onoffswitch">
+                        <input type="hidden" name="settings[refresh.hover_cards]" value="0" />
+                        <input type="checkbox" name="settings[refresh.hover_cards]" value="1" id="rf-hover-cards" class="onoffswitch-checkbox" @if ($settings['refresh.hover_cards']) checked @endif />
+                        <label class="onoffswitch-label" for="rf-hover-cards"></label>
+                    </div>
+                </div>
+            </div>
+            <p class="form-help">{{ __("In ticket lists, resting the pointer on a subject shows the first message of the ticket, and on a contact's name the contact's details. Each agent can still turn them off for themselves in the Layout menu of the list.") }}</p>
+        </div>
+    </div>
+
     <h3 class="subheader">{{ __('Appearance') }}</h3>
 
     <div class="form-group">

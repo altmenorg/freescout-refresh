@@ -16,6 +16,12 @@ class Settings
         return ($v === null || $v === '') ? $default : $v;
     }
 
+    /** Hover cards of the ticket lists (first message, contact details): on unless turned off in the settings. */
+    public static function hoverCards()
+    {
+        return (string)self::get('hover_cards', '1') !== '0';
+    }
+
     /** SLA: hours to the first agent reply (calendar hours, paused while "Pending"). */
     public static function firstResponseHours()
     {
