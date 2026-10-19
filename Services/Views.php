@@ -68,7 +68,7 @@ class Views
             // "Default" section (same views as Freshdesk, in the same order)
             'created'               => [__('Tickets I created'), 'fd-created', 'default', false],
             'my-open'         => [__('My new and open tickets'), 'fd-new-open', 'default', true],
-            'watching'            => [__('Tickets I\'m watching'), 'fd-watching', 'default', true],
+            'watching'            => [__('Tickets I\'m watching'), 'fd-eye', 'default', true],
             'undelivered'          => [__('All undelivered messages'), 'fd-undelivered', 'default', true],
             'all'                => [__('All tickets'), 'fd-all-tickets', 'default', false],
             'unresolved'         => [__('All unresolved tickets'), 'fd-unresolved', 'default', true],
@@ -79,7 +79,7 @@ class Views
             'due-today' => [__('Due today'), 'fd-calendar', 'work', true],
             'open'             => [__('refresh::labels.open'), 'fd-status', 'work', true],
             'pending'          => [__('Pending'), 'fd-hourglass', 'work', true],
-            'starred'             => [__('Starred'), 'fd-star-filled', 'work', true],
+            'starred'             => [__('Starred'), 'fd-star', 'work', true],
             // Bottom of menu
             'drafts'          => [__('Drafts'), 'fd-edit', 'bottom', true],
             'trash'           => [__('Trash'), 'fd-trash', 'bottom', false],

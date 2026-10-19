@@ -206,6 +206,8 @@
 .rf-i-fd-views { --rf-i: url(../../modules/refresh/icons/fd-views.svg); }
 .rf-i-fd-warning { --rf-i: url(../../modules/refresh/icons/fd-warning.svg); }
 .rf-i-fd-watching { --rf-i: url(../../modules/refresh/icons/fd-watching.svg); }
+.rf-i-fd-eye { --rf-i: url(../../modules/refresh/icons/fd-eye.svg); }
+.rf-i-fd-star { --rf-i: url(../../modules/refresh/icons/fd-star.svg); }
 /* Banner's "New" button: + in a 14 px square, 9 px arrow */
 .rf-i-fd-new { --rf-i: url(../../modules/refresh/icons/fd-new.svg); width: 14px; height: 14px; vertical-align: -2px; }
 .rf-i-fd-dropdown-arrow { --rf-i: url(../../modules/refresh/icons/fd-dropdown-arrow.svg); width: 9px; height: 9px; vertical-align: 0; }

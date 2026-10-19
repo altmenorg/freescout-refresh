@@ -839,7 +839,7 @@
                 var follow = menu.find('a.conv-follow').first();
                 if (follow.length) {
                     var fl = $.trim(follow.clone().find('.hidden').remove().end().text()).replace(/\s+/g, ' ');
-                    items.push({ label: fl || rfT('Follow'), icon: 'fd-watching', onClick: function () { follow.trigger('click'); } });
+                    items.push({ label: fl || rfT('Follow'), icon: 'fd-eye', onClick: function () { follow.trigger('click'); } });
                 }
                 items.push({ label: rfT('Forward'), icon: 'forward', onClick: function () { openCompose('.conv-forward'); } });
                 var print = pick(/imprimer/i);
