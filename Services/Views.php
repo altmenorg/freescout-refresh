@@ -74,7 +74,7 @@ class Views
             'unresolved'         => [__('All unresolved tickets'), 'fd-unresolved', 'default', true],
             // Working views (with counters)
             'unassigned'        => [__('Unassigned'), 'fd-agent', 'work', true],
-            'new'            => [__('New'), 'new', 'work', true],
+            'new'            => [__('New'), 'fd-new', 'work', true],
             'overdue'           => [__('Overdue'), 'fd-alert', 'work', true],
             'due-today' => [__('Due today'), 'fd-calendar', 'work', true],
             'open'             => [__('refresh::labels.open'), 'fd-status', 'work', true],

@@ -210,6 +210,7 @@
 .rf-i-fd-star { --rf-i: url(../../modules/refresh/icons/fd-star.svg); }
 /* Banner's "New" button: + in a 14 px square, 9 px arrow */
 .rf-i-fd-new { --rf-i: url(../../modules/refresh/icons/fd-new.svg); width: 14px; height: 14px; vertical-align: -2px; }
+.rf-v .rf-i-fd-new { width: 16px; height: 16px; vertical-align: -3px; } /* views menu: same size as the other view icons */
 .rf-i-fd-dropdown-arrow { --rf-i: url(../../modules/refresh/icons/fd-dropdown-arrow.svg); width: 9px; height: 9px; vertical-align: 0; }
 /* "⋮" menu (ticket toolbar, contact rows): 14 px */
 .rf-i-fd-more { --rf-i: url(../../modules/refresh/icons/fd-more.svg); width: 14px; height: 14px; vertical-align: -2px; }
