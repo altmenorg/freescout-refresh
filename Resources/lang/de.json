@@ -348,5 +348,18 @@
     "attachment": "Anhang",
     "attachments": "Anhänge",
     "Hover previews": "Vorschau beim Überfahren",
-    "In ticket lists, resting the pointer on a subject shows the first message of the ticket, and on a contact's name the contact's details. Each agent can still turn them off for themselves in the Layout menu of the list.": "In Ticketlisten zeigt der Mauszeiger auf einem Betreff die erste Nachricht des Tickets und auf dem Namen eines Kontakts dessen Kontaktdaten. Jeder Agent kann sie für sich selbst im Menü Layout der Liste ausschalten."
+    "In ticket lists, resting the pointer on a subject shows the first message of the ticket, and on a contact's name the contact's details. Each agent can still turn them off for themselves in the Layout menu of the list.": "In Ticketlisten zeigt der Mauszeiger auf einem Betreff die erste Nachricht des Tickets und auf dem Namen eines Kontakts dessen Kontaktdaten. Jeder Agent kann sie für sich selbst im Menü Layout der Liste ausschalten.",
+    ":name is replying": ":name antwortet gerade",
+    ":name is viewing this ticket": ":name sieht sich dieses Ticket an",
+    ":count new messages since you opened this ticket": ":count neue Nachrichten, seit Sie dieses Ticket geöffnet haben",
+    ":name replied": ":name hat geschrieben",
+    ":name added a note": ":name hat eine Notiz hinzugefügt",
+    ":name replied to the customer": ":name hat dem Kunden geantwortet",
+    "Someone": "Jemand",
+    "The ticket could not be updated. Reload the page to see the new messages.": "Das Ticket konnte nicht aktualisiert werden. Laden Sie die Seite neu, um die neuen Nachrichten zu sehen.",
+    "New message on this ticket": "Neue Nachricht in diesem Ticket",
+    "Your reply may no longer be up to date.": "Ihre Antwort ist möglicherweise nicht mehr aktuell.",
+    "Send anyway": "Trotzdem senden",
+    "Show the new messages": "Neue Nachrichten anzeigen",
+    "Update ticket": "Aktualisieren"
 }

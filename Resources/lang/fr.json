@@ -348,5 +348,18 @@
     "attachment": "pièce jointe",
     "attachments": "pièces jointes",
     "Hover previews": "Aperçus au survol",
-    "In ticket lists, resting the pointer on a subject shows the first message of the ticket, and on a contact's name the contact's details. Each agent can still turn them off for themselves in the Layout menu of the list.": "Dans les listes de tickets, laisser le pointeur sur un objet affiche le premier message du ticket, et sur le nom d'un contact ses coordonnées. Chaque agent peut les désactiver pour lui-même dans le menu Mise en page de la liste."
+    "In ticket lists, resting the pointer on a subject shows the first message of the ticket, and on a contact's name the contact's details. Each agent can still turn them off for themselves in the Layout menu of the list.": "Dans les listes de tickets, laisser le pointeur sur un objet affiche le premier message du ticket, et sur le nom d'un contact ses coordonnées. Chaque agent peut les désactiver pour lui-même dans le menu Mise en page de la liste.",
+    ":name is replying": ":name est en train de répondre",
+    ":name is viewing this ticket": ":name consulte ce ticket",
+    ":count new messages since you opened this ticket": ":count nouveaux messages depuis que vous avez ouvert ce ticket",
+    ":name replied": ":name a écrit",
+    ":name added a note": ":name a ajouté une note",
+    ":name replied to the customer": ":name a répondu au client",
+    "Someone": "Quelqu'un",
+    "The ticket could not be updated. Reload the page to see the new messages.": "Le ticket n'a pas pu être mis à jour. Rechargez la page pour voir les nouveaux messages.",
+    "New message on this ticket": "Nouveau message sur ce ticket",
+    "Your reply may no longer be up to date.": "Votre réponse n'est peut-être plus à jour.",
+    "Send anyway": "Envoyer quand même",
+    "Show the new messages": "Voir les nouveaux messages",
+    "Update ticket": "Mettre à jour"
 }

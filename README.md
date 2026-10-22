@@ -55,6 +55,11 @@ brings the stock FreeScout interface back.
 - **Split ticket**: move a message to a new ticket, with a note left in the original one.
 - **Inline tags** field with suggestions and "Create …" (Tags module).
 - **Toasts** instead of the green banners, with close button, "View" and "Undo".
+- **Collision detection**, like Freshdesk: a bar shows who else has the ticket open ("Marie is viewing this ticket",
+  "Marie is replying"). When someone adds a message or a note while you are on the ticket, an alert tells you, and
+  **Update ticket** brings it in without reloading the page or closing your reply. Sending a reply while a newer
+  message is not shown yet asks first: *Show the new messages* or *Send anyway*. Uses FreeScout's own realtime
+  viewers and permissions; notes are never held.
 
 ![Ticket](screenshots/ticket.png)
 

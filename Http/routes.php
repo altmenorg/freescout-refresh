@@ -19,6 +19,8 @@ Route::group(['middleware' => 'web', 'prefix' => \Helper::getSubdirectory(), 'na
     // Hover cards of the ticket list: first message of a ticket, contact details (Public/js/hovercards.js)
     Route::get('/refresh/hover/conversation/{id}', ['uses' => 'HovercardController@conversation', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.hover.conversation');
     Route::get('/refresh/hover/customer/{id}', ['uses' => 'HovercardController@customer', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.hover.customer');
+    // Collision detection: other agents on the ticket and messages added since the page was loaded (Public/js/collision.js)
+    Route::get('/refresh/conversation/{id}/activity', ['uses' => 'CollisionController@activity', 'middleware' => ['auth', 'roles'], 'roles' => ['admin', 'user']])->name('refresh.collision');
     // Diagnostics file for bug reports (admins only)
     Route::get('/refresh/diagnostics', ['uses' => 'DiagnosticsController@show', 'middleware' => ['auth', 'roles'], 'roles' => ['admin']])->name('refresh.diagnostics');
     // Health check for updaters and admins (also: php artisan refresh:health)

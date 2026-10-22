@@ -148,6 +148,8 @@ class RefreshServiceProvider extends ServiceProvider
             $scripts[] = \Module::getPublicPath('refresh').'/js/mobile.js';
             // Hover cards of the ticket list (computer only)
             $scripts[] = \Module::getPublicPath('refresh').'/js/hovercards.js';
+            // Collision detection on a ticket: other agents viewing / replying, messages added meanwhile
+            $scripts[] = \Module::getPublicPath('refresh').'/js/collision.js';
             return $scripts;
         });
     }
@@ -832,6 +834,8 @@ class RefreshServiceProvider extends ServiceProvider
             // Hover cards of the ticket list (Public/js/hovercards.js, HovercardController)
             // (null when turned off in the settings; each agent can turn them off in the list's Layout menu: rf_hover cookie)
             window.rfHover = <?php echo \Modules\Refresh\Services\Settings::hoverCards() ? json_encode(['conversation' => url('/refresh/hover/conversation'), 'customer' => url('/refresh/hover/customer')]) : 'null'; ?>;
+            // Collision detection on a ticket (Public/js/collision.js, CollisionController): {id} = conversation
+            window.rfCollisionUrl = <?php echo json_encode(url('/refresh/conversation/{id}/activity')); ?>;
             // Avatar initials: first letters of the first and last word of a name ("Steffen Zucher" → "SZ"), as
             // Initials() on the server side (issue #11)
             var rfInitials = window.rfInitials = function (name) {
@@ -1929,18 +1933,21 @@ class RefreshServiceProvider extends ServiceProvider
                         }, true);
                     });
 
-                    var syncThreads = function (fresh) {
+                    // keepDrafts: drafts left as they are on both sides (the agent may be writing one in the editor)
+                    var syncThreads = function (fresh, keepDrafts) {
+                        var isDraft = function (el) { return keepDrafts && /\bthread-type-draft\b/.test(el.className); };
                         var incoming = {};
-                        $(fresh).children('.thread').each(function () { incoming[key(this)] = this; });
+                        $(fresh).children('.thread').each(function () { if (!isDraft(this)) { incoming[key(this)] = this; } });
                         var kept = {};
                         main.children('.thread').each(function () {
+                            if (isDraft(this)) { return; }
                             var f = incoming[key(this)];
                             if (f && sig(f) === sig(this)) { kept[key(this)] = true; } else { $(this).remove(); }
                         });
                         // native order = newest first: what is new goes before the first message still in place
                         var added = [];
                         $(fresh).children('.thread').each(function () {
-                            if (!kept[key(this)]) { added.push($(document.importNode(this, true)).addClass('rf-live')[0]); }
+                            if (!kept[key(this)] && !isDraft(this)) { added.push($(document.importNode(this, true)).addClass('rf-live')[0]); }
                         });
                         if (!added.length) { return $(); }
                         var anchor = main.children('.thread').first();
@@ -2037,6 +2044,29 @@ class RefreshServiceProvider extends ServiceProvider
                                 // the newest message (at the bottom of the conversation) in view
                                 if (added.length) { added[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
                                 d.resolve();
+                            } catch (e) {
+                                d.reject();
+                            }
+                        }).fail(function () { d.reject(); });
+                        return d.promise();
+                    };
+
+                    // Messages added by someone else while the agent is on the ticket (Public/js/collision.js): brought in
+                    // with the status, agent and SLA, the editor and its draft untouched
+                    window.rfTicketSync = function () {
+                        var d = $.Deferred();
+                        $.ajax({ url: window.location.href.split('#')[0], dataType: 'html', cache: false }).done(function (html) {
+                            var doc = new DOMParser().parseFromString(html, 'text/html');
+                            var fresh = doc.getElementById('conv-layout-main');
+                            if (!fresh || !$(fresh).children('.thread').length) { d.reject(); return; }
+                            try {
+                                var added = syncThreads(fresh, true);
+                                rfThreadDecor();
+                                syncState(doc);
+                                if (window.initTooltips) { initTooltips(); }
+                                $(document).trigger('rf:ticket-updated');
+                                if (added.length) { added[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+                                d.resolve(added);
                             } catch (e) {
                                 d.reject();
                             }

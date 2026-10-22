@@ -1593,3 +1593,32 @@ body.rf-new-page:not(.rf-m) #form-create { margin: 0 !important; }
 .rf-hover-toggle .rf-hover-check { margin-left: auto; visibility: hidden; }
 .rf-hover-toggle.active .rf-hover-check { visibility: visible; }
 @media (max-width: 767px) { .rf-hovercard { display: none !important; } }
+
+/* ---------------------------------------------------------------- collision detection (Public/js/collision.js)
+   Between the ticket header and the conversation: who else is on the ticket, and messages added meanwhile. Same
+   right margin as the conversation (both right panels, or the collapsed bar). FreeScout's small avatars of viewers
+   and its "View new message" block are replaced by these bars. */
+body.rf-conv #conv-viewers { display: none !important; }
+body.rf-conv #conv-layout-main > .thread-type-new { display: none !important; }
+.rf-presence, .rf-collide { flex: none; display: flex; align-items: center; gap: 10px; margin: 8px 502px 0 16px; padding: 6px 12px; border: 1px solid var(--fd-border); border-radius: 5px; background: #f8fafc; color: var(--fd-text-2); font-size: 13px; line-height: 20px; }
+body.rf-conv.rf-rp-collapsed .rf-presence, body.rf-conv.rf-rp-collapsed .rf-collide { margin-right: 72px; }
+.rf-presence-replying { border-color: #fde68a; background: #fffbeb; color: #92400e; }
+.rf-presence-avs { flex: none; display: inline-flex; }
+.rf-presence-avs .rf-presence-av + .rf-presence-av { margin-left: -6px; }
+.rf-presence-av { width: 22px; height: 22px; border: 2px solid #fff; border-radius: 50%; object-fit: cover; }
+span.rf-presence-av.rf-av { width: 22px; height: 22px; font-size: 10px; background: #e0e7ff; color: var(--fd-brand); }
+.rf-presence-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rf-presence-replying .rf-presence-text { font-weight: 600; }
+.rf-presence-sep { color: var(--fd-muted); }
+.rf-collide { border-color: #c7d2fe; background: #eef2ff; color: var(--fd-text); font-weight: 500; }
+.rf-collide > .rf-i { flex: none; }
+.rf-collide-text { flex: 1; min-width: 0; }
+.rf-collide-update { flex: none; height: 28px; padding: 0 12px; border: 0; border-radius: 5px; background: var(--fd-primary); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+.rf-collide-update:hover { background: var(--fd-primary-h); }
+.rf-collide-update[disabled] { opacity: .6; cursor: default; }
+@media (max-width: 767px) {
+  .rf-presence { margin: 8px 16px 0; }
+  /* the page scrolls on phones: the alert floats above the reply bar */
+  .rf-collide { position: fixed; z-index: 1035; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); margin: 0; box-shadow: 0 4px 16px rgba(15, 23, 42, .14); }
+  body.rf-m-app .rf-collide { bottom: 125px; }
+}
