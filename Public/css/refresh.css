@@ -1603,6 +1603,8 @@ body.rf-conv #conv-layout-main > .thread-type-new { display: none !important; }
 .rf-presence, .rf-collide { flex: none; display: flex; align-items: center; gap: 10px; margin: 8px 502px 0 16px; padding: 6px 12px; border: 1px solid var(--fd-border); border-radius: 5px; background: #f8fafc; color: var(--fd-text-2); font-size: 13px; line-height: 20px; }
 body.rf-conv.rf-rp-collapsed .rf-presence, body.rf-conv.rf-rp-collapsed .rf-collide { margin-right: 72px; }
 .rf-presence-replying { border-color: #fde68a; background: #fffbeb; color: #92400e; }
+/* Red top line, like the floating notifications (.alert-floating.alert-danger): another agent on the ticket must be seen */
+.rf-presence, .rf-presence-replying { border-top: 4px solid #e11d48; }
 .rf-presence-avs { flex: none; display: inline-flex; }
 .rf-presence-avs .rf-presence-av + .rf-presence-av { margin-left: -6px; }
 .rf-presence-av { width: 22px; height: 22px; border: 2px solid #fff; border-radius: 50%; object-fit: cover; }
