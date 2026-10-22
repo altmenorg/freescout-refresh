@@ -60,6 +60,10 @@ brings the stock FreeScout interface back.
   **Update ticket** brings it in without reloading the page or closing your reply. Sending a reply while a newer
   message is not shown yet asks first: *Show the new messages* or *Send anyway*. Uses FreeScout's own realtime
   viewers and permissions; notes are never held.
+- **Forward within the ticket** (setting, off by default), like Freshdesk: the forward stays in the ticket as a private
+  note instead of creating a new "Fwd:" ticket; the recipient's reply comes back into the same ticket as a private note
+  ("X replied to the forward"), without becoming the ticket's contact, and **Reply** on that note answers them. The
+  contact never sees either.
 
 ![Ticket](screenshots/ticket.png)
 
@@ -134,6 +138,7 @@ server keys and the subscribed devices: nobody has to subscribe again.
 | **First response** | Hours to the first agent reply (default 24). Used by badges, views and the dashboard. Calendar hours, paused while a ticket is *Pending*. |
 | **Resolution** | Hours to resolve a ticket (default 72). The due date of a ticket can also be changed by hand. |
 | **Ticket types** | The choices of the *Type* field (ticket properties, new ticket, filters), one per line, in the order of the menus. Types already set on tickets (for instance by the Freshdesk import) stay available after these. |
+| **Forward within the ticket** | Off (default): FreeScout's own forward, which creates a new "Fwd:" ticket per recipient. On: the forward and the recipient's replies stay in the ticket as private notes, like Freshdesk. Replies to forwards already sent keep landing in their ticket if it is turned off again. |
 | **Logo** | Image shown at the top of the left bar. Empty: the header logo (Customization module or FreeScout's own). |
 
 ![Settings](screenshots/settings.png)
