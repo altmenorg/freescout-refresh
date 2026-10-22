@@ -51,6 +51,22 @@
         </div>
     </div>
 
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{{ __('Forward within the ticket') }}</label>
+        <div class="col-sm-6">
+            <div class="controls">
+                <div class="onoffswitch-wrap">
+                    <div class="onoffswitch">
+                        <input type="hidden" name="settings[refresh.forward_in_ticket]" value="0" />
+                        <input type="checkbox" name="settings[refresh.forward_in_ticket]" value="1" id="rf-forward-in-ticket" class="onoffswitch-checkbox" @if ($settings['refresh.forward_in_ticket']) checked @endif />
+                        <label class="onoffswitch-label" for="rf-forward-in-ticket"></label>
+                    </div>
+                </div>
+            </div>
+            <p class="form-help">{{ __("Like Freshdesk: a forward stays in the ticket as a private note, and the recipient's reply comes back into the same ticket as a private note, which can be answered from there. The contact never sees either. Off: FreeScout's own forward, which creates a new \"Fwd:\" ticket.") }}</p>
+        </div>
+    </div>
+
     <h3 class="subheader">{{ __('Appearance') }}</h3>
 
     <div class="form-group">

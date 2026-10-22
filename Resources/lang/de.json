@@ -361,5 +361,8 @@
     "Your reply may no longer be up to date.": "Ihre Antwort ist möglicherweise nicht mehr aktuell.",
     "Send anyway": "Trotzdem senden",
     "Show the new messages": "Neue Nachrichten anzeigen",
-    "Update ticket": "Aktualisieren"
+    "Update ticket": "Aktualisieren",
+    "Forward within the ticket": "Im Ticket weiterleiten",
+    "Like Freshdesk: a forward stays in the ticket as a private note, and the recipient's reply comes back into the same ticket as a private note, which can be answered from there. The contact never sees either. Off: FreeScout's own forward, which creates a new \"Fwd:\" ticket.": "Wie bei Freshdesk: Eine Weiterleitung bleibt als private Notiz im Ticket, und die Antwort des Empfängers kommt als private Notiz in dasselbe Ticket zurück und kann dort beantwortet werden. Der Kontakt sieht keine von beiden. Aus: die Weiterleitung von FreeScout, die ein neues „Fwd:“-Ticket erstellt.",
+    "replied to the forward": "hat auf die Weiterleitung geantwortet"
 }

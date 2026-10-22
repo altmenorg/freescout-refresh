@@ -36,7 +36,8 @@ class CollisionController extends Controller
                 ->whereIn('type', [Thread::TYPE_CUSTOMER, Thread::TYPE_MESSAGE, Thread::TYPE_NOTE])
                 ->where('state', Thread::STATE_PUBLISHED)
                 ->where(function ($q) use ($me) {
-                    $q->where('type', Thread::TYPE_CUSTOMER)->orWhere('created_by_user_id', '!=', $me->id);
+                    // a note without agent (reply to a forward, Services\Forward) counts too: NULL != id is not true in SQL
+                    $q->where('type', Thread::TYPE_CUSTOMER)->orWhere('created_by_user_id', '!=', $me->id)->orWhereNull('created_by_user_id');
                 })
                 ->orderBy('id')->limit(20)->get();
             foreach ($rows as $thread) {

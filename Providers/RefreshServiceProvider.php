@@ -63,6 +63,9 @@ class RefreshServiceProvider extends ServiceProvider
         $this->registerSendDropdown();
         $this->registerJavascript();
         $this->registerSettings();
+        // Forward within the ticket (setting): the hooks stay registered when it is turned off, so that the replies
+        // to forwards already sent still land in their ticket
+        \Modules\Refresh\Services\Forward::registerHooks();
 
         // The shell (rail, top bar, list layout) is built by the provider script at the end of the page: until then the
         // browser would paint FreeScout's own layout, a white flash on every page change. The page stays hidden
@@ -90,7 +93,7 @@ class RefreshServiceProvider extends ServiceProvider
      *  moved to the Web Push module (github.com/altmenorg/freescout-webpush). */
     protected function registerSettings()
     {
-        $keys = ['sla_first_response', 'sla_resolution', 'logo_url', 'types', 'hover_cards'];
+        $keys = ['sla_first_response', 'sla_resolution', 'logo_url', 'types', 'hover_cards', 'forward_in_ticket'];
         \Eventy::addFilter('settings.sections', function ($sections) {
             $sections['refresh'] = ['title' => 'Refresh', 'icon' => 'blackboard', 'order' => 150];
             return $sections;
@@ -109,6 +112,7 @@ class RefreshServiceProvider extends ServiceProvider
                 $settings['refresh.sla_resolution'] = \Modules\Refresh\Services\Settings::DEFAULT_RESOLUTION_HOURS;
             }
             $settings['refresh.hover_cards'] = \Modules\Refresh\Services\Settings::hoverCards();
+            $settings['refresh.forward_in_ticket'] = \Modules\Refresh\Services\Forward::enabled();
             // Ticket types never saved: the ones already on tickets, so that the first save keeps them
             $types = \Modules\Refresh\Services\Settings::types();
             $settings['refresh.types'] = implode("\n", $types === null ? \Modules\Refresh\Services\Views::usedTypes() : $types);
@@ -150,6 +154,8 @@ class RefreshServiceProvider extends ServiceProvider
             $scripts[] = \Module::getPublicPath('refresh').'/js/hovercards.js';
             // Collision detection on a ticket: other agents viewing / replying, messages added meanwhile
             $scripts[] = \Module::getPublicPath('refresh').'/js/collision.js';
+            // Forward within the ticket: after collision.js, whose fsAjax wrapper it wraps in turn
+            $scripts[] = \Module::getPublicPath('refresh').'/js/forward.js';
             return $scripts;
         });
     }
@@ -836,6 +842,8 @@ class RefreshServiceProvider extends ServiceProvider
             window.rfHover = <?php echo \Modules\Refresh\Services\Settings::hoverCards() ? json_encode(['conversation' => url('/refresh/hover/conversation'), 'customer' => url('/refresh/hover/customer')]) : 'null'; ?>;
             // Collision detection on a ticket (Public/js/collision.js, CollisionController): {id} = conversation
             window.rfCollisionUrl = <?php echo json_encode(url('/refresh/conversation/{id}/activity')); ?>;
+            // Forward within the ticket (Public/js/forward.js, Services\Forward): null when the setting is off
+            window.rfForwardUrl = <?php echo \Modules\Refresh\Services\Forward::enabled() ? json_encode(url('/refresh/conversation/{id}/forward')) : 'null'; ?>;
             // Avatar initials: first letters of the first and last word of a name ("Steffen Zucher" → "SZ"), as
             // Initials() on the server side (issue #11)
             var rfInitials = window.rfInitials = function (name) {
@@ -1633,9 +1641,19 @@ class RefreshServiceProvider extends ServiceProvider
                     });
                     var nameEl = person.find('a').first().length ? person.find('a').first() : person;
                     var name = $.trim(nameEl.text());
+                    // forward within the ticket (Services\Forward): a reply received has no agent as author
+                    var fwd = t.find('.rf-fwd').first();
+                    if (fwd.attr('data-kind') === 'in' && !name) {
+                        name = fwd.attr('data-name') || fwd.attr('data-email') || '';
+                        // as a link to the contact, like the other names (same size and colour)
+                        var who = fwd.attr('data-url') ? $('<a></a>').attr('href', fwd.attr('data-url')) : $('<span></span>');
+                        person.find('strong').first().empty().append(who.text(name));
+                    }
                     if (name === '<?php echo addslashes(__('you')); ?>') { name = me; nameEl.text(me); }
                     var action = rfT('replied');
-                    if (t.hasClass('thread-type-note')) {
+                    if (fwd.length) {
+                        action = fwd.attr('data-kind') === 'in' ? rfT('replied to the forward') : rfT('forwarded');
+                    } else if (t.hasClass('thread-type-note')) {
                         action = t.find('.thread-header').text().indexOf('<?php echo addslashes(__('forwarded')); ?>') !== -1 ? rfT('forwarded') : rfT('added a private note');
                     } else if (t.hasClass('thread-type-customer') && t.is(firstCustomer)) {
                         action = rfT('reported by e-mail');
@@ -1844,6 +1862,21 @@ class RefreshServiceProvider extends ServiceProvider
                         var split = th.find('.thread-options .dropdown-menu a.new-conv').filter(function () {
                             return /new-ticket/.test($(this).attr('href') || '');
                         }).first();
+                        // reply received to a forward (Services\Forward): Reply = forward form to its author, quoting it
+                        var fwdIn = th.find('.rf-fwd[data-kind="in"]').first();
+                        if (fwdIn.length && window.rfForwardUrl && th.attr('data-thread_id')) {
+                            th.append($('<div class="rf-th-tools"></div>').append(
+                                $('<button type="button" class="rf-th-tool" title="' + rfT('Reply') + '"><i class="rf-i rf-i-reply rf-i-sm"></i></button>')
+                                    .on('click', function () {
+                                        rfSwitchMode('.conv-forward');
+                                        window.rfForwardReply = { thread: th.attr('data-thread_id'), email: fwdIn.attr('data-email') };
+                                        if (window.addSelect2Option && fwdIn.attr('data-email')) {
+                                            $('#to_email').val(null);
+                                            addSelect2Option($('#to_email'), { id: fwdIn.attr('data-email'), text: fwdIn.attr('data-email') });
+                                        }
+                                    })));
+                            return;
+                        }
                         if (th.hasClass('thread-type-note') || !th.find('.thread-options').length) { return; }
                         var tools = $('<div class="rf-th-tools"></div>');
                         tools.append($('<button type="button" class="rf-th-tool" title="' + rfT('Forward') + '"><i class="rf-i rf-i-forward rf-i-sm"></i></button>')
