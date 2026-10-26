@@ -1636,7 +1636,36 @@ span.rf-presence-av.rf-av { width: 22px; height: 22px; font-size: 10px; backgrou
   body.rf-m-app .rf-collide { bottom: 125px; }
 }
 
-/* ---- list between phone and desktop, and narrow lists (v1.8.2): last, after the table-view rules it adjusts ---- */
+/* ---- list between phone and desktop, and narrow lists (v1.8.3): last, after the table-view rules it adjusts ---- */
+/* narrow list, at any window width (views and filters panels open): the subject keeps some room. Table view: compact
+   columns below 960 px of list, then the table scrolls sideways (780 px minimum). Card view: narrower side column.
+   FreeScout's CSS minifier (natxet CssMin) does not know @container / @supports: when such a block is directly followed
+   by an @media, it drops its closing braces and everything after lands inside it (mobile.css included). An ordinary
+   rule must follow the last block: .rf-list-main below, keep it there. */
+@supports (container-type: inline-size) {
+  @container rf-list (max-width: 959px) {
+    .rf-list-scroll { overflow-x: auto; }
+    .rf-layout-table .table.table-conversations { min-width: 780px; }
+    .rf-layout-table .table-conversations colgroup col.conv-customer { width: 160px !important; }
+    .rf-layout-table .table-conversations th.conv-customer, .rf-layout-table .table-conversations td.conv-customer { width: 160px !important; max-width: 160px !important; }
+    .rf-layout-table .table-conversations colgroup col.rf-col-side { width: 330px !important; }
+    .rf-layout-table .rf-side > .rf-side-prio { width: 88px; }
+    .rf-layout-table .rf-side > .rf-side-agent { width: 116px; }
+    .rf-layout-table .rf-side > .rf-side-status { width: 110px; }
+  }
+}
+@supports (container-type: inline-size) {
+  @container rf-list (max-width: 699px) {
+    .rf-toolbar, .rf-toolbar-right { flex-wrap: wrap; row-gap: 8px; }
+    .rf-list-layout:not(.rf-layout-table) .table-conversations colgroup col.rf-col-side { width: 170px !important; }
+  }
+}
+@supports (container-type: inline-size) {
+  @container rf-list (max-width: 499px) {
+    .rf-list-layout:not(.rf-layout-table) .table-conversations colgroup col.rf-col-side { width: 125px !important; }
+  }
+}
+.rf-list-main { container: rf-list / inline-size; }
 /* Between phone and desktop (768-1100 px). Native FreeScout switches to its own small-screen layout there: views column
    folded to a 51 px bar (< 992 px) and the list table turned into absolutely positioned blocks (< 1001 px). Refresh keeps
    its desktop layout instead, every value below restoring what desktop computes. */
@@ -1672,23 +1701,4 @@ span.rf-presence-av.rf-av { width: 22px; height: 22px; font-size: 10px; backgrou
   .rf-list-main > .rf-toolbar { grid-row: 1; grid-column: 1; }
   .rf-list-main > .rf-list-scroll { grid-row: 2; grid-column: 1; }
   .content-2col > .rf-list-layout > .rf-filters { grid-row: 2; grid-column: 1; justify-self: end; z-index: 20; box-shadow: -8px 0 24px rgba(15, 23, 42, .12); }
-}
-/* narrow list, at any window width (views and filters panels open): the subject keeps some room */
-.rf-list-main { container: rf-list / inline-size; }
-@container rf-list (max-width: 959px) {
-  .rf-list-scroll { overflow-x: auto; }
-  .rf-layout-table .table.table-conversations { min-width: 780px; } /* below that, the table scrolls sideways */
-  .rf-layout-table .table-conversations colgroup col.conv-customer { width: 160px !important; }
-  .rf-layout-table .table-conversations th.conv-customer, .rf-layout-table .table-conversations td.conv-customer { width: 160px !important; max-width: 160px !important; }
-  .rf-layout-table .table-conversations colgroup col.rf-col-side { width: 330px !important; }
-  .rf-layout-table .rf-side > .rf-side-prio { width: 88px; }
-  .rf-layout-table .rf-side > .rf-side-agent { width: 116px; }
-  .rf-layout-table .rf-side > .rf-side-status { width: 110px; }
-}
-@container rf-list (max-width: 699px) {
-  .rf-toolbar, .rf-toolbar-right { flex-wrap: wrap; row-gap: 8px; }
-  .rf-list-layout:not(.rf-layout-table) .table-conversations colgroup col.rf-col-side { width: 170px !important; }
-}
-@container rf-list (max-width: 499px) {
-  .rf-list-layout:not(.rf-layout-table) .table-conversations colgroup col.rf-col-side { width: 125px !important; }
 }
