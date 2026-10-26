@@ -434,6 +434,14 @@ body.rf-shell #app .layout-2col:has(.rf-list-layout) { height: calc(100vh - 65px
 .rf-filters-reset { font-size: 12px; font-weight: 600; color: var(--fd-brand) !important; }
 .rf-filters-body { flex: 1; overflow-y: auto; padding: 4px 20px 16px; }
 .rf-filters-foot { padding: 12px 20px 16px; border-top: 1px solid var(--fd-border); background: #fff; }
+/* between phone and desktop: views (289 px) + filters (300 px) + the 300 px side column left no room for the subject;
+   the filters panel opens as a drawer over the list, under the toolbar so that the Filter button stays reachable */
+@media (min-width: 768px) and (max-width: 1100px) {
+  .content-2col > .rf-list-layout { position: relative; }
+  .content-2col > .rf-list-layout > .rf-filters { position: absolute; top: 53px; right: 0; bottom: 0; z-index: 20; box-shadow: -8px 0 24px rgba(15, 23, 42, .12); }
+  .content-2col > .rf-list-layout .rf-list-main > .rf-toolbar { position: relative; z-index: 21; }
+  .table-conversations colgroup col.rf-col-side { width: 170px !important; }
+}
 .rf-f { margin-bottom: 18px; }
 .rf-f label { display: block; font-size: 12px; font-weight: 500; line-height: 18px; color: var(--fd-text-2); margin: 0 0 8px; }
 .rf-search { position: relative; }
@@ -614,6 +622,17 @@ body.rf-conv .conv-action-wrapper .conv-action-block { margin: 8px 0 0 !importan
 body.rf-conv #conv-layout-customer { width: 486px !important; padding: 0 !important; background: #fff !important; box-shadow: none !important; border-left: 1px solid var(--fd-border); }
 body.rf-conv #conv-layout-customer > *:not(.rf-rp) { display: none !important; }
 body.rf-conv #conv-layout-header, body.rf-conv #conv-layout-main { padding-right: 486px !important; } /* width of both right panels; the native rule (style.css:1872) only reserves 280px → toolbar ‹ › arrows hidden */
+/* between phone and desktop: native FreeScout stacks the right column under 1100 px (static), which left the 486 px padding above
+   with nothing beside it and squeezed the subject to one letter per line; keep a single 260 px right column instead, properties above contact */
+@media (min-width: 768px) and (max-width: 1100px) {
+  body.rf-conv #conv-layout-header, body.rf-conv #conv-layout-main { padding-right: 260px !important; }
+  body.rf-conv #conv-layout-customer { position: absolute !important; top: 0; right: 0; bottom: 0; width: 260px !important; height: auto !important; overflow-y: auto; }
+  body.rf-conv .rf-rp { grid-template-columns: 1fr; height: auto; }
+  body.rf-conv .rf-rp-props { height: auto; border-right: 0; border-bottom: 1px solid var(--fd-border); }
+  body.rf-conv .rf-rp-contact { height: auto; overflow: visible; }
+  body.rf-conv .conv-subjwrap { padding-right: 0; } /* the 145 px kept for .conv-numnav, hidden by Refresh */
+  body.rf-conv .rf-tb { flex-wrap: wrap; row-gap: 6px; } /* ‹ › arrows go to a second line instead of being cut off */
+}
 .rf-rp { display: grid; grid-template-columns: 227px 259px; height: 100%; }
 .rf-rp-props { display: flex; flex-direction: column; border-right: 1px solid var(--fd-border); min-height: 0; height: 100%; }
 .rf-rp-scroll { flex: 1; overflow-y: auto; }
