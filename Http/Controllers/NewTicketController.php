@@ -124,6 +124,11 @@ class NewTicketController extends Controller
 
         // Created by the agent (FreeScout shows it), status, type / priority / tags
         $conversation->created_by_user_id = $user->id;
+        // Source "Phone": FreeScout's phone conversation (phone icon, type filter, reports), set after creation so that
+        // Conversation::create() runs as for an e-mail ticket (it would force a phone conversation to Pending)
+        if ($request->input('rf_source') === 'phone') {
+            $conversation->type = Conversation::TYPE_PHONE;
+        }
         $conversation->status = $status;
         if ($status == Conversation::STATUS_CLOSED) {
             $conversation->closed_by_user_id = $user->id;

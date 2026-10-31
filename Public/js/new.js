@@ -147,6 +147,8 @@
         $.each(D.priorities || [], function (i, p) { prioOptions.push([p.id, p.label]); });
         var typeSel = select('rf_type', typeOptions, '');
         var prioSel = select('rf_priority', prioOptions, 1);
+        // New ticket: e-mail ticket, or FreeScout's phone conversation (NewTicketController)
+        var sourceSel = ticket ? select('rf_source', [['email', rfT('E-mail')], ['phone', rfT('Phone')]], 'email') : null;
 
         // New ticket: own creation instead of FreeScout's send (which would e-mail the contact)
         var setBusy = function () {};
@@ -207,7 +209,7 @@
         setTimeout(setTitle, 0);
 
         // read by mobile.js
-        window.rfNew = { ticket: ticket, title: title, typeSel: typeSel, prioSel: prioSel, another: another, footerReady: footerReady };
+        window.rfNew = { ticket: ticket, title: title, sourceSel: sourceSel, typeSel: typeSel, prioSel: prioSel, another: another, footerReady: footerReady };
 
         if (phone) {
             return;
@@ -302,8 +304,8 @@
         var agentField = field(rfT('Agent'), false, $());
         var tagsField = tagSel ? field(rfT('Tags'), false, tagSel) : $();
         if (ticket) {
-            // Freshdesk order: Contact, Subject, Type, Status, Priority, Agent, Description, Tags
-            wrap.append(typeField, statusField, prioField, agentField, bodyField, tagsField);
+            // Freshdesk order: Contact, Subject, Source, Type, Status, Priority, Agent, Description, Tags
+            wrap.append(field(rfT('Source'), true, sourceSel), typeField, statusField, prioField, agentField, bodyField, tagsField);
         } else {
             // Freshdesk order: From, To, Subject, Description, Priority, Status, Tags, Type (assigned to the sender)
             wrap.append(bodyField, prioField, statusField, tagsField, typeField);

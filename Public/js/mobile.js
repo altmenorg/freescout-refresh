@@ -961,7 +961,8 @@
                 });
                 // type and priority (saved with the ticket, new.js), after status / agent once those are placed
                 if (N.typeSel && !N.typeSel.closest('.rf-m-nf').length && f.find('.rf-m-nf select[name="status"]').length) {
-                    $.each([[rfT('Type'), N.typeSel], [rfT('Priority'), N.prioSel]], function (i, x) {
+                    var extra = N.sourceSel ? [[rfT('Source'), N.sourceSel]] : [];
+                    $.each(extra.concat([[rfT('Type'), N.typeSel], [rfT('Priority'), N.prioSel]]), function (i, x) {
                         // same look as the native status / agent selects (form-control), not the desktop rf-select
                         var w = $('<div class="rf-m-nf"></div>').append($('<label></label>').text(x[0]), x[1].removeClass('rf-select').addClass('form-control'));
                         after.after(w);

@@ -343,7 +343,7 @@ class RefreshServiceProvider extends ServiceProvider
             $closed = $conversation->closed_at ? Carbon::parse($conversation->closed_at) : $last;
             $who = '';
             if ($conversation->customer_id && $conversation->customer) {
-                $who = '<span class="rf-meta rf-meta-who" data-customer="'.(int)$conversation->customer_id.'"><i class="rf-i rf-i-fd-email rf-i-sm"></i> '.e($conversation->customer->getFullName(true)).'</span><span class="rf-meta-sep">•</span>';
+                $who = '<span class="rf-meta rf-meta-who" data-customer="'.(int)$conversation->customer_id.'"><i class="rf-i '.($conversation->isPhone() ? 'rf-i-fd-phone' : 'rf-i-fd-email').' rf-i-sm"></i> '.e($conversation->customer->getFullName(true)).'</span><span class="rf-meta-sep">•</span>';
             }
             $in_time = $closed->lte($sla['resolution_due']);
             return $who.'<span class="rf-meta rf-meta-closed" data-closed="'.$closed->timestamp.'">' . __('Closed for') . ' '.e($closed->diffForHumans()).'</span><span class="rf-meta-sep">•</span>'
@@ -379,7 +379,7 @@ class RefreshServiceProvider extends ServiceProvider
 
         $who = '';
         if ($conversation->customer_id && $conversation->customer) {
-            $who = '<span class="rf-meta rf-meta-who" data-customer="'.(int)$conversation->customer_id.'"><i class="rf-i rf-i-fd-email rf-i-sm"></i> '.e($conversation->customer->getFullName(true)).'</span><span class="rf-meta-sep">•</span>';
+            $who = '<span class="rf-meta rf-meta-who" data-customer="'.(int)$conversation->customer_id.'"><i class="rf-i '.($conversation->isPhone() ? 'rf-i-fd-phone' : 'rf-i-fd-email').' rf-i-sm"></i> '.e($conversation->customer->getFullName(true)).'</span><span class="rf-meta-sep">•</span>';
         }
 
         return $who.'<span class="rf-meta">'.e($left).'</span><span class="rf-meta-sep">•</span><span class="rf-meta rf-meta-sla'.(($sla['first_overdue'] || $sla['resolution_overdue']) && !$sla['pending'] ? ' rf-meta-overdue' : '').'"'.($due ? ' data-due="'.$due->timestamp.'"' : '').'>'.$right.'</span>';
@@ -1595,9 +1595,12 @@ class RefreshServiceProvider extends ServiceProvider
                 };
 
                 // ------------------------------------------------------------ title: channel icon + subject
+                // FreeScout's phone conversation: phone icon, "reported by phone" ($cv: the breadcrumb's conversation;
+                // #conv-layout's conv-type-… class is the translated type name)
+                var convPhone = <?php echo (isset($cv) && $cv && $cv->isPhone()) ? 'true' : 'false'; ?>;
                 var subj = $('#conv-subject .conv-subjtext').first();
                 if (subj.length && !subj.find('.rf-chan').length) {
-                    subj.before('<span class="rf-chan"><i class="rf-i rf-i-fd-email"></i></span>');
+                    subj.before('<span class="rf-chan"><i class="rf-i ' + (convPhone ? 'rf-i-fd-phone' : 'rf-i-fd-email') + '"></i></span>');
                 }
 
                 // ------------------------------------------------------------ Freshdesk-style thread items
@@ -1656,7 +1659,7 @@ class RefreshServiceProvider extends ServiceProvider
                     } else if (t.hasClass('thread-type-note')) {
                         action = t.find('.thread-header').text().indexOf('<?php echo addslashes(__('forwarded')); ?>') !== -1 ? rfT('forwarded') : rfT('added a private note');
                     } else if (t.hasClass('thread-type-customer') && t.is(firstCustomer)) {
-                        action = rfT('reported by e-mail');
+                        action = convPhone ? rfT('reported by phone') : rfT('reported by e-mail');
                     }
                     var dateEl = t.find('.thread-date').first();
                     var when = $.trim(dateEl.text());
