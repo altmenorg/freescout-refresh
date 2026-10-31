@@ -175,6 +175,12 @@ Other modules can add an entry with their own icon to the left bar:
 Links a module adds to FreeScout's top menu also appear in the bar, with a generic icon, when they are not declared
 this way. The [Cobrowse module](https://github.com/altmenorg/freescout-cobrowse) is an example.
 
+Modules can also cooperate with Refresh in the browser through **FreeScout Interop**, a small versioned contract
+shared with other modules ([altmenorg/fs-interop](https://github.com/altmenorg/fs-interop)): navigation entries in the
+left bar and the phone tab bar, actions in the ticket toolbar and the phone "Ticket actions" sheet, swipe actions on the
+phone ticket list, the list a ticket was opened from, and server hooks for SLA targets and the dashboard. See
+[docs/EXTENDING.md](docs/EXTENDING.md) and `interop.json`.
+
 ### For updaters
 
 - **Checksums**: from 1.4.8, each release has a `SHA256SUMS` asset with the SHA-256 of `Refresh.zip` and `module.json`
