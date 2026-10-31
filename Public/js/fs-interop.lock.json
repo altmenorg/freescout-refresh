@@ -1,0 +1,9 @@
+{
+    "bridge": "fs-interop",
+    "version": "1.0.0",
+    "protocol": "1.0.0",
+    "file": "Public/js/fs-interop.js",
+    "sha256": "ab1dd931e2a632bf0a09ab35aace7dad730eac0cad37e8951e5bd6549e47b0e7",
+    "source": "https://github.com/altmenorg/fs-interop/releases/tag/v1.0.0",
+    "note": "Unchanged copy of the shared FreeScout Interop bridge. Never edit it: update the shared repository, release a new version, then replace this file and this lock file together."
+}
