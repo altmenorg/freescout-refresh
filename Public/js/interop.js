@@ -39,7 +39,7 @@
     var hrefKey = function (url) {
         var a = document.createElement('a');
         a.href = String(url || '');
-        return (a.protocol + '//' + a.host + a.pathname).replace(/\/$/, '');
+        return (a.protocol + '//' + a.host + a.pathname).replace(/\/$/, '') + a.search;
     };
     // Icon of an intent: an SVG address is drawn like the rail's module icons (CSS mask, --rf-i, set through the CSSOM:
     // allowed by FreeScout's CSP); a name is taken from Refresh's icon set when it has one, else a neutral grid.
@@ -98,7 +98,11 @@
             var key = hrefKey(entry.href);
             // desktop rail: an entry already in the bar (e.g. added on the server through refresh.rail_items) is reused
             if (rail.length && $.inArray('desktop-sidebar', placements) >= 0) {
-                var link = rail.children('.rf-rail-link').filter(function () { return hrefKey(this.getAttribute('href')) === key; }).first();
+                // (never one of Refresh's own entries: the dashboard's address is the site root, a prefix of many)
+                var link = rail.children('.rf-rail-link').filter(function () {
+                    var self = $(this);
+                    return hrefKey(this.getAttribute('href')) === key && !$.grep($.map(RAIL, function (cls) { return cls; }), function (cls) { return self.has('.rf-i-' + cls).length > 0; }).length;
+                }).first();
                 if (!link.length) {
                     link = $('<a class="rf-rail-link rf-interop-nav" data-toggle="tooltip" data-placement="right"></a>')
                         .attr({ href: entry.href, title: entry.label }).append(icon(entry.icon));
