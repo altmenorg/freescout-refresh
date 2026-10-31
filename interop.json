@@ -1,0 +1,64 @@
+{
+  "manifest_version": 1,
+
+  "module": {
+    "id": "refresh",
+    "name": "Refresh",
+    "alias": "refresh",
+    "version_source": "module.json",
+    "documentation": "docs/EXTENDING.md"
+  },
+
+  "interop": {
+    "protocol": "1.0.0",
+    "bridge": "Public/js/fs-interop.js",
+    "bridge_lock": "Public/js/fs-interop.lock.json",
+
+    "provides": {
+      "capabilities": {
+        "navigation": "1.0",
+        "navigation-context": "1.0",
+        "ticket-toolbar": "1.0",
+        "swipe-actions": "1.0",
+        "conversation-ui": "1.0",
+        "dashboard-handoff": "1.0"
+      },
+      "surfaces": [
+        { "surface": "navigation", "context": "*", "version": "1.0" },
+        { "surface": "ticket-list", "context": "mailbox", "version": "1.0" },
+        { "surface": "ticket-toolbar", "context": "conversation", "version": "1.0" },
+        { "surface": "dashboard", "context": "mailbox", "version": "1.0" }
+      ],
+      "events": {
+        "refresh:ready": { "version": "1.0", "description": "Refresh rendered its interface and the intents of other modules: {schema, source_module, version, context}" },
+        "refresh:list-rendered": { "version": "1.0", "description": "a ticket list was rendered (page load or view switched in place): {schema, source_module, mailbox_id, view}" },
+        "refresh:conversation-rendered": { "version": "1.0", "description": "a ticket page was rendered: {schema, source_module, conversation_id, mailbox_id, mobile}" }
+      },
+      "server_hooks": {
+        "fsinterop.sla.targets": { "type": "filter", "version": "1.0", "payload": "sla-targets 1.0", "description": "Refresh answers with its SLA targets (Manage > Settings > Refresh), unless another module answered first" },
+        "fsinterop.dashboard.owner": { "type": "filter", "role": "consumer", "version": "1.0", "payload": "dashboard-owner 1.0", "description": "asked before rendering My dashboard; another owner = Refresh skips its block" },
+        "fsinterop.modules": { "type": "filter", "version": "1.0", "description": "Refresh adds its summary (id, name, version, protocol, capabilities)" },
+        "fsinterop.navigation.context": { "type": "filter", "version": "1.0", "payload": "navigation-context 1.0", "description": "Refresh claims navigation@*, ticket-list@mailbox, ticket-toolbar@conversation and, when it rendered its block, dashboard@mailbox" }
+      }
+    }
+  },
+
+  "compatibility": {
+    "freescout": ">=1.8.0 <2.0.0",
+    "php": ">=7.1.0",
+    "peers": {
+      "refresh-global": {
+        "required": false,
+        "supported_versions": ">=1.17.0 <2.0.0",
+        "interop_protocol": ">=1.0.0 <2.0.0",
+        "conflicts": []
+      }
+    }
+  },
+
+  "compatibility_policy": {
+    "peer_protocol_mismatch": "degraded",
+    "explicit_conflict": "blocked",
+    "unknown_peer_version": "warning"
+  }
+}

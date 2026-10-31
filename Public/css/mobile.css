@@ -734,6 +734,8 @@
   .rf-m-swipe-act { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 75px; height: 100%; padding: 0 4px; border: 0; background: transparent; color: #fff; font-size: 14px; line-height: 18px; }
   .rf-m-swipe-act > span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rf-m-swipe-act .rf-i { width: 18px; height: 18px; }
+  /* swiping a card left (only with swipe actions of other modules, FreeScout Interop): the panel on the right */
+  .rf-m-swipe.rf-m-swipe-left { justify-content: flex-end; }
 
   /* native pages opened from Account (profile, notifications, settings, mailboxes, users…): the app's forms
      (same layout as the Filter screen: 15 px 500 #475569 labels, 47.3 px full-width fields, navy primary button) */

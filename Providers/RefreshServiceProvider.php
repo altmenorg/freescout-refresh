@@ -66,6 +66,8 @@ class RefreshServiceProvider extends ServiceProvider
         // Forward within the ticket (setting): the hooks stay registered when it is turned off, so that the replies
         // to forwards already sent still land in their ticket
         \Modules\Refresh\Services\Forward::registerHooks();
+        // FreeScout Interop (docs/EXTENDING.md): SLA targets, dashboard handoff, module summary, surfaces of the page
+        \Modules\Refresh\Services\Interop::registerHooks();
 
         // The shell (rail, top bar, list layout) is built by the provider script at the end of the page: until then the
         // browser would paint FreeScout's own layout, a white flash on every page change. The page stays hidden
@@ -143,8 +145,13 @@ class RefreshServiceProvider extends ServiceProvider
         });
         // Editor toolbar: must be loaded with the page's scripts, before initReplyForm()
         \Eventy::addFilter('javascripts', function ($scripts) {
-            // Diagnostics: first, so that it records the errors of the module's other scripts
+            // FreeScout Interop bridge (unchanged copy of the shared file, fs-interop.lock.json): first, as the contract
+            // asks; idempotent, so a copy shipped by another module may load before or after it
+            $scripts[] = \Module::getPublicPath('refresh').'/js/fs-interop.js';
+            // Diagnostics: before the module's own scripts, so that it records their errors
             $scripts[] = \Module::getPublicPath('refresh').'/js/diagnostics.js';
+            // Refresh's side of the contract: registers Refresh while it loads, renders the intents of other modules
+            $scripts[] = \Module::getPublicPath('refresh').'/js/interop.js';
             $scripts[] = \Module::getPublicPath('refresh').'/js/editor.js';
             // New ticket / Send an e-mail pages: before mobile.js, which reads window.rfNew
             $scripts[] = \Module::getPublicPath('refresh').'/js/new.js';
@@ -517,6 +524,12 @@ class RefreshServiceProvider extends ServiceProvider
             if (!$mailbox) {
                 return $html;
             }
+            // FreeScout Interop: another module may render the dashboard of this page (e.g. RefreshGlobal's dashboard of
+            // all mailboxes); it then adds its own block and Refresh leaves the page to it
+            if (!\Modules\Refresh\Services\Interop::ownsDashboard($user)) {
+                return $html;
+            }
+            \Modules\Refresh\Services\Interop::dashboardRendered();
 
             $views = self::views();
             $tiles = [];
@@ -1389,6 +1402,8 @@ class RefreshServiceProvider extends ServiceProvider
                             bindDd();
                             conversationsTableInit();
                             viewMailboxInit();
+                            // FreeScout Interop: the list was replaced (refresh:list-rendered)
+                            if (window.rfInterop) { window.rfInterop.listRendered(); }
                         }).fail(function (x, st) {
                             if (st !== 'abort') { window.location.href = url; }
                         }).always(function () {

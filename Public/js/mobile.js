@@ -79,7 +79,7 @@
             body.removeClass('rf-m-overlay rf-m-drawer rf-m-pop-open');
         };
         scrim.on('click', closeAll);
-        // items: [{label, icon, color, active, onClick, sep, cls}] ; opts: {title, head (small caps), pop, foot, keep}
+        // items: [{label, icon (name) or iconEl (element), color, active, onClick, sep, cls}] ; opts: {title, head (small caps), pop, foot, keep}
         var sheet = function (items, opts) {
             opts = opts || {};
             closeAll();
@@ -92,7 +92,7 @@
             $.each(items, function (i, it) {
                 if (it.sep) { list.append('<div class="rf-m-sheet-sep"></div>'); return; }
                 var b = $('<button type="button" class="rf-m-opt"></button>').addClass(it.cls || '').toggleClass('active', !!it.active);
-                if (it.icon) { b.append(ic(it.icon)); }
+                if (it.icon) { b.append(ic(it.icon)); } else if (it.iconEl) { b.append(it.iconEl); }
                 if (it.color) { b.append($('<i class="rf-sq"></i>').css('background', it.color)); }
                 b.append($('<span class="rf-m-opt-label"></span>').text(it.label));
                 b.append('<span class="rf-m-check">' + ic('m-check') + '</span>');
@@ -353,31 +353,42 @@
         // Right swipe on a card (list): navy blue panel with Delete / Take / Spam, like the app.
         // Delete = native bulk delete on this single ticket (native confirmation); Take = assign the ticket to me;
         // Spam = "Spam" status. All actions go through the native ajax (conversations.ajax).
+        // Swipe actions declared by other modules (FreeScout Interop, Public/js/interop.js) are offered in the same
+        // gesture: after Refresh's own on a right swipe, alone in a panel on the right of the card on a left swipe (only
+        // when there are some: without them a card does not move to the left, as before). Refresh stays the only handler
+        // of the touch events.
         var swipe = null, openRow = null;
+        var swipeActs = function (dir) { return window.rfInterop ? window.rfInterop.swipeActions(dir) : []; };
         var closeSwipe = function () {
             if (!openRow) { return; }
-            openRow.css('transform', '').removeClass('rf-m-swiped');
+            openRow.css('transform', '').removeClass('rf-m-swiped').removeData('rfSwipeX');
             openRow.data('rfSwipe') && openRow.data('rfSwipe').remove();
             openRow = null;
         };
-        var swipePanel = function (tr) {
-            var p = $('<div class="rf-m-swipe"></div>').css({ top: tr[0].offsetTop, height: tr.outerHeight() });
-            var act = function (icon, label, fn) { p.append($('<button type="button" class="rf-m-swipe-act"></button>').append(ic(icon), $('<span></span>').text(label)).on('click', fn)); };
+        // dir "right": the card moves right, the panel shows on its left (Refresh's actions + others); "left": the reverse
+        var swipePanel = function (tr, dir, extra) {
+            var p = $('<div class="rf-m-swipe"></div>').toggleClass('rf-m-swipe-left', dir === 'left').css({ top: tr[0].offsetTop, height: tr.outerHeight() });
+            var act = function (icon, label, fn) { p.append($('<button type="button" class="rf-m-swipe-act"></button>').append(typeof icon === 'string' ? ic(icon) : icon, $('<span></span>').text(label)).on('click', fn)); };
             var convId = tr.find('.conv-checkbox').val();
             var after = function (r) { if (window.loaderHide) { loaderHide(); } if (r && r.status === 'success') { window.location.reload(); } else if (window.showAjaxError) { showAjaxError(r); } };
-            act('fd-trash', rfT('Delete'), function () {
-                closeSwipe();
-                $('.conv-checkbox:checked').prop('checked', false).trigger('change').closest('tr').removeClass('selected');
-                tr.find('.conv-checkbox').prop('checked', true).trigger('change');
-                setTimeout(function () { $('#conversations-bulk-actions .conv-delete').first().trigger('click'); }, 50);
-            });
-            act('m-ticket', rfT('Take'), function () {
-                closeSwipe();
-                fsAjax({ action: 'conversation_change_user', user_id: getGlobalAttr('auth_user_id'), conversation_id: convId }, laroute.route('conversations.ajax'), after, true);
-            });
-            act('fd-ban', rfT('Spam'), function () {
-                closeSwipe();
-                fsAjax({ action: 'conversation_change_status', status: 4, conversation_id: convId }, laroute.route('conversations.ajax'), after, true);
+            if (dir !== 'left') {
+                act('fd-trash', rfT('Delete'), function () {
+                    closeSwipe();
+                    $('.conv-checkbox:checked').prop('checked', false).trigger('change').closest('tr').removeClass('selected');
+                    tr.find('.conv-checkbox').prop('checked', true).trigger('change');
+                    setTimeout(function () { $('#conversations-bulk-actions .conv-delete').first().trigger('click'); }, 50);
+                });
+                act('m-ticket', rfT('Take'), function () {
+                    closeSwipe();
+                    fsAjax({ action: 'conversation_change_user', user_id: getGlobalAttr('auth_user_id'), conversation_id: convId }, laroute.route('conversations.ajax'), after, true);
+                });
+                act('fd-ban', rfT('Spam'), function () {
+                    closeSwipe();
+                    fsAjax({ action: 'conversation_change_status', status: 4, conversation_id: convId }, laroute.route('conversations.ajax'), after, true);
+                });
+            }
+            $.each(extra || [], function (i, a) {
+                act(a.iconEl, a.label, function () { closeSwipe(); a.run(convId); });
             });
             tr.before(p);
             tr.data('rfSwipe', p);
@@ -387,15 +398,22 @@
             if (body.hasClass('rf-m-sel')) { return; }
             var t = e.originalEvent.touches[0];
             if (openRow && openRow[0] !== this) { closeSwipe(); }
-            swipe = { tr: $(this), x: t.clientX, y: t.clientY, dir: '', base: $(this).hasClass('rf-m-swiped') ? 225 : 0 };
+            var right = swipeActs('right'), left = swipeActs('left');
+            swipe = { tr: $(this), x: t.clientX, y: t.clientY, dir: '', base: $(this).data('rfSwipeX') || 0, acts: { right: right, left: left },
+                // open widths (75 px per action), and how far the card can be pulled: one action more
+                open: { right: 225 + 75 * right.length, left: 75 * left.length } };
         });
         $(document).on('touchmove', 'body.rf-m-list tr.conv-row', function (e) {
             if (!swipe) { return; }
             var t = e.originalEvent.touches[0], dx = t.clientX - swipe.x, dy = t.clientY - swipe.y;
             if (!swipe.dir && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) { swipe.dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v'; }
             if (swipe.dir !== 'h') { return; }
-            if (!swipe.tr.data('rfSwipe') || !swipe.tr.data('rfSwipe').parent().length) { swipePanel(swipe.tr); }
-            var x = Math.max(0, Math.min(swipe.base + dx, 300));
+            var x = Math.max(swipe.open.left ? -(swipe.open.left + 75) : 0, Math.min(swipe.base + dx, swipe.open.right + 75));
+            var side = x < 0 ? 'left' : 'right', p = swipe.tr.data('rfSwipe');
+            if (!p || !p.parent().length || p.hasClass('rf-m-swipe-left') !== (side === 'left')) {
+                if (p) { p.remove(); }
+                swipePanel(swipe.tr, side, swipe.acts[side]);
+            }
             swipe.tr.css({ transition: 'none', transform: 'translateX(' + x + 'px)' });
             swipe.x2 = x;
         });
@@ -404,11 +422,11 @@
             swipe.tr.css('transition', '');
             if (swipe.dir === 'h') {
                 lastHold = new Date().getTime(); // don't open the ticket on release
-                if ((swipe.x2 || 0) > 110) {
-                    swipe.tr.css('transform', 'translateX(225px)').addClass('rf-m-swiped');
-                    openRow = swipe.tr;
+                var x2 = swipe.x2 || 0, w = x2 > 110 ? swipe.open.right : (x2 < -110 && swipe.open.left ? -swipe.open.left : 0);
+                openRow = swipe.tr;
+                if (w) {
+                    swipe.tr.css('transform', 'translateX(' + w + 'px)').addClass('rf-m-swiped').data('rfSwipeX', w);
                 } else {
-                    openRow = swipe.tr;
                     closeSwipe();
                 }
             }
@@ -816,11 +834,11 @@
                 var closeBtn = $('.rf-tb-close').first();
                 if (closeBtn.length) {
                     var reopen = closeBtn.hasClass('rf-reopen');
-                    items.push({ label: reopen ? rfT('Reopen ticket') : rfT('Close ticket'), icon: 'fd-check-circle', onClick: function () { closeBtn.trigger('click'); } });
+                    items.push({ key: 'close', label: reopen ? rfT('Reopen ticket') : rfT('Close ticket'), icon: 'fd-check-circle', onClick: function () { closeBtn.trigger('click'); } });
                 }
                 var due = rp.find('.rf-rp-sla-edit');
                 if (due.length) {
-                    items.push({ label: rfT('Due'), icon: 'fd-calendar', onClick: function () {
+                    items.push({ key: 'due', label: rfT('Due'), icon: 'fd-calendar', onClick: function () {
                         openProps();
                         body.addClass('rf-m-props-due');
                         rp.find('.rf-rp-due-form').show();
@@ -831,19 +849,32 @@
                     return menu.find('li > a').filter(function () { return !$(this).parent().hasClass('hidden-lg') && re.test($(this).text()); }).first();
                 };
                 var merge = pick(/fusionner/i);
-                if (merge.length) { items.push({ label: rfT('Merge'), icon: 'fd-merge', onClick: function () { merge.trigger('click'); } }); }
+                if (merge.length) { items.push({ key: 'merge', label: rfT('Merge'), icon: 'fd-merge', onClick: function () { merge.trigger('click'); } }); }
                 var spam = $('#conv-status .conv-status a[data-status="4"]').first();
-                if (spam.length) { items.push({ label: rfT('Spam'), icon: 'fd-ban', onClick: function () { spam.trigger('click'); } }); }
+                if (spam.length) { items.push({ key: 'spam', label: rfT('Spam'), icon: 'fd-ban', onClick: function () { spam.trigger('click'); } }); }
                 var del = $('.rf-tb-delete').first();
-                if (del.length) { items.push({ label: rfT('Delete'), icon: 'fd-trash', onClick: function () { del.trigger('click'); } }); }
+                if (del.length) { items.push({ key: 'delete', label: rfT('Delete'), icon: 'fd-trash', onClick: function () { del.trigger('click'); } }); }
                 var follow = menu.find('a.conv-follow').first();
                 if (follow.length) {
                     var fl = $.trim(follow.clone().find('.hidden').remove().end().text()).replace(/\s+/g, ' ');
-                    items.push({ label: fl || rfT('Follow'), icon: 'fd-eye', onClick: function () { follow.trigger('click'); } });
+                    items.push({ key: 'follow', label: fl || rfT('Follow'), icon: 'fd-eye', onClick: function () { follow.trigger('click'); } });
                 }
-                items.push({ label: rfT('Forward'), icon: 'forward', onClick: function () { openCompose('.conv-forward'); } });
+                items.push({ key: 'forward', label: rfT('Forward'), icon: 'forward', onClick: function () { openCompose('.conv-forward'); } });
                 var print = pick(/imprimer/i);
-                if (print.length) { items.push({ label: rfT('Print'), icon: 'print', onClick: function () { print[0].click(); } }); }
+                if (print.length) { items.push({ key: 'print', label: rfT('Print'), icon: 'print', onClick: function () { print[0].click(); } }); }
+                // actions other modules declare for the ticket toolbar (FreeScout Interop, Public/js/interop.js): after the
+                // entry they name ("close" by default), else at the end
+                if (window.rfInterop) {
+                    var lastAfter = {};
+                    $.each(window.rfInterop.sheetItems(), function (i, it) {
+                        var target = it.after ? (lastAfter[it.after] || it.after) : it.before, at = -1;
+                        $.each(items, function (j, o) {
+                            if (o.key && o.key === target) { at = it.after ? j + 1 : j; return false; }
+                        });
+                        if (it.after) { lastAfter[it.after] = it.key; }
+                        items.splice(at < 0 ? items.length : at, 0, it);
+                    });
+                }
                 sheet(items, { head: rfT('Ticket actions') });
             }
 

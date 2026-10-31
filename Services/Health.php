@@ -12,7 +12,7 @@ class Health
 {
     /** Classes the module loads on every page or on its own pages. */
     const CLASSES = [
-        Settings::class, Views::class, Dashboard::class, Diagnostics::class,
+        Settings::class, Views::class, Dashboard::class, Diagnostics::class, Interop::class,
         \Modules\Refresh\Http\Controllers\TicketsController::class,
         \Modules\Refresh\Http\Controllers\ContactsController::class,
         \Modules\Refresh\Http\Controllers\PropertiesController::class,
@@ -25,7 +25,7 @@ class Health
     const VIEWS = ['refresh::tickets', 'refresh::properties', 'refresh::contact_panel', 'refresh::contacts', 'refresh::dashboard', 'refresh::settings'];
 
     /** Served through FreeScout's public/modules/refresh link: a broken link leaves FreeScout without its interface. */
-    const ASSETS = ['css/icons.css', 'css/refresh.css', 'css/mobile.css', 'js/diagnostics.js', 'js/editor.js', 'js/new.js', 'js/mobile.js'];
+    const ASSETS = ['css/icons.css', 'css/refresh.css', 'css/mobile.css', 'js/fs-interop.js', 'js/interop.js', 'js/diagnostics.js', 'js/editor.js', 'js/new.js', 'js/mobile.js'];
 
     /** FreeScout routes the module's pages and scripts cannot work without (Tags and Saved Replies are optional). */
     const CORE_ROUTES = ['conversations.ajax', 'conversations.view', 'conversations.create', 'customers.update', 'mailboxes.view'];
