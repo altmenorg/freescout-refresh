@@ -223,6 +223,29 @@ class RefreshServiceProvider extends ServiceProvider
             $translator->load('*', '*', $locale);
             $translator->addLines(require $file, $locale, '*');
         }
+        // 3) after them (French "Voir ou Annuler" comes from overrides/fr.php)
+        $this->overrideSendToast($translator);
+    }
+
+    /**
+     * Toast after sending a reply (ConversationsController::ajax send_reply): FreeScout says "Email Sent", but the
+     * e-mail is queued for Conversation::UNDO_TIMOUT seconds and the toast only shows while it can be undone. Every
+     * language says "Sending in N s · View or Undo" instead, fully translated (Resources/lang/send-delay.php).
+     */
+    protected function overrideSendToast($translator)
+    {
+        $seconds = defined('App\Conversation::UNDO_TIMOUT') ? (int)\App\Conversation::UNDO_TIMOUT : 15;
+        foreach (require __DIR__.'/../Resources/lang/send-delay.php' as $locale => $w) {
+            [$sending, $view, $or, $undo] = $w;
+            $sending = ':%tag_start%'.sprintf($sending, $seconds).':%tag_end%';
+            $translator->load('*', '*', $locale);
+            $translator->addLines([
+                '*.:%tag_start%Email Sent:%tag_end% :%undo_start%Undo:%a_end%'
+                    => $sending.' :%undo_start%'.$undo.':%a_end%',
+                '*.:%tag_start%Email Sent:%tag_end% :%view_start%View:%a_end% or :%undo_start%Undo:%a_end%'
+                    => $sending.' :%view_start%'.$view.':%a_end% '.$or.' :%undo_start%'.$undo.':%a_end%',
+            ], $locale, '*');
+        }
     }
 
     /* ------------------------------------------------------------------ SLA */
