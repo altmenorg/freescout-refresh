@@ -229,8 +229,8 @@ class RefreshServiceProvider extends ServiceProvider
 
     /**
      * Toast after sending a reply (ConversationsController::ajax send_reply): FreeScout says "Email Sent", but the
-     * e-mail is queued for Conversation::UNDO_TIMOUT seconds and the toast only shows while it can be undone. Every
-     * language says "Sending in N s · View or Undo" instead, fully translated (Resources/lang/send-delay.php).
+     * e-mail is queued for Conversation::UNDO_TIMOUT seconds and the toast only shows while it can be undone. The
+     * languages Refresh supports say "Sending in N s · View or Undo" instead (Resources/lang/send-delay.php).
      */
     protected function overrideSendToast($translator)
     {
