@@ -17,7 +17,9 @@ class ForwardController extends Controller
     {
         $conversation = Conversation::find((int)$id);
         $user = auth()->user();
-        if (!Forward::enabled() || !$conversation || !$user->can('view', $conversation)) {
+        // 'update' (suggestion of @00MY00, issue #1): same answer as 'view' today (ConversationPolicy::update returns
+        // view(), and send_reply checks 'view'), but a forward changes the ticket, so it follows FreeScout if that differs
+        if (!Forward::enabled() || !$conversation || !$user->can('update', $conversation)) {
             return response()->json(['status' => 'error', 'msg' => __('Not enough permissions')]);
         }
 
