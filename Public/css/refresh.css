@@ -1702,3 +1702,5 @@ span.rf-presence-av.rf-av { width: 22px; height: 22px; font-size: 10px; backgrou
   .rf-list-main > .rf-list-scroll { grid-row: 2; grid-column: 1; }
   .content-2col > .rf-list-layout > .rf-filters { grid-row: 2; grid-column: 1; justify-self: end; z-index: 20; box-shadow: -8px 0 24px rgba(15, 23, 42, .12); }
 }
+/* "More actions" of a message: the native menu (▾) hidden by Refresh, opened under the button (discussion #16) */
+.rf-th-menu { z-index: 1060; min-width: 180px; max-height: 60vh; overflow-y: auto; margin: 0; }

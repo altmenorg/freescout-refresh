@@ -366,5 +366,7 @@
     "Update ticket": "Mettre à jour",
     "Forward within the ticket": "Transférer dans le ticket",
     "Like Freshdesk: a forward stays in the ticket as a private note, and the recipient's reply comes back into the same ticket as a private note, which can be answered from there. The contact never sees either. Off: FreeScout's own forward, which creates a new \"Fwd:\" ticket.": "Comme sur Freshdesk : un transfert reste dans le ticket sous forme de note privée, et la réponse du destinataire revient dans le même ticket, en note privée, à laquelle on peut répondre depuis le ticket. Le contact ne voit ni l'un ni l'autre. Désactivé : le transfert de FreeScout, qui crée un nouveau ticket « Fwd: ».",
-    "replied to the forward": "a répondu au transfert"
+    "replied to the forward": "a répondu au transfert",
+    "Translate": "Traduire",
+    "More actions": "Plus d'actions"
 }

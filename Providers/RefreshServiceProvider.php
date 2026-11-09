@@ -1891,7 +1891,8 @@ class RefreshServiceProvider extends ServiceProvider
 
                 // ------------------------------------------------------------ per-message actions (Freshdesk: 2 icons on hover)
                 // The native "thread options" menu (▾: Edit, New ticket, Clone, Sent e-mails, Original, Print)
-                // is hidden in CSS and replaced with Forward + Split. Split = native "New ticket" (thread's new-conv link,
+                // is hidden in CSS and replaced with Forward + Split (+ Translate when the Translate module is there) + More actions,
+                // which lists the native menu with the entries other modules add. Split = native "New ticket" (thread's new-conv link,
                 // pre-filled with this message; the message also stays in the original ticket, unlike Freshdesk which moves it).
                 var rfThreadTools = function () {
                     // draft: buttons turned into icons (CSS "Draft in thread") → tooltips
@@ -1928,9 +1929,47 @@ class RefreshServiceProvider extends ServiceProvider
                             tools.append($('<button type="button" class="rf-th-tool rf-th-split" title="' + rfT('Split ticket') + '"><i class="rf-i rf-i-split rf-i-sm"></i></button>')
                                 .attr('data-thread', th.attr('data-thread_id')));
                         }
+                        // Entries of the hidden native menu: those of the Translate module (discussion #16) as an icon,
+                        // and the whole menu (FreeScout's entries and those other modules add) behind "More actions".
+                        // A click is passed on to the original entry, so its own handlers (modal, module scripts) run.
+                        var entries = th.find('.thread-options .dropdown-menu a').filter(function () {
+                            return $.trim($(this).text()) !== '';
+                        });
+                        entries.filter(function () {
+                            return /ticket-translator|translat/i.test(($(this).attr('href') || '') + ' ' + ($(this).attr('data-url') || ''));
+                        }).first().each(function () {
+                            var orig = this;
+                            tools.append($('<button type="button" class="rf-th-tool rf-th-translate"><i class="rf-i rf-i-multilingual rf-i-sm"></i></button>')
+                                .attr('title', $.trim($(orig).text()) || rfT('Translate'))
+                                .on('click', function () { orig.click(); }));
+                        });
+                        if (entries.length) {
+                            tools.append($('<button type="button" class="rf-th-tool rf-th-more"><i class="rf-i rf-i-more-horizontal rf-i-sm"></i></button>')
+                                .attr('title', rfT('More actions')).data('rfEntries', entries));
+                        }
                         th.append(tools);
                     });
                 };
+                // "More actions" of a message: the native menu's entries, in a menu opened under the button
+                var rfThMenuClose = function () { $('.rf-th-menu').remove(); $(document).off('.rfthmenu'); };
+                $(document).on('click', '.rf-th-more', function (e) {
+                    e.stopPropagation();
+                    var btn = $(this);
+                    var open = $('.rf-th-menu').length && $('.rf-th-menu').data('rfBtn') === this;
+                    rfThMenuClose();
+                    if (open) { return; }
+                    var menu = $('<ul class="dropdown-menu rf-th-menu" role="menu"></ul>').data('rfBtn', this);
+                    $.each(btn.data('rfEntries') || [], function (i, orig) {
+                        menu.append($('<li></li>').append($('<a href="#" role="button"></a>').text($.trim($(orig).text()))
+                            .on('click', function (ev) { ev.preventDefault(); rfThMenuClose(); orig.click(); })));
+                    });
+                    var r = this.getBoundingClientRect();
+                    menu.css({ position: 'fixed', display: 'block', top: r.bottom + 4, right: Math.max(8, window.innerWidth - r.right), left: 'auto' })
+                        .appendTo('body');
+                    $(document).on('click.rfthmenu', function (ev) { if (!$(ev.target).closest('.rf-th-menu').length) { rfThMenuClose(); } })
+                        .on('keydown.rfthmenu', function (ev) { if (ev.keyCode === 27) { rfThMenuClose(); } });
+                    $(window).one('scroll resize', rfThMenuClose);
+                });
                 // "Split ticket": same confirmation dialog as Freshdesk (Split this message into a new ticket? Cancel / Split),
                 // then the message moves to a new ticket (SplitController), which is opened.
                 $(document).on('click', '.rf-th-split', function () {
