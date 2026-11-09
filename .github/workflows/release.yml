@@ -1,0 +1,34 @@
+# Publishes a GitHub release when a version tag (vX.Y.Z) is pushed: Refresh.zip (git archive, export-ignore
+# applied, folder Refresh/), module.json and SHA256SUMS, with the annotated tag's message as release notes.
+name: Release
+on:
+  push:
+    tags: ['v*.*.*']
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check module.json version
+        run: |
+          v="$(jq -r .version module.json)"
+          [ "v$v" = "$GITHUB_REF_NAME" ] || { echo "module.json says $v, tag is $GITHUB_REF_NAME"; exit 1; }
+      - name: Build assets
+        run: |
+          mkdir dist
+          git archive --format=zip --prefix=Refresh/ -o dist/Refresh.zip "$GITHUB_REF_NAME"
+          cp module.json dist/
+          (cd dist && sha256sum -b Refresh.zip module.json > SHA256SUMS && cat SHA256SUMS)
+          git fetch -f origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
+          git tag -l --format='%(contents:body)' "$GITHUB_REF_NAME" > dist/notes.md
+          git tag -l --format='%(contents:subject)' "$GITHUB_REF_NAME" > dist/title.txt
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --title "$(cat dist/title.txt)" --notes-file dist/notes.md --latest \
+            dist/Refresh.zip dist/module.json dist/SHA256SUMS
