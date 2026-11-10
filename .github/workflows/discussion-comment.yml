@@ -1,5 +1,4 @@
-# Posts a comment on a discussion of this repository (Actions › Discussion comment › Run workflow).
-# The comment is posted by github-actions[bot].
+# Deletes the comments github-actions[bot] posted on a discussion (Actions › Discussion comment › Run workflow).
 name: Discussion comment
 on:
   workflow_dispatch:
@@ -7,22 +6,20 @@ on:
       number:
         description: Discussion number
         required: true
-      body:
-        description: Comment (Markdown)
-        required: true
 permissions:
   discussions: write
 jobs:
-  comment:
+  delete-bot-comments:
     runs-on: ubuntu-latest
     steps:
       - env:
           GH_TOKEN: ${{ github.token }}
           NUMBER: ${{ inputs.number }}
-          BODY: ${{ inputs.body }}
         run: |
-          id="$(gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){discussion(number:$n){id}}}' \
-            -f o="${GITHUB_REPOSITORY%/*}" -f r="${GITHUB_REPOSITORY#*/}" -F n="$NUMBER" --jq .data.repository.discussion.id)"
-          [ -n "$id" ] && [ "$id" != "null" ] || { echo "discussion #$NUMBER not found"; exit 1; }
-          gh api graphql -f query='mutation($d:ID!,$b:String!){addDiscussionComment(input:{discussionId:$d,body:$b}){comment{url}}}' \
-            -f d="$id" -f b="$BODY" --jq .data.addDiscussionComment.comment.url
+          ids="$(gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){discussion(number:$n){comments(last:100){nodes{id author{login}}}}}}' \
+            -f o="${GITHUB_REPOSITORY%/*}" -f r="${GITHUB_REPOSITORY#*/}" -F n="$NUMBER" \
+            --jq '.data.repository.discussion.comments.nodes[] | select(.author.login=="github-actions") | .id')"
+          [ -n "$ids" ] || { echo "no bot comment on #$NUMBER"; exit 1; }
+          for id in $ids; do
+            gh api graphql -f query='mutation($i:ID!){deleteDiscussionComment(input:{id:$i}){comment{id}}}' -f i="$id" >/dev/null && echo "deleted $id"
+          done
