@@ -1,4 +1,4 @@
-# Refresh: a new interface for FreeScout
+# Refresh: a modern, Freshdesk-style interface for FreeScout
 
 **A new, Freshdesk-inspired interface for [FreeScout](https://freescout.net).** Refresh reworks the whole agent interface
 of FreeScout: a left navigation bar, ticket views with SLA badges, a dashboard, a properties panel next to each ticket,
