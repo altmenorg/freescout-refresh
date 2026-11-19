@@ -75,6 +75,7 @@ class Views
             // Working views (with counters)
             'unassigned'        => [__('Unassigned'), 'fd-agent', 'work', true],
             'new'            => [__('New'), 'fd-new', 'work', true],
+            'waiting'        => [__('Waiting on us'), 'fd-hourglass', 'work', true],
             'overdue'           => [__('Overdue'), 'fd-alert', 'work', true],
             'due-today' => [__('Due today'), 'fd-calendar', 'work', true],
             'open'             => [__('refresh::labels.open'), 'fd-status', 'work', true],
@@ -189,6 +190,10 @@ class Views
                 $q->where('conversations.status', Conversation::STATUS_ACTIVE);
                 self::whereNeverAnswered($q);
                 break;
+            case 'waiting':
+                $q->whereIn('conversations.status', $unresolved);
+                self::whereCustomerWroteLast($q);
+                break;
             case 'overdue':
                 $q->where('conversations.status', Conversation::STATUS_ACTIVE)
                     ->where(function ($w) use ($now) {
@@ -276,6 +281,25 @@ class Views
     {
         return route('refresh.tickets', ['mailbox_id' => $mailbox_id, 'view' => $sv['view']])
             .'?'.http_build_query(array_merge($sv['query'], ['sv' => $sv['id']]));
+    }
+
+    /**
+     * "Waiting on us": the newest published thread is from the customer. A reply, or a note by a human agent
+     * (users.type = User::TYPE_USER), counts as a reaction; notes by robot users (automation and AI modules) and
+     * line items (status or assignment changes) are ignored. Notes do not update conversations.last_reply_from,
+     * hence the subquery instead of that column.
+     */
+    protected static function whereCustomerWroteLast($query)
+    {
+        $p = \DB::getTablePrefix();
+        $query->whereRaw(
+            '(SELECT t.type FROM '.$p.'threads t LEFT JOIN '.$p.'users u ON u.id = t.created_by_user_id'
+            .' WHERE t.conversation_id = '.$p.'conversations.id AND t.state = ?'
+            .' AND (t.type IN (?, ?) OR (t.type = ? AND u.type = ?))'
+            .' ORDER BY t.created_at DESC, t.id DESC LIMIT 1) = ?',
+            [Thread::STATE_PUBLISHED, Thread::TYPE_CUSTOMER, Thread::TYPE_MESSAGE, Thread::TYPE_NOTE,
+                \App\User::TYPE_USER, Thread::TYPE_CUSTOMER]
+        );
     }
 
     protected static function whereNeverAnswered($query)

@@ -28,8 +28,8 @@ brings the stock FreeScout interface back.
 
 ### Ticket list
 - **Views**, in the same order as Freshdesk: tickets I created, my new and open tickets, tickets I'm watching,
-  undelivered messages, all tickets, all unresolved tickets; then unassigned, new, overdue, due today, open, pending,
-  starred; trash and spam. Live counters.
+  undelivered messages, all tickets, all unresolved tickets; then unassigned, new, waiting on us (the customer wrote
+  last), overdue, due today, open, pending, starred; trash and spam. Live counters.
 - **Saved views**: save the current filters as a shared view.
 - **Filters panel**: agents, statuses, priorities, types, tags, customer, created / closed period, resolution and first
   response due dates. **Sort** by date created, last modified, last customer response, due date, priority or status.
